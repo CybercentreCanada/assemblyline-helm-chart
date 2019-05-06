@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: assemblyline-dispatcher-submissions
+  labels:
+    app: assemblyline
+    component: disptacher-submissions
+spec:
+  containers:
+  - name: al-dispatch-submissions
+    image: assemblyline/assemblyline_core
+    command: ['python3', '/opt/alv4/alv4_core/al_core/dispatching/run_submissions.py']
