@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-alerter
+  labels:
+    app: assemblyline
+    component: alerter
+spec:
+  containers:
+    - name: al-dispatch-files
+      image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+      imagePullPolicy: Always
+      command: ['python', '-m', 'al_core.alerter.run_alerter']
+      volumeMounts:
+        - name: al-config
+          mountPath: /etc/assemblyline/
+  volumes:
+    - name: al-config
+      configMap:
+        name: {{ .Release.Name }}-global-config
+        items:
+          - key: config
+            path: config.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-alerter
+spec:
+  clusterIP: None  # AL services are headless, and communicate through redis
+  selector:
+    app: assemblyline
+    component: alerter
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-workflow
+  labels:
+    app: assemblyline
+    component: workflow
+spec:
+  containers:
+    - name: al-dispatch-files
+      image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+      imagePullPolicy: Always
+      command: ['python', '-m', 'al_core.workflow.run_workflow']
+      volumeMounts:
+        - name: al-config
+          mountPath: /etc/assemblyline/
+  volumes:
+    - name: al-config
+      configMap:
+        name: {{ .Release.Name }}-global-config
+        items:
+          - key: config
+            path: config.yml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-workflow
+spec:
+  clusterIP: None  # AL services are headless, and communicate through redis
+  selector:
+    app: assemblyline
+    component: workflow
+

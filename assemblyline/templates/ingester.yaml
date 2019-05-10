@@ -1,16 +1,15 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-dispatcher-submissions
+  name: {{ .Release.Name }}-ingester-ingest
   labels:
     app: assemblyline
-    component: dispatcher-submissions
+    component: ingester-ingest
 spec:
   containers:
-    - name: al-dispatch-submissions
+    - name: al-ingester-ingest
       image: cccs/assemblyline-core:{{ .Values.coreVersion }}
-      imagePullPolicy: Always
-      command: ['python', '-m', 'al_core.dispatching.run_submissions']
+      command: ['python3', '-m', 'al_core.ingester.run_ingest']
       volumeMounts:
         - name: al-config
           mountPath: /etc/assemblyline/
@@ -25,26 +24,25 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-dispatcher-submissions
+  name: {{ .Release.Name }}-ingester-ingest
 spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline
-    component: dispatcher-submissions
+    component: ingester-ingest
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-dispatcher-files
+  name: {{ .Release.Name }}-ingester-internal
   labels:
     app: assemblyline
-    component: dispatcher-files
+    component: ingester-internal
 spec:
   containers:
-    - name: al-dispatch-files
+    - name: al-ingester-internal
       image: cccs/assemblyline-core:{{ .Values.coreVersion }}
-      imagePullPolicy: Always
-      command: ['python', '-m', 'al_core.dispatching.run_files']
+      command: ['python', '-m', 'al_core.ingester.run_internal']
       volumeMounts:
         - name: al-config
           mountPath: /etc/assemblyline/
@@ -59,26 +57,25 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-dispatcher-files
+  name: {{ .Release.Name }}-ingester-internal
 spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline
-    component: dispatcher-files
+    component: ingester-internal
 ---
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-watcher
+  name: {{ .Release.Name }}-ingester-submit
   labels:
     app: assemblyline
-    component: watcher
+    component: ingester-submit
 spec:
   containers:
-    - name: al-dispatch-files
+    - name: al-ingester-submit
       image: cccs/assemblyline-core:{{ .Values.coreVersion }}
-      imagePullPolicy: Always
-      command: ['python', '-m', 'al_core.watcher.run_watcher']
+      command: ['python', '-m', 'al_core.ingester.run_submit']
       volumeMounts:
         - name: al-config
           mountPath: /etc/assemblyline/
@@ -93,9 +90,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-watcher
+  name: {{ .Release.Name }}-ingester-submit
 spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline
-    component: watcher
+    component: ingester-submit
