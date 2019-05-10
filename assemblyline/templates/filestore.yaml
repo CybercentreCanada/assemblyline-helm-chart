@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-filestore
+  labels:
+    app: assemblyline
+    component: filestore
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    component: filestore
+  ports:
+  - protocol: TCP
+    port: 9000
+    targetPort: 9000
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-filestore
+spec:
+  selector:
+    matchLabels:
+      app: assemblyline
+      component: filestore
+  serviceName: {{ .Release.Name }}-filestore
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        component: filestore
+    spec:
+      terminationGracePeriodSeconds: 10
+      env:
+        - name: MINIO_ACCESS_KEY
+          value: al_storage_key
+        - name: MINIO_SECRET_KEY
+          value: Ch@ngeTh!sPa33w0rd
+      containers:
+      - name: minio
+        image: minio/minio
+        ports:
+        - containerPort: 9000
+        command: ['/usr/bin/minio']
+        args: ['server', '/data']
+        volumeMounts:
+        - name: filestore-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: filestore-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.storage.filestore }}
+      resources:
+        requests:
+          storage: 50Gi

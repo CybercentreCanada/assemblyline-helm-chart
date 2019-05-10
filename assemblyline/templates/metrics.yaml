@@ -1,0 +1,98 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-kibana
+  labels:
+    app: assemblyline
+    component: kibana
+spec:
+  containers:
+  - name: kibana
+    image: docker.elastic.co/kibana/kibana:7.0.0
+    env:
+    - name: SERVER_NAME
+      value: localhost
+    - name: ELASTICSEARCH_HOSTS
+      value: http://{{ .Release.Nome }}-datastore:9200
+    livenessProbe:
+      httpGet:
+        port: 5601
+      periodSeconds: 30
+      timeoutSeconds: 30
+      failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-kibana
+spec:
+  selector:
+    app: assemblyline
+    component: kibana
+  ports:
+  - protocol: TCP
+    port: 5601
+    targetPort: 5601
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ .Release.Name }}-apm
+  labels:
+    app: assemblyline
+    component: apm
+spec:
+  containers:
+  - name: apm
+    image: sgaroncse/apm-server:7.0.0
+    env:
+    - name: ES_HOSTS
+      value: http://{{ .Release.Nome }}-datastore:9200
+    livenessProbe:
+      httpGet:
+        port: 5601
+      periodSeconds: 30
+      timeoutSeconds: 30
+      failureThreshold: 3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-apm
+spec:
+  selector:
+    app: assemblyline
+    component: apm
+  ports:
+  - protocol: TCP
+    port: 8200
+    targetPort: 8200
+---
+
+
+#
+#  filebeat:
+#    image: docker.elastic.co/beats/filebeat:7.0.0
+#    user: root
+#    volumes:
+#      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - /opt/alv4/alv4/dev/depends/config/filebeat.docker.yml:/usr/share/filebeat/filebeat.yml:ro
+#    command: filebeat -e -strict.perms=false
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#
+#  metricbeat:
+#    image: docker.elastic.co/beats/metricbeat:7.0.0
+#    user: root
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - /opt/alv4/alv4/dev/depends/config/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
+#    command: metricbeat -e --strict.perms=false
+#    depends_on:
+#      elasticsearch:
+#        condition: service_healthy
+#      kibana:
+#        condition: service_healthy
