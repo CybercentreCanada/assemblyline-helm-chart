@@ -8,7 +8,7 @@ metadata:
     component: expiry
 spec:
   containers:
-    - name: al-dispatch-files
+    - name: al-expiry
       image: cccs/assemblyline-core:{{ .Values.coreVersion }}
       imagePullPolicy: Always
       command: ['python', '-m', 'al_core.expiry.run_expiry']

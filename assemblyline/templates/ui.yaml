@@ -1,3 +1,84 @@
+#{{- if not .Values.tls.secretName }}
+#  {{ $ca := genCA "svc-cat-ca" 3650 }}
+#  {{ $cn := .Values.net.domain }}
+#  {{ $server := genSignedCert $cn nil nil 365 $ca }}
+#  {{ $client := genSignedCert "" nil nil 365 $ca }}
+#
+#apiVersion: v1
+#kind: Secret
+#metadata:
+#  name: {{ .Release.Name }}-generated-cert
+#  labels:
+#    app: assembyline
+#data:
+#  caCert: {{ b64enc $ca.Cert }}
+#  clientCert: {{ b64enc $client.Key }}
+#  clientKey: {{ b64enc $client.Cert }}
+#  serverCert: {{ b64enc $server.Cert }}
+#  serverKey: {{ b64enc $server.Key }}
+#{{ else }}
+#  {{ $tlsSecret := .Values.tls.secretName }}
+#{{ end }}
+#---
+#apiVersion: v1
+#kind: Pod
+#metadata:
+#  name: {{ .Release.Name }}-nginx
+#  labels:
+#    app: assemblyline
+#    component: nginx
+#spec:
+#  containers:
+#  - name: nginx
+#    image: nginx:1.15.10
+#    volumeMounts:
+#    - name: nginx-conf
+#      mountPath: /etc/nginx/conf.d/
+#    - name: cert-conf
+#      mountPath: /etc/ssl/
+#  volumes:
+#    - name: nginx-conf
+#      configMap:
+#        name: {{ .Release.Name }}-global-config
+#        items:
+#          - key: http_redirect.conf
+#            path: http_redirect.conf
+#          - key: nginx.conf
+#            path: default.conf
+#    - name: cert-conf
+#      secret:
+#        secretName: {{ if .Values.tls.secretName }} {{.Values.tls.secretName}} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+#        items:
+#          - key: serverCert
+#            path: nginx.crt
+#          - key: serverKey
+#            path: nginx.key
+#---
+#apiVersion: v1
+#kind: Service
+#metadata:
+#  name: {{ .Release.Name }}-nginx
+#spec:
+#  type: LoadBalancer
+#
+#  selector:
+#    app: assemblyline
+#    component: nginx
+#  ports:
+#  - protocol: TCP
+#    port: 80
+#    targetPort: 80
+#    name: http
+#  - protocol: TCP
+#    port: 443
+#    targetPort: 443
+#    name: https
+#
+##    COPY nginx.crt /etc/ssl/
+##    COPY nginx.key /etc/ssl/
+##
+##
+#---
 apiVersion: v1
 kind: Pod
 metadata:
@@ -43,7 +124,7 @@ metadata:
 spec:
   containers:
   - name: socketio
-    image: cccs/assemblyline-ui:{{ .Values.uiVersion }}
+    image: cccs/assemblyline-socketio:{{ .Values.uiVersion }}
     volumeMounts:
       - name: al-config
         mountPath: /etc/assemblyline/

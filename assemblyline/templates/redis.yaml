@@ -22,3 +22,59 @@ spec:
   - protocol: TCP
     port: 6379
     targetPort: 6379
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-redis-persistent
+  labels:
+    app: assemblyline
+    component: redis-persistent
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    component: redis-persistent
+  ports:
+  - protocol: TCP
+    port: 6379
+#    targetPort: 6379
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}-redis-persistent
+spec:
+  selector:
+    matchLabels:
+      app: assemblyline
+      component: redis-persistent
+  serviceName: {{ .Release.Name }}-redis-persistent
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        component: redis-persistent
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: redis
+        command: ['redis-server']
+        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '0']
+        ports:
+        - containerPort: 6379
+        volumeMounts:
+        - name: redis-data
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: redis-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.storage.redis }}
+      resources:
+        requests:
+          storage: 50Gi
+

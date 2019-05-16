@@ -13,7 +13,7 @@ spec:
     - name: SERVER_NAME
       value: localhost
     - name: ELASTICSEARCH_HOSTS
-      value: http://{{ .Release.Nome }}-datastore:9200
+      value: http://{{ .Release.Name }}-datastore:9200
     livenessProbe:
       httpGet:
         port: 5601
@@ -48,7 +48,7 @@ spec:
     image: sgaroncse/apm-server:7.0.0
     env:
     - name: ES_HOSTS
-      value: http://{{ .Release.Nome }}-datastore:9200
+      value: http://{{ .Release.Name }}-datastore:9200
     livenessProbe:
       httpGet:
         port: 5601

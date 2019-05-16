@@ -1,8 +1,16 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev7'
-uiVersion:   '4.0.0.dev6'
+coreVersion: '4.0.0.dev8'
+uiVersion:   '4.0.0.dev8'
 
 storage:
   filestore: default
   datastore: default
+  redis: default
+
+net:
+  domain: localhost
+  maxBodySize: 100M
+
+tls:
+  secretName: ''

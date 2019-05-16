@@ -33,14 +33,14 @@ spec:
         component: filestore
     spec:
       terminationGracePeriodSeconds: 10
-      env:
-        - name: MINIO_ACCESS_KEY
-          value: al_storage_key
-        - name: MINIO_SECRET_KEY
-          value: Ch@ngeTh!sPa33w0rd
       containers:
       - name: minio
         image: minio/minio
+        env:
+          - name: MINIO_ACCESS_KEY
+            value: al_storage_key
+          - name: MINIO_SECRET_KEY
+            value: Ch@ngeTh!sPa33w0rd
         ports:
         - containerPort: 9000
         command: ['/usr/bin/minio']
