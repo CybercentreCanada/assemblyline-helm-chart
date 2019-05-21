@@ -11,48 +11,10 @@ metadata:
   labels:
     app: assembyline
 data:
-#  caCert: {{ b64enc $ca.Cert }}
-#  clientCert: {{ b64enc $client.Key }}
-#  clientKey: {{ b64enc $client.Cert }}
   cert: {{ b64enc $server.Cert }}
   key: {{ b64enc $server.Key }}
 {{ end }}
 ---
-#apiVersion: v1
-#kind: Pod
-#metadata:
-#  name: {{ .Release.Name }}-nginx
-#  labels:
-#    app: assemblyline
-#    component: nginx
-#spec:
-#  containers:
-#  - name: nginx
-#    image: nginx:1.15.10
-#    volumeMounts:
-#    - name: nginx-conf
-#      mountPath: /etc/nginx/conf.d/
-#    - name: cert-conf
-#      mountPath: /etc/ssl/
-#  volumes:
-#    - name: nginx-conf
-#      configMap:
-#        name: {{ .Release.Name }}-global-config
-#        items:
-#          - key: http_redirect.conf
-#            path: http_redirect.conf
-#          - key: nginx.conf
-#            path: default.conf
-#    - name: cert-conf
-#      secret:
-#        secretName: {{ if .Values.tls.secretName }} {{.Values.tls.secretName}} {{else}} {{ .Release.Name }}-generated-cert {{end}}
-#        items:
-#          - key: serverCert
-#            path: nginx.crt
-#          - key: serverKey
-#            path: nginx.key
-#---
-
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
@@ -73,3 +35,7 @@ spec:
             backend:
               serviceName: {{ .Release.Name }}-ui
               servicePort: 5000
+          - path: /kibana/
+            backend:
+              serviceName: {{ .Release.Name }}-kibana
+              servicePort: 5601

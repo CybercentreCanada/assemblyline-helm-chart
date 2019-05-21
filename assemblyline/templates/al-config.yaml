@@ -10,7 +10,7 @@ data:
         delay: 0
       metrics:
         apm_server:
-          server_url: http://{{ .Release.Name }}_apm_server:8200/
+          server_url: http://{{ .Release.Name }}-apm:8200/
         elasticsearch:
           hosts: ["{{ .Release.Name }}-datastore"]
         kibana:
