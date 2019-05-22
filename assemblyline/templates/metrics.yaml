@@ -3,12 +3,13 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-kibana
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: kibana
+    accessCore: "true"
 spec:
   containers:
   - name: kibana
-    image: docker.elastic.co/kibana/kibana:7.0.0
+    image: docker.elastic.co/kibana/kibana:7.1.0
     env:
     - name: SERVER_NAME
       value: localhost
@@ -34,7 +35,7 @@ metadata:
   name: {{ .Release.Name }}-kibana
 spec:
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: kibana
   ports:
   - protocol: TCP
@@ -47,12 +48,13 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-apm
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: apm
+    accessCore: "true"
 spec:
   containers:
   - name: apm
-    image: sgaroncse/apm-server:7.0.0
+    image: sgaroncse/apm-server:7.1.0
     env:
     - name: ES_HOSTS
       value: {{ .Release.Name }}-datastore:9200
@@ -64,37 +66,21 @@ metadata:
   name: {{ .Release.Name }}-apm
 spec:
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: apm
   ports:
   - protocol: TCP
     port: 8200
     targetPort: 8200
 ---
-
-
-
-#  metricbeat:
-#    image: docker.elastic.co/beats/metricbeat:7.0.0
-#    user: root
-#    volumes:
-#      - /var/run/docker.sock:/var/run/docker.sock:ro
-#      - /opt/alv4/alv4/dev/depends/config/metricbeat.docker.yml:/usr/share/metricbeat/metricbeat.yml:ro
-#    command: metricbeat -e --strict.perms=false
-#    depends_on:
-#      elasticsearch:
-#        condition: service_healthy
-#      kibana:
-#        condition: service_healthy
-
----
 apiVersion: v1
 kind: Pod
 metadata:
   name: {{ .Release.Name }}-metrics
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: metrics
+    accessCore: "true"
 spec:
   containers:
     - name: al-metrics
@@ -118,7 +104,7 @@ metadata:
 spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: metrics
 ---
 apiVersion: v1
@@ -126,8 +112,9 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-heartbeat
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: heartbeat
+    accessCore: "true"
 spec:
   containers:
     - name: al-heartbeat
@@ -151,5 +138,5 @@ metadata:
 spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: heartbeat

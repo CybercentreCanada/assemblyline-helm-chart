@@ -20,49 +20,13 @@ data:
         processors:
           - add_docker_metadata: ~
 
-    #filebeat.config:
-    #  inputs:
-    #    # Mounted `filebeat-inputs` configmap:
-    #   path: ${path.config}/inputs.d/*.yml
-    #    # Reload inputs configs as they change:
-    #    reload.enabled: false
-    #  modules:
-    #    path: ${path.config}/modules.d/*.yml
-    #    # Reload module configs as they change:
-    #    reload.enabled: false
-
-    # To enable hints based autodiscover, remove `filebeat.config.inputs` configuration and uncomment this:
-    #filebeat.autodiscover:
-    #  providers:
-    #    - type: kubernetes
-    #      hints.enabled: true
-
     processors:
       - add_cloud_metadata: ~
-
-    #cloud.id: ${ELASTIC_CLOUD_ID}
-    #cloud.auth: ${ELASTIC_CLOUD_AUTH}
 
     output.elasticsearch:
       hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
     #  username: ${ELASTICSEARCH_USERNAME}
     #  password: ${ELASTICSEARCH_PASSWORD}
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: filebeat-inputs
-#  namespace: kube-system
-  labels:
-    k8s-app: filebeat
-data:
-  kubernetes.yml: |-
-    #- type: docker
-    #  containers.ids:
-    #  - "*"
-    #  processors:
-    #    - add_kubernetes_metadata:
-    #        in_cluster: true
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -75,13 +39,14 @@ spec:
   template:
     metadata:
       labels:
-        k8s-app: filebeat
+        app: assemblyline-{{ .Release.Name }}
+        accessCore: "true"
     spec:
       serviceAccountName: filebeat
       terminationGracePeriodSeconds: 30
       containers:
       - name: filebeat
-        image: elastic/filebeat:7.0.1
+        image: elastic/filebeat:7.1.0
         args: [
           "-c", "/etc/filebeat.yml",
           "-e",
@@ -110,9 +75,6 @@ spec:
           mountPath: /etc/filebeat.yml
           readOnly: true
           subPath: filebeat.yml
-        - name: inputs
-          mountPath: /usr/share/filebeat/inputs.d
-          readOnly: true
         - name: data
           mountPath: /usr/share/filebeat/data
         - name: varlibdockercontainers
@@ -129,10 +91,6 @@ spec:
       - name: varlibdockercontainers
         hostPath:
           path: /var/lib/docker/containers
-      - name: inputs
-        configMap:
-          defaultMode: 0600
-          name: filebeat-inputs
       # data folder stores a registry of read status for all files, so we don't send everything again on a Filebeat pod restart
       - name: data
         hostPath:
@@ -178,14 +136,3 @@ metadata:
 #  namespace: kube-system
   labels:
     k8s-app: filebeat
----
-#kind: Service
-#apiVersion: v1
-#metadata:
-#  name: kube-state-metrics
-##  namespace: namespace-a
-#spec:
-#  type: ExternalName
-#  externalName: kube-state-metrics.kube-system.svc.cluster.local
-#  ports:
-#  - port: 80

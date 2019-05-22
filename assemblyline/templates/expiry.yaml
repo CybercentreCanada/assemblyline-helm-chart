@@ -4,8 +4,9 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-expiry
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: expiry
+    accessCore: "true"
 spec:
   containers:
     - name: al-expiry

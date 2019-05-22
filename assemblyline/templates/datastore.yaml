@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-datastore
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: datastore
 spec:
   clusterIP: None
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: datastore
   ports:
   - protocol: TCP
@@ -22,14 +22,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: assemblyline
+      app: assemblyline-{{ .Release.Name }}
       component: datastore
   serviceName: {{ .Release.Name }}-datastore
   replicas: 1
   template:
     metadata:
       labels:
-        app: assemblyline
+        app: assemblyline-{{ .Release.Name }}
         component: datastore
     spec:
       terminationGracePeriodSeconds: 60
@@ -40,7 +40,7 @@ spec:
           value: '-Xms512m -Xmx512m'
         - name: DISCOVERY_TYPE
           value: 'single-node'
-        image: sgaroncse/elasticsearch:7.0.0
+        image: sgaroncse/elasticsearch:7.1.0
         livenessProbe:
           httpGet:
             path: _cluster/health

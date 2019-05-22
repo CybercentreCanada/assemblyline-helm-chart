@@ -1,10 +1,11 @@
+# Create a POD/Service for non-persisted redis
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Release.Name }}-redis
+  name: {{ .Release.Name }}-redis-volatile
   labels:
-    app: assemblyline
-    component: redis
+    app: assemblyline-{{ .Release.Name }}
+    component: redis-volatile
 spec:
   containers:
   - name: redis
@@ -16,29 +17,29 @@ metadata:
   name: {{ .Release.Name }}-redis-volatile
 spec:
   selector:
-    app: assemblyline
-    component: redis
+    app: assemblyline-{{ .Release.Name }}
+    component: redis-volatile
   ports:
   - protocol: TCP
     port: 6379
     targetPort: 6379
 ---
+# Create a StatefulSet/Service for persistent redis
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-redis-persistent
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: redis-persistent
 spec:
   clusterIP: None
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: redis-persistent
   ports:
   - protocol: TCP
     port: 6379
-#    targetPort: 6379
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -47,14 +48,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: assemblyline
+      app: assemblyline-{{ .Release.Name }}
       component: redis-persistent
   serviceName: {{ .Release.Name }}-redis-persistent
   replicas: 1
   template:
     metadata:
       labels:
-        app: assemblyline
+        app: assemblyline-{{ .Release.Name }}
         component: redis-persistent
     spec:
       terminationGracePeriodSeconds: 10

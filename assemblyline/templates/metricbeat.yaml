@@ -99,7 +99,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.0.1
+        image: docker.elastic.co/beats/metricbeat:7.1.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
@@ -168,7 +168,7 @@ data:
   metricbeat.yml: |-
     metricbeat.config.modules:
       # Mounted `metricbeat-daemonset-modules` configmap:
-      path: ${path.config}/modules.d/*.yml
+      path: /usr/share/metricbeat/modules.d/*.yml
       # Reload module configs as they change:
       reload.enabled: false
 
@@ -176,7 +176,8 @@ data:
       - add_cloud_metadata: ~
 
     output.elasticsearch:
-      hosts: {{ .Release.Name }}-datastore:9200
+      hosts: ["{{ .Release.Name }}-datastore:9200"]
+
 
     setup:
       kibana.host: "http://{{ .Release.Name }}-kibana:5601/kibana"
@@ -223,8 +224,8 @@ data:
     - module: kibana
       metricsets: ["status"]
       period: 10s
-      hosts: ["{{ .Release.Name }}kibana:5601"]
-      basepath: ""
+      hosts: ["http://{{ .Release.Name }}-kibana:5601"]
+      basepath: "kibana"
       enabled: true
       xpack.enabled: true
     - module: elasticsearch
@@ -254,14 +255,15 @@ spec:
   template:
     metadata:
       labels:
-        k8s-app: metricbeat
+        app: assemblyline-{{ .Release.Name }}
+        accessCore: "true"
     spec:
       serviceAccountName: metricbeat
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.0.1
+        image: docker.elastic.co/beats/metricbeat:7.1.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",

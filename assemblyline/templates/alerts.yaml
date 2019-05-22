@@ -4,8 +4,9 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-alerter
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: alerter
+    accessCore: "true"
 spec:
   containers:
     - name: al-dispatch-files
@@ -38,8 +39,9 @@ kind: Pod
 metadata:
   name: {{ .Release.Name }}-workflow
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: workflow
+    accessCore: "true"
 spec:
   containers:
     - name: al-dispatch-files

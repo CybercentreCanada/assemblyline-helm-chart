@@ -3,12 +3,12 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-filestore
   labels:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: filestore
 spec:
   clusterIP: None
   selector:
-    app: assemblyline
+    app: assemblyline-{{ .Release.Name }}
     component: filestore
   ports:
   - protocol: TCP
@@ -22,14 +22,14 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: assemblyline
+      app: assemblyline-{{ .Release.Name }}
       component: filestore
   serviceName: {{ .Release.Name }}-filestore
   replicas: 1
   template:
     metadata:
       labels:
-        app: assemblyline
+        app: assemblyline-{{ .Release.Name }}
         component: filestore
     spec:
       terminationGracePeriodSeconds: 10

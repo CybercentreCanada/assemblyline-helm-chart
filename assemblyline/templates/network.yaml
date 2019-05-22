@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-default-deny
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+  policyTypes:
+  - Ingress
+  - Egress
+---
+# Allow components with the accessCore: "true" label to access the listed components
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: {{ .Release.Name }}-allow-core
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+    matchExpression:
+      key: component
+      operator: In
+      values: [redis-volatile, redis-persistent, filestore, datastore, apm]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: assemblyline-{{ .Release.Name}}
+          accessCore: "true"
