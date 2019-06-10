@@ -1,12 +1,88 @@
-#apiVersion: networking.k8s.io/v1
-#kind: NetworkPolicy
-#metadata:
-#  name: {{ .Release.Name}}-default-deny
-#spec:
-#  podSelector:
-#    matchLabels:
-#      app: assemblyline-{{ .Release.Name }}
-#  policyTypes:
-#  - Ingress
-#  - Egress
-#---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-default-deny
+  labels:
+    app: assemblyline-{{ .Release.Name }}
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-backend-allow-from-core
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+    matchExpressions:
+    - key: component
+      operator: In
+      values: [redis-volatile, redis-persistent, datastore, filestore, apm]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: assemblyline-{{ .Release.Name }}
+          section: core
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-core-allow-to-backend
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+      section: core
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: assemblyline-{{ .Release.Name }}
+        matchExpressions:
+        - key: component
+          operator: In
+          values: [redis-volatile, redis-persistent, datastore, filestore, apm]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-backend-allow-from-metrics
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+    matchExpressions:
+    - key: component
+      operator: In
+      values: [datastore, kibana]
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: assemblyline-{{ .Release.Name }}
+          section: metrics
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-metrics-allow-to-backend
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+      section: metrics
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: assemblyline-{{ .Release.Name }}
+        matchExpressions:
+        - key: component
+          operator: In
+          values: [datastore, kibana]
+---

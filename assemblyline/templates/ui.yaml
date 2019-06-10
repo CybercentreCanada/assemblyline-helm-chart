@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}-ui
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: ui
-    accessCore: "true"
 spec:
   containers:
   - name: ui
@@ -28,6 +28,7 @@ metadata:
 spec:
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: ui
   ports:
   - protocol: TCP
@@ -40,8 +41,8 @@ metadata:
   name: {{ .Release.Name }}-socketio
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: socketio
-    accessCore: "true"
 spec:
   containers:
   - name: socketio
@@ -64,8 +65,25 @@ metadata:
 spec:
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: socketio
   ports:
   - protocol: TCP
     port: 5002
     targetPort: 5002
+---  # Allow UI/socketio to accept connections from anywhere
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-allow-ui
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+      section: core
+    matchExpressions:
+    - key: component
+      operator: In
+      values: [ui, socketio]
+  ingress:
+  - {}

@@ -5,8 +5,8 @@ metadata:
   name: {{ .Release.Name }}-expiry
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: expiry
-    accessCore: "true"
 spec:
   containers:
     - name: al-expiry
@@ -32,4 +32,5 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline
+    section: core
     component: expiry

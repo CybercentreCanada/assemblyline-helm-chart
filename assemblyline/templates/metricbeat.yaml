@@ -3,9 +3,9 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-config
-  #namespace: kube-system
   labels:
-    k8s-app: metricbeat
+    app: assemblyline-{{ .Release.Name }}
+    section: metrics
 data:
   metricbeat.yml: |-
     metricbeat.config.modules:
@@ -86,12 +86,16 @@ metadata:
   name: metricbeat
   #namespace: kube-system
   labels:
-    k8s-app: metricbeat
+    app: assemblyline-{{ .Release.Name }}
+    section: metrics
+    component: metricsbeat
 spec:
   template:
     metadata:
       labels:
-        k8s-app: metricbeat
+        app: assemblyline-{{ .Release.Name }}
+        section: metrics
+        component: metricsbeat
     spec:
       serviceAccountName: metricbeat
       terminationGracePeriodSeconds: 30
@@ -250,13 +254,17 @@ metadata:
   name: metricbeat
   #namespace: kube-system
   labels:
-    k8s-app: metricbeat
+    app: assemblyline-{{ .Release.Name }}
+    section: core  # This is not metrics on purpose, this instance should run with the rest of core
+                   # and should have the same permissions as a core service
+    component: metricsbeat-core
 spec:
   template:
     metadata:
       labels:
         app: assemblyline-{{ .Release.Name }}
-        accessCore: "true"
+        section: metrics
+        component: metricsbeat-core
     spec:
       serviceAccountName: metricbeat
       hostNetwork: true

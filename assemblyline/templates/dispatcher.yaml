@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}-dispatcher-submissions
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: dispatcher-submissions
-    accessCore: "true"
 spec:
   containers:
     - name: al-dispatch-submissions
@@ -31,6 +31,7 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: dispatcher-submissions
 ---
 apiVersion: v1
@@ -39,8 +40,8 @@ metadata:
   name: {{ .Release.Name }}-dispatcher-files
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: dispatcher-files
-    accessCore: "true"
 spec:
   containers:
     - name: al-dispatch-files
@@ -66,6 +67,7 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: dispatcher-files
 ---
 apiVersion: v1
@@ -74,8 +76,8 @@ metadata:
   name: {{ .Release.Name }}-watcher
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: watcher
-    accessCore: "true"
 spec:
   containers:
     - name: al-dispatch-files
@@ -101,4 +103,5 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: watcher

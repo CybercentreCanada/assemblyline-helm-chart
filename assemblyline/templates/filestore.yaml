@@ -4,11 +4,13 @@ metadata:
   name: {{ .Release.Name }}-filestore
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: filestore
 spec:
   clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: filestore
   ports:
   - protocol: TCP
@@ -23,6 +25,7 @@ spec:
   selector:
     matchLabels:
       app: assemblyline-{{ .Release.Name }}
+      section: core
       component: filestore
   serviceName: {{ .Release.Name }}-filestore
   replicas: 1
@@ -30,6 +33,7 @@ spec:
     metadata:
       labels:
         app: assemblyline-{{ .Release.Name }}
+        section: core
         component: filestore
     spec:
       terminationGracePeriodSeconds: 10

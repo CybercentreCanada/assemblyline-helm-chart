@@ -4,8 +4,8 @@ metadata:
   name: {{ .Release.Name }}-kibana
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: kibana
-    accessCore: "true"
 spec:
   containers:
   - name: kibana
@@ -36,6 +36,7 @@ metadata:
 spec:
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: kibana
   ports:
   - protocol: TCP
@@ -49,8 +50,8 @@ metadata:
   name: {{ .Release.Name }}-apm
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: apm
-    accessCore: "true"
 spec:
   containers:
   - name: apm
@@ -67,6 +68,7 @@ metadata:
 spec:
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: apm
   ports:
   - protocol: TCP
@@ -79,8 +81,8 @@ metadata:
   name: {{ .Release.Name }}-metrics
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: metrics
-    accessCore: "true"
 spec:
   containers:
     - name: al-metrics
@@ -105,6 +107,7 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: metrics
 ---
 apiVersion: v1
@@ -113,8 +116,8 @@ metadata:
   name: {{ .Release.Name }}-heartbeat
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: heartbeat
-    accessCore: "true"
 spec:
   containers:
     - name: al-heartbeat
@@ -139,4 +142,5 @@ spec:
   clusterIP: None  # AL services are headless, and communicate through redis
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: heartbeat

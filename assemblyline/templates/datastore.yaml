@@ -4,11 +4,13 @@ metadata:
   name: {{ .Release.Name }}-datastore
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: datastore
 spec:
   clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: datastore
   ports:
   - protocol: TCP
@@ -23,6 +25,7 @@ spec:
   selector:
     matchLabels:
       app: assemblyline-{{ .Release.Name }}
+      section: core
       component: datastore
   serviceName: {{ .Release.Name }}-datastore
   replicas: 1
@@ -30,6 +33,7 @@ spec:
     metadata:
       labels:
         app: assemblyline-{{ .Release.Name }}
+        section: core
         component: datastore
     spec:
       terminationGracePeriodSeconds: 60

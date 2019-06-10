@@ -5,6 +5,7 @@ metadata:
   name: {{ .Release.Name }}-redis-volatile
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: redis-volatile
 spec:
   containers:
@@ -18,6 +19,7 @@ metadata:
 spec:
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: redis-volatile
   ports:
   - protocol: TCP
@@ -31,11 +33,13 @@ metadata:
   name: {{ .Release.Name }}-redis-persistent
   labels:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: redis-persistent
 spec:
   clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
+    section: core
     component: redis-persistent
   ports:
   - protocol: TCP
@@ -49,6 +53,7 @@ spec:
   selector:
     matchLabels:
       app: assemblyline-{{ .Release.Name }}
+      section: core
       component: redis-persistent
   serviceName: {{ .Release.Name }}-redis-persistent
   replicas: 1
@@ -56,6 +61,7 @@ spec:
     metadata:
       labels:
         app: assemblyline-{{ .Release.Name }}
+        section: core
         component: redis-persistent
     spec:
       terminationGracePeriodSeconds: 10
@@ -78,4 +84,3 @@ spec:
       resources:
         requests:
           storage: 50Gi
-
