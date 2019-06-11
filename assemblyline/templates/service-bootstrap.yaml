@@ -1,0 +1,29 @@
+#
+#   Launch services so that they auto-install
+#
+{{- range .Values.autoInstallServices }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $.Release.Name }}-alsvc-{{ . }}
+  labels:
+    app: assemblyline-{{ $.Release.Name }}
+    section: analysis
+spec:
+  template:
+    metadata:
+      labels:
+        app: assemblyline-{{ $.Release.Name }}
+        section: analysis
+        component: alsvc_{{ . }}
+    spec:
+      containers:
+      - name: alsvc-{{ . }}
+        image: cccs/alsvc_{{ . }}:latest
+        env:
+          - name: SERVICE_API_HOST
+            value: http://{{ $.Release.Name }}-service-server:5003
+      restartPolicy: Never
+  backoffLimit: 4
+---
+{{- end }}
