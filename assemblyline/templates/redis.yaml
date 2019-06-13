@@ -74,7 +74,7 @@ spec:
         - containerPort: 6379
         volumeMounts:
         - name: redis-data
-          mountPath: /data
+          mountPath: /var/opt/redislabs/
   volumeClaimTemplates:
   - metadata:
       name: redis-data
@@ -83,4 +83,4 @@ spec:
       storageClassName: {{ .Values.storage.redis }}
       resources:
         requests:
-          storage: 50Gi
+          storage: 20Gi
