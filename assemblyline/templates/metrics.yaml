@@ -144,3 +144,16 @@ spec:
     app: assemblyline-{{ .Release.Name }}
     section: core
     component: heartbeat
+---  # Allow UI/socketio to accept connections from anywhere
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name}}-allow-kibana
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+      section: core
+      component: kibana
+  ingress:
+  - {}

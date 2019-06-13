@@ -21,7 +21,7 @@ spec:
     matchExpressions:
     - key: component
       operator: In
-      values: [redis-volatile, redis-persistent, datastore, filestore, apm]
+      values: [redis-volatile, redis-persistent, datastore, filestore, apm, kibana]
   ingress:
   - from:
     - podSelector:
@@ -46,7 +46,7 @@ spec:
         matchExpressions:
         - key: component
           operator: In
-          values: [redis-volatile, redis-persistent, datastore, filestore, apm]
+          values: [redis-volatile, redis-persistent, datastore, filestore, apm, kibana]
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -86,3 +86,25 @@ spec:
           operator: In
           values: [datastore, kibana]
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: assemblyline-{{ .Release.Name }}-allow-dns
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline-{{ .Release.Name }}
+#  egress:
+#    - to:
+#      - podSelector:
+#          matchLabels:
+#            k8s-app: kube-dns
+  policyTypes:
+  - Egress
+  egress:
+  # allow DNS resolution
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
