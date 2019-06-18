@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
 coreVersion: '4.0.0.dev12'
-uiVersion:   '4.0.0.dev21'
-sapiVersion:   '4.0.0.dev5'
+uiVersion:   '4.0.0.dev23'
+sapiVersion:   '4.0.0.dev6'
 
 storage:
   filestore: default
@@ -26,5 +26,4 @@ autoInstallServices:
   - metapeek
   - pdfid
   - peepdf
-  - sync
   - unpacker

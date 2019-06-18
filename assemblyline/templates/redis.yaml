@@ -11,12 +11,19 @@ spec:
   containers:
   - name: redis
     image: redis
+    ports:
+      - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-redis-volatile
+  labels:
+    app: assemblyline-{{ .Release.Name }}
+    section: core
+    component: redis-volatile
 spec:
+  clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
     section: core
@@ -24,7 +31,6 @@ spec:
   ports:
   - protocol: TCP
     port: 6379
-    targetPort: 6379
 ---
 # Create a StatefulSet/Service for persistent redis
 apiVersion: v1
