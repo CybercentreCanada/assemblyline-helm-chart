@@ -34,6 +34,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-kibana
 spec:
+  clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
     section: core
@@ -66,6 +67,7 @@ kind: Service
 metadata:
   name: {{ .Release.Name }}-apm
 spec:
+  clusterIP: None
   selector:
     app: assemblyline-{{ .Release.Name }}
     section: core
