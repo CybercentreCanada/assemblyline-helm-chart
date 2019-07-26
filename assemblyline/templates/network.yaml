@@ -1,112 +1,149 @@
+# Deny all attempts to ingress to the core
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ .Release.Name}}-default-deny
+  namespace: {{ .Release.Name }}
+  name: {{ .Release.Name}}-deny-from-outside
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
 spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
-    - Egress
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name}}-backend-allow-from-core
-spec:
+  # For all pods in the given namespace
   podSelector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-      section: core
-    matchExpressions:
-    - key: component
-      operator: In
-      values: [redis-volatile, redis-persistent, datastore, filestore, apm, kibana]
+  # Allow ingress from any pods also in given namespace
   ingress:
   - from:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-          section: core
+    - podSelector: {}
+  # and by implication, deny from anywhere NOT in the given namespace
 ---
+# Deny all attempts to egress from the core
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ .Release.Name}}-core-allow-to-backend
+  namespace: {{ .Release.Name }}
+  name: {{ .Release.Name}}-deny-to-outside
+  labels:
+    app: assemblyline
 spec:
+  # For all pods in the given namespace
   podSelector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-      section: core
+  # Allow egress to any pods also in given namespace
   egress:
   - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-          section: core
-        matchExpressions:
-        - key: component
-          operator: In
-          values: [redis-volatile, redis-persistent, datastore, filestore, apm, kibana]
+    - podSelector: {}
+  # and by implication, deny to any pod NOT in the given namespace
 ---
+# Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ .Release.Name}}-backend-allow-from-metrics
+  namespace: {{ .Release.Name }}
+  name: {{ .Release.Name }}-allow-dns
+  labels:
+    app: assemblyline
 spec:
+  # For all pods in the given namespace
   podSelector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-    matchExpressions:
-    - key: component
-      operator: In
-      values: [datastore, kibana]
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-          section: metrics
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name}}-metrics-allow-to-backend
-spec:
-  podSelector:
-    matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-      section: metrics
+  # Allow egress to the dns service in the system namespace
   egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-        matchExpressions:
-        - key: component
-          operator: In
-          values: [datastore, kibana]
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: assemblyline-{{ .Release.Name }}-allow-dns
-spec:
-  podSelector:
-    matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-#  egress:
-#    - to:
-#      - podSelector:
-#          matchLabels:
-#            k8s-app: kube-dns
-  policyTypes:
-  - Egress
-  egress:
-  # allow DNS resolution
   - ports:
-    - port: 53
-      protocol: UDP
-    - port: 53
-      protocol: TCP
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+#  - to:  # It would be better to use this more specific selection, but its not broadly supported
+#    - namespaceSelector:
+#        matchLabels:
+#          name: kube-system
+#      podSelector:
+#        matchLabels:
+#          k8s-app: kube-dns
+---
+# Allow all ingress traffic to UI/socket-io/service-api
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  namespace: {{ .Release.Name }}
+  name: {{ .Release.Name }}-allow-to-endpoints
+spec:
+  # For the matched services
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: core
+    matchExpressions:
+    - key: component
+      operator: In
+      values: [ui, socketio, service-server]
+  # Allow ingress from all sources, regardless of origin
+  ingress:
+  - from: []
+---
+# Deny all traffic to/from/inside the service namespace
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  namespace: {{ template "service-namespace" . }}
+  name: {{ template "service-namespace" . }}-default-deny
+spec:
+  # For all pods in the service namespace
+  podSelector: {}
+  # Your policy for ingress and egress
+  policyTypes:
+  - Ingress
+  - Egress
+  # Is NULL, don't allow any connections
+---
+# Allow pods to access DNS
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  namespace: {{ template "service-namespace" . }}
+  name: {{ template "service-namespace" . }}-allow-dns
+  labels:
+    app: assemblyline
+spec:
+  # For all pods in the given namespace
+  podSelector:
+    matchLabels:
+  # Allow egress to the dns service in the system namespace
+  egress:
+  - ports:
+      - port: 53
+        protocol: UDP
+      - port: 53
+        protocol: TCP
+#  - to:  # It would be better to use this more specific selection, but its not broadly supported
+#    - namespaceSelector:
+#        matchLabels:
+#          name: kube-system
+#      podSelector:
+#        matchLabels:
+#          k8s-app: kube-dns
+---
+# Allow traffic from anyone in the service namespace to the service-api
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  namespace: {{ template "service-namespace" . }}
+  name: {{ template "service-namespace" . }}-allow-api
+spec:
+  # For all pods in the service namespace
+  podSelector: {}
+  # Allow traffic to
+  egress:
+  - to:
+    # only in the given namespace
+    - namespaceSelector:
+        matchLabels:
+          name: {{ .Release.Name }}
+      # Only the service server pod
+      podSelector:
+        matchLabels:
+          app: assemblyline
+          section: core
+          component: service-server
+---
+

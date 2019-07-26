@@ -1,0 +1,12 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: data-layer
+  annotations:
+    # This global PriorityClass must be added first!
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "-100"
+value: 1000000
+globalDefault: false
+description: "This priority class should be used for databases or similar."

@@ -1,15 +1,16 @@
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Release.Name }}-datastore
+  name: datastore
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: core
     component: datastore
 spec:
   clusterIP: None
   selector:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: core
     component: datastore
   ports:
@@ -20,19 +21,19 @@ spec:
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: {{ .Release.Name }}-datastore
+  name: datastore
 spec:
   selector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
+      app: assemblyline
       section: core
       component: datastore
-  serviceName: {{ .Release.Name }}-datastore
+  serviceName: datastore
   replicas: 1
   template:
     metadata:
       labels:
-        app: assemblyline-{{ .Release.Name }}
+        app: assemblyline
         section: core
         component: datastore
     spec:
@@ -57,6 +58,7 @@ spec:
         volumeMounts:
         - name: datastore-data
           mountPath: /usr/share/elasticsearch/data
+      priorityClassName: data-layer
   volumeClaimTemplates:
   - metadata:
       name: datastore-data

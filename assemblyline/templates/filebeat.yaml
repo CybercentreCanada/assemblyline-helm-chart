@@ -32,14 +32,14 @@ kind: DaemonSet
 metadata:
   name: filebeat
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: metrics
     component: filebeat
 spec:
   template:
     metadata:
       labels:
-        app: assemblyline-{{ .Release.Name }}
+        app: assemblyline
         accessCore: "true"
     spec:
       serviceAccountName: filebeat
@@ -53,7 +53,7 @@ spec:
         ]
         env:
         - name: ELASTICSEARCH_HOST
-          value: "{{ .Release.Name }}-datastore"
+          value: "datastore"
         - name: ELASTICSEARCH_PORT
           value: "9200"
 #        - name: ELASTICSEARCH_USERNAME
@@ -135,5 +135,5 @@ metadata:
   name: filebeat
 #  namespace: kube-system
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: metrics

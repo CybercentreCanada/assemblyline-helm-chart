@@ -1,7 +1,7 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev12'
-uiVersion:   '4.0.0.dev23'
+coreVersion: '4.0.0.dev14'
+uiVersion:   '4.0.0.dev25'
 sapiVersion:   '4.0.0.dev6'
 
 storage:
@@ -9,9 +9,8 @@ storage:
   datastore: default
   redis: default
 
-net:
-  domain: localhost
-  maxBodySize: 100M
+domain: localhost
+maxBodySize: 100M
 
 tls:
   secretName: ''
@@ -27,3 +26,5 @@ autoInstallServices:
   - pdfid
   - peepdf
   - unpacker
+
+serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined

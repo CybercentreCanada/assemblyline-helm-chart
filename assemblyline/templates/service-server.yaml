@@ -1,71 +1,38 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-service-server
+  name: service-server
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: core
     component: service-server
 spec:
-  containers:
-  - name: service-server
-    image: cccs/assemblyline-service-server:{{ .Values.sapiVersion }}
-    volumeMounts:
-      - name: al-config
-        mountPath: /etc/assemblyline/
-  volumes:
-    - name: al-config
-      configMap:
-        name: {{ .Release.Name }}-global-config
-        items:
-          - key: config
-            path: config.yml
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-service-server
-spec:
-  clusterIP: None
+  replicas: 1
   selector:
-    app: assemblyline-{{ .Release.Name }}
-    section: core
-    component: service-server
-  ports:
-  - protocol: TCP
-    port: 5003
-    targetPort: 5003
----  # Allow sapi to accept connections from analysis pods
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name}}-allow-sapi-from
-spec:
-  podSelector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
+      app: assemblyline
       section: core
       component: service-server
-  ingress:
-  - from:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-          section: analysis
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name}}-allow-sapi-to
-spec:
-  podSelector:
-    matchLabels:
-      app: assemblyline-{{ .Release.Name }}
-      section: analysis
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline-{{ .Release.Name }}
-          section: core
-          component: service-server
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: service-server
+    spec:
+      containers:
+        - name: service-server
+          image: cccs/assemblyline-service-server:{{ .Values.sapiVersion }}
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: al-config
+              mountPath: /etc/assemblyline/
+          ports:
+            - containerPort: 5003
+      volumes:
+        - name: al-config
+          configMap:
+            name: {{ .Release.Name }}-global-config
+            items:
+              - key: config
+                path: config.yml

@@ -1,34 +1,41 @@
-{{ define "assemblyline.coreService" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .component }}
+  name: scaler
   labels:
     app: assemblyline
     section: core
-    component: {{ .component }}
+    component: scaler
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: assemblyline
       section: core
-      component: {{ .component }}
+      component: scaler
   template:
     metadata:
       labels:
         app: assemblyline
         section: core
-        component: {{ .component }}
+        component: scaler
     spec:
+      serviceAccountName: {{ .Release.Name }}-scaling-manager
       containers:
-        - name: {{ .component }}
+        - name: scaler
           image: cccs/assemblyline-core:{{ .Values.coreVersion }}
           imagePullPolicy: Always
-          command: ['python', '-m', '{{ .command }}']
+          command: ['python', '-m', 'al_core.scaler.run_scaler']
           volumeMounts:
             - name: al-config
               mountPath: /etc/assemblyline/
+          env:
+            - name: KUBERNETES_AL_CONFIG
+              value: al-config
+            - name: KUBERNETES_NAMESPACE
+              value: {{ .Release.Name }}
+            - name: KUBERNETES_SERVICE_NAMESPACE
+              value: {{ template "service-namespace" . }}
       volumes:
         - name: al-config
           configMap:
@@ -36,12 +43,3 @@ spec:
             items:
               - key: config
                 path: config.yml
-{{ end }}
-
-{{- define "service-namespace" -}}
-{{- if .Values.serviceNamespace -}}
-    {{- .Values.serviceNamespace -}}
-{{- else -}}
-    {{- .Release.Name -}}-services
-{{- end -}}
-{{- end -}}

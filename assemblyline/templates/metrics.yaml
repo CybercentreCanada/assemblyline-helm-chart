@@ -1,92 +1,70 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-kibana
+  name: kibana
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: core
     component: kibana
 spec:
-  containers:
-  - name: kibana
-    image: docker.elastic.co/kibana/kibana:7.1.0
-    env:
-    - name: SERVER_NAME
-      value: localhost
-    - name: ELASTICSEARCH_HOSTS
-      value: http://{{ .Release.Name }}-datastore:9200
-    - name: SERVER_BASEPATH
-      value: /kibana
-    - name: SERVER_REWRITEBASEPATH
-      value: "true"
-    ports:
-    - containerPort: 5601
-    livenessProbe:
-      httpGet:
-        path: /kibana
-        port: 5601
-      periodSeconds: 30
-      timeoutSeconds: 30
-      failureThreshold: 3
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-kibana
-spec:
-  clusterIP: None
+  replicas: 1
   selector:
-    app: assemblyline-{{ .Release.Name }}
-    section: core
-    component: kibana
-  ports:
-  - protocol: TCP
-    port: 5601
-    targetPort: 5601
----
-
-apiVersion: v1
-kind: Pod
-metadata:
-  name: {{ .Release.Name }}-apm
-  labels:
-    app: assemblyline-{{ .Release.Name }}
-    section: core
-    component: apm
-spec:
-  containers:
-  - name: apm
-    image: sgaroncse/apm-server:7.1.0
-    env:
-    - name: ES_HOSTS
-      value: {{ .Release.Name }}-datastore:9200
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ .Release.Name }}-apm
-spec:
-  clusterIP: None
-  selector:
-    app: assemblyline-{{ .Release.Name }}
-    section: core
-    component: apm
-  ports:
-  - protocol: TCP
-    port: 8200
-    targetPort: 8200
-
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name}}-allow-kibana
-spec:
-  podSelector:
     matchLabels:
-      app: assemblyline-{{ .Release.Name }}
+      app: assemblyline
       section: core
       component: kibana
-  ingress:
-  - {}
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:7.1.0
+          imagePullPolicy: Always
+          env:
+          - name: SERVER_NAME
+            value: localhost
+          - name: ELASTICSEARCH_HOSTS
+            value: http://datastore:9200
+          - name: SERVER_BASEPATH
+            value: /kibana
+          - name: SERVER_REWRITEBASEPATH
+            value: "true"
+          ports:
+          - containerPort: 5601
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apm
+  labels:
+    app: assemblyline
+    section: core
+    component: apm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: apm
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: apm
+    spec:
+      containers:
+        - name: apm
+          image: sgaroncse/apm-server:7.1.0
+          imagePullPolicy: Always
+          env:
+          - name: ES_HOSTS
+            value: datastore:9200
+          ports:
+          - containerPort: 8200
+

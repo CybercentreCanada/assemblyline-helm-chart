@@ -20,7 +20,9 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
-#  namespace:
+  annotations:
+    # Configuration for if we are using nginx ingress (harmless otherwise)
+    nginx.ingress.kubernetes.io/proxy-body-size: 8m
 spec:
   tls:
     - hosts:
@@ -30,13 +32,13 @@ spec:
         paths:
           - path: /socket.io/
             backend:
-              serviceName: {{ .Release.Name }}-socketio
+              serviceName: socketio
               servicePort: 5002
           - path: /
             backend:
-              serviceName: {{ .Release.Name }}-ui
+              serviceName: ui
               servicePort: 5000
           - path: /kibana/
             backend:
-              serviceName: {{ .Release.Name }}-kibana
+              serviceName: kibana
               servicePort: 5601

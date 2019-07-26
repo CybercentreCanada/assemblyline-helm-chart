@@ -10,32 +10,32 @@ data:
         delay: 0
       metrics:
         apm_server:
-          server_url: http://{{ .Release.Name }}-apm:8200/
+          server_url: http://apm:8200/
         elasticsearch:
-          hosts: ["{{ .Release.Name }}-datastore"]
+          hosts: ["datastore"]
         kibana:
-          host: {{ .Release.Name }}-kibana
+          host: kibana
         redis:
-          host: {{ .Release.Name }}-redis-volatile
+          host: redis-volatile
           port: 6379
       redis:
         nonpersistent:
-          host: {{ .Release.Name }}-redis-volatile
+          host: redis-volatile
           port: 6379
         persistent:
-          host: {{ .Release.Name }}-redis-persistent
+          host: redis-persistent
           port: 6379
+      scaler:
+        core_namespace: {{ .Release.Name }}
+        service_namespace: {{ template "service-namespace" . }}
     datastore:
       elasticsearch:
-        nodes: [{{ .Release.Name }}-datastore:9200]
-      hosts: [{{ .Release.Name }}-datastore:9200]
+        nodes: [datastore:9200]
+      hosts: [datastore:9200]
     filestore:
-      cache: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@{{ .Release.Name }}-filestore:9000?s3_bucket=al-cache&use_ssl=False"]
-      storage: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@{{ .Release.Name }}-filestore:9000?s3_bucket=al-storage&use_ssl=False"]
+      cache: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
+      storage: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
     logging:
       log_to_console: true
       log_to_file: false
       log_to_syslog: false
-#      log_level: DEBUG
-#    ui:
-#      debug: true

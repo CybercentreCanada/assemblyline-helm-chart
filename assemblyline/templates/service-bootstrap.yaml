@@ -6,6 +6,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ $.Release.Name }}-alsvc-{{ . }}
+  namespace: {{ template "service-namespace" $ }}
   labels:
     app: assemblyline-{{ $.Release.Name }}
     section: analysis

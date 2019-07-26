@@ -4,7 +4,7 @@ kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-config
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: metrics
 data:
   metricbeat.yml: |-
@@ -18,10 +18,10 @@ data:
       - add_cloud_metadata: ~
 
     output.elasticsearch:
-      hosts: ['{{ .Release.Name }}-datastore:9200']
+      hosts: ['datastore:9200']
 
     setup:
-      kibana.host: "http://{{ .Release.Name }}-kibana:5601/kibana"
+      kibana.host: "http://kibana:5601/kibana"
       dashboards.enabled: true
       dashboards.retry.enabled: true
       template.settings:
@@ -86,14 +86,14 @@ metadata:
   name: metricbeat
   #namespace: kube-system
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: metrics
     component: metricsbeat
 spec:
   template:
     metadata:
       labels:
-        app: assemblyline-{{ .Release.Name }}
+        app: assemblyline
         section: metrics
         component: metricsbeat
     spec:
@@ -180,11 +180,11 @@ data:
       - add_cloud_metadata: ~
 
     output.elasticsearch:
-      hosts: ["{{ .Release.Name }}-datastore:9200"]
+      hosts: ["datastore:9200"]
 
 
     setup:
-      kibana.host: "http://{{ .Release.Name }}-kibana:5601/kibana"
+      kibana.host: "http://kibana:5601/kibana"
       dashboards.enabled: true
       dashboards.retry.enabled: true
       template.settings:
@@ -218,17 +218,17 @@ data:
         - "info"
         - "keyspace"
       period: 10s
-      hosts: ["{{ .Release.Name }}-redis-volatile:6379"]
+      hosts: ["redis-volatile:6379"]
     - module: redis
       metricsets:
         - "info"
         - "keyspace"
       period: 10s
-      hosts: ["{{ .Release.Name }}-redis-persistent:6379"]
+      hosts: ["redis-persistent:6379"]
     - module: kibana
       metricsets: ["status"]
       period: 10s
-      hosts: ["http://{{ .Release.Name }}-kibana:5601"]
+      hosts: ["http://kibana:5601"]
       basepath: "kibana"
       enabled: true
       xpack.enabled: true
@@ -242,7 +242,7 @@ data:
         - shard
         - ml_job
       period: 10s
-      hosts: ["{{ .Release.Name }}-datastore:9200"]
+      hosts: ["datastore:9200"]
       enabled: true
       xpack.enabled: true
 
@@ -254,7 +254,7 @@ metadata:
   name: metricbeat
   #namespace: kube-system
   labels:
-    app: assemblyline-{{ .Release.Name }}
+    app: assemblyline
     section: core  # This is not metrics on purpose, this instance should run with the rest of core
                    # and should have the same permissions as a core service
     component: metricsbeat-core
@@ -262,7 +262,7 @@ spec:
   template:
     metadata:
       labels:
-        app: assemblyline-{{ .Release.Name }}
+        app: assemblyline
         section: metrics
         component: metricsbeat-core
     spec:
