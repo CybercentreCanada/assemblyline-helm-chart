@@ -28,6 +28,15 @@ data:
       scaler:
         core_namespace: {{ .Release.Name }}
         service_namespace: {{ template "service-namespace" . }}
+        core_configs:
+          dispatcher_files:
+            container_config:
+              image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
+              command': ['python', '-m', 'al_core.dispatching.run_files'],
+          dispatcher_submissions:
+            container_config:
+              image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
+              command: ['python', '-m', 'al_core.dispatching.run_submissions']
     datastore:
       elasticsearch:
         nodes: [datastore:9200]
