@@ -5,7 +5,7 @@ metadata:
   name: metricbeat-daemonset-config
   labels:
     app: assemblyline
-    section: metrics
+    section: core
 data:
   metricbeat.yml: |-
     metricbeat.config.modules:
@@ -32,7 +32,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metricbeat-daemonset-modules
-  #namespace: kube-system
   labels:
     k8s-app: metricbeat
 data:
@@ -84,17 +83,16 @@ apiVersion: extensions/v1beta1
 kind: DaemonSet
 metadata:
   name: metricbeat
-  #namespace: kube-system
   labels:
     app: assemblyline
-    section: metrics
+    section: core
     component: metricsbeat
 spec:
   template:
     metadata:
       labels:
         app: assemblyline
-        section: metrics
+        section: core
         component: metricsbeat
     spec:
       serviceAccountName: metricbeat
@@ -103,7 +101,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.1.0
+        image: docker.elastic.co/beats/metricbeat:7.3.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
@@ -165,7 +163,6 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metricbeat-deployment-config
-  #namespace: kube-system
   labels:
     k8s-app: metricbeat
 data:
@@ -182,7 +179,6 @@ data:
     output.elasticsearch:
       hosts: ["datastore:9200"]
 
-
     setup:
       kibana.host: "http://kibana:5601/kibana"
       dashboards.enabled: true
@@ -195,11 +191,10 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: metricbeat-deployment-modules
-  #namespace: kube-system
   labels:
     k8s-app: metricbeat
 data:
-  # This module requires `kube-state-metrics` up and running under `kube-system` namespace
+  # TODO get the cross-namespace connection to kube-state-metrics setup
   kubernetes.yml: |-
     #- module: kubernetes
     #  metricsets:
@@ -231,7 +226,7 @@ data:
       hosts: ["http://kibana:5601"]
       basepath: "kibana"
       enabled: true
-      xpack.enabled: true
+     # xpack.enabled: true
     - module: elasticsearch
       metricsets:
         - node
@@ -244,7 +239,7 @@ data:
       period: 10s
       hosts: ["datastore:9200"]
       enabled: true
-      xpack.enabled: true
+     # xpack.enabled: true
 
 ---
 # Deploy singleton instance in the whole cluster for some unique data sources, like kube-state-metrics
@@ -252,18 +247,16 @@ apiVersion: apps/v1beta1
 kind: Deployment
 metadata:
   name: metricbeat
-  #namespace: kube-system
   labels:
     app: assemblyline
-    section: core  # This is not metrics on purpose, this instance should run with the rest of core
-                   # and should have the same permissions as a core service
+    section: core
     component: metricsbeat-core
 spec:
   template:
     metadata:
       labels:
         app: assemblyline
-        section: metrics
+        section: core
         component: metricsbeat-core
     spec:
       serviceAccountName: metricbeat
@@ -271,7 +264,7 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.1.0
+        image: docker.elastic.co/beats/metricbeat:7.3.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
@@ -354,7 +347,6 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: metricbeat
-  #namespace: kube-system
   labels:
     k8s-app: metricbeat
 ---

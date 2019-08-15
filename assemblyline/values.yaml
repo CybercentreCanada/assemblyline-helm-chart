@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev19'
-uiVersion:   '4.0.0.dev26'
-sapiVersion:   '4.0.0.dev6'
+coreVersion: '4.0.0.dev28'
+uiVersion:   '4.0.0.dev28'
+sapiVersion:   '4.0.0.dev10'
 
 storage:
   filestore: default
@@ -26,5 +26,6 @@ autoInstallServices:
   - pdfid
   - peepdf
   - unpacker
+  - characterize
 
 serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined

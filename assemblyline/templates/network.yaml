@@ -146,4 +146,22 @@ spec:
           section: core
           component: service-server
 ---
-
+# Let the scaler do whatever it wants
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  namespace: {{ .Release.Name }}
+  name: {{ .Release.Name }}-allow-scaler
+  labels:
+    app: assemblyline
+spec:
+  # For the scaler
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: scaler
+  # Allow egress to whatever
+  egress:
+  - to: []
+---

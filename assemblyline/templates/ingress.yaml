@@ -1,6 +1,6 @@
 {{- if not .Values.tls.secretName }}
   {{ $ca := genCA "svc-cat-ca" 3650 }}
-  {{ $cn := .Values.net.domain }}
+  {{ $cn := .Values.domain }}
   {{ $server := genSignedCert $cn nil nil 365 $ca }}
   {{ $client := genSignedCert "" nil nil 365 $ca }}
 

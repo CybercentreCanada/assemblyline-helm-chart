@@ -45,7 +45,7 @@ spec:
           value: '-Xms512m -Xmx512m'
         - name: DISCOVERY_TYPE
           value: 'single-node'
-        image: sgaroncse/elasticsearch:7.1.0
+        image: sgaroncse/elasticsearch:7.3.0
         livenessProbe:
           httpGet:
             path: _cluster/health

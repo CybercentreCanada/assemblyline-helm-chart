@@ -31,7 +31,7 @@ spec:
               mountPath: /etc/assemblyline/
           env:
             - name: KUBERNETES_AL_CONFIG
-              value: al-config
+              value: {{ .Release.Name }}-global-config
             - name: KUBERNETES_NAMESPACE
               value: {{ .Release.Name }}
             - name: KUBERNETES_SERVICE_NAMESPACE

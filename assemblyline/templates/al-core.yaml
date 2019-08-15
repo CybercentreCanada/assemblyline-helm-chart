@@ -2,7 +2,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "workflow" "command" "al_core.alerter.run_workflow") . }}
+{{with merge (dict "component" "workflow" "command" "al_core.workflow.run_workflow") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---

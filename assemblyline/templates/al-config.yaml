@@ -28,11 +28,15 @@ data:
       scaler:
         core_namespace: {{ .Release.Name }}
         service_namespace: {{ template "service-namespace" . }}
+        service_defaults:
+          environment:
+            - name: 'SERVICE_API_HOST'
+              value: 'http://service-server.{{ $.Release.Name }}.svc.cluster.local:5003'
         core_configs:
           dispatcher_files:
             container_config:
               image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
-              command': ['python', '-m', 'al_core.dispatching.run_files'],
+              command: ['python', '-m', 'al_core.dispatching.run_files']
           dispatcher_submissions:
             container_config:
               image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
