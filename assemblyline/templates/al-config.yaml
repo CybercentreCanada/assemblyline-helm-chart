@@ -36,11 +36,11 @@ data:
           dispatcher_files:
             container_config:
               image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
-              command: ['python', '-m', 'al_core.dispatching.run_files']
+              command: ['python', '-m', 'assemblyline_core.dispatching.run_files']
           dispatcher_submissions:
             container_config:
               image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
-              command: ['python', '-m', 'al_core.dispatching.run_submissions']
+              command: ['python', '-m', 'assemblyline_core.dispatching.run_submissions']
     datastore:
       elasticsearch:
         nodes: [datastore:9200]

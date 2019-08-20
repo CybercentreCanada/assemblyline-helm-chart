@@ -25,7 +25,7 @@ spec:
         - name: scaler
           image: cccs/assemblyline-core:{{ .Values.coreVersion }}
           imagePullPolicy: Always
-          command: ['python', '-m', 'al_core.scaler.run_scaler']
+          command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
           volumeMounts:
             - name: al-config
               mountPath: /etc/assemblyline/

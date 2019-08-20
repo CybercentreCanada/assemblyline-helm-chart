@@ -1,36 +1,36 @@
-{{with merge (dict "component" "alerter" "command" "al_core.alerter.run_alerter") . }}
+{{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "workflow" "command" "al_core.workflow.run_workflow") . }}
+{{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "watcher" "command" "al_core.watcher.run_watcher") . }}
+{{with merge (dict "component" "watcher" "command" "assemblyline_core.watcher.run_watcher") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "expiry" "command" "al_core.expiry.run_expiry") . }}
+{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester-ingest" "command" "al_core.ingester.run_ingest") . }}
+{{with merge (dict "component" "ingester-ingest" "command" "assemblyline_core.ingester.run_ingest") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester-internal" "command" "al_core.ingester.run_internal") . }}
+{{with merge (dict "component" "ingester-internal" "command" "assemblyline_core.ingester.run_internal") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester-submit" "command" "al_core.ingester.run_submit") . }}
+{{with merge (dict "component" "ingester-submit" "command" "assemblyline_core.ingester.run_submit") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "metrics" "command" "al_core.metrics.run_metrics_aggregator") . }}
+{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "heartbeat" "command" "al_core.metrics.run_heartbeat_manager") . }}
+{{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
