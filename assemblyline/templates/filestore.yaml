@@ -40,6 +40,7 @@ spec:
       containers:
       - name: minio
         image: minio/minio
+        priorityClassName: al-infra
         env:
           - name: MINIO_ACCESS_KEY
             value: al_storage_key

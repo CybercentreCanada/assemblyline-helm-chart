@@ -1,12 +1,27 @@
 apiVersion: scheduling.k8s.io/v1
 kind: PriorityClass
 metadata:
-  name: data-layer
-  annotations:
-    # This global PriorityClass must be added first!
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-delete-policy: before-hook-creation
-    helm.sh/hook-weight: "-100"
-value: 1000000
+  namespace: {{ template "service-namespace" . }}
+  name: al-service-priority
+value: 0
+preemptionPolicy: Never
 globalDefault: false
-description: "This priority class should be used for databases or similar."
+description: "AL analysis services should be low priority and non-preempting."
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  namespace: {{ .Release.Name }}
+  name: al-core-priority
+value: 10000
+globalDefault: false
+description: "AL core services have medium priority and preempt other services when needed."
+---
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  namespace: {{ .Release.Name }}
+  name: al-infra
+value: 100000
+globalDefault: false
+description: "High priority class for infrastructure containers"

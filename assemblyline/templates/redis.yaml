@@ -1,6 +1,6 @@
 # Create a POD/Service for non-persisted redis
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: redis-volatile
   labels:
@@ -8,12 +8,26 @@ metadata:
     section: core
     component: redis-volatile
 spec:
-  containers:
-  - name: redis
-    image: redis
-    ports:
-      - containerPort: 6379
-  priorityClassName: data-layer
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: redis-volatile
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: redis-volatile
+    spec:
+      priorityClassName: al-infra
+      containers:
+        - name: redis
+          image: redis
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
 ---
 apiVersion: v1
 kind: Service
@@ -72,6 +86,7 @@ spec:
         component: redis-persistent
     spec:
       terminationGracePeriodSeconds: 10
+      priorityClassName: al-infra
       containers:
       - name: redis
         image: redis
@@ -82,7 +97,6 @@ spec:
         volumeMounts:
         - name: redis-data
           mountPath: /var/opt/redislabs/
-      priorityClassName: data-layer
   volumeClaimTemplates:
   - metadata:
       name: redis-data

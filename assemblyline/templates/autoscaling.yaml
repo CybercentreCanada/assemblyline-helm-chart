@@ -21,6 +21,7 @@ spec:
         component: scaler
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
+      priorityClassName: al-core-priority
       containers:
         - name: scaler
           image: cccs/assemblyline-core:{{ .Values.coreVersion }}

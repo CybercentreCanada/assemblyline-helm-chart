@@ -38,6 +38,7 @@ spec:
         component: datastore
     spec:
       terminationGracePeriodSeconds: 60
+      priorityClassName: al-infra
       containers:
       - name: elasticsearch
         env:
@@ -58,7 +59,6 @@ spec:
         volumeMounts:
         - name: datastore-data
           mountPath: /usr/share/elasticsearch/data
-      priorityClassName: data-layer
   volumeClaimTemplates:
   - metadata:
       name: datastore-data

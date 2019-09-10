@@ -44,6 +44,7 @@ spec:
     spec:
       serviceAccountName: filebeat
       terminationGracePeriodSeconds: 30
+      priorityClassName: al-core-priority
       containers:
       - name: filebeat
         image: elastic/filebeat:7.1.0

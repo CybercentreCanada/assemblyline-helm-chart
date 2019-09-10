@@ -39,6 +39,7 @@ spec:
         section: core
         component: kibana
     spec:
+      priorityClassName: al-core-priority
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:7.3.0
@@ -77,6 +78,7 @@ spec:
         section: core
         component: apm
     spec:
+      priorityClassName: al-core-priority
       containers:
         - name: apm
           image: sgaroncse/apm-server:7.3.0

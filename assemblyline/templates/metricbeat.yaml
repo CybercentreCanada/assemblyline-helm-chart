@@ -99,6 +99,7 @@ spec:
       terminationGracePeriodSeconds: 30
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      priorityClassName: al-core-priority
       containers:
       - name: metricbeat
         image: docker.elastic.co/beats/metricbeat:7.3.0
@@ -262,6 +263,7 @@ spec:
       serviceAccountName: metricbeat
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet
+      priorityClassName: al-core-priority
       containers:
       - name: metricbeat
         image: docker.elastic.co/beats/metricbeat:7.3.0

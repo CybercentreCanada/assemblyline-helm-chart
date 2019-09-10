@@ -21,6 +21,7 @@ spec:
         section: core
         component: {{ .component }}
     spec:
+      priorityClassName: al-core-priority
       containers:
         - name: {{ .component }}
           image: cccs/assemblyline-core:{{ .Values.coreVersion }}
