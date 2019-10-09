@@ -1,8 +1,7 @@
 {{- if not .Values.tls.secretName }}
-  {{ $ca := genCA "svc-cat-ca" 3650 }}
-  {{ $cn := .Values.domain }}
-  {{ $server := genSignedCert $cn nil nil 365 $ca }}
-  {{ $client := genSignedCert "" nil nil 365 $ca }}
+#  {{ $ca := genCA "svc-cat-ca" 3650 }}
+#  {{ $cn := .Values.domain }}
+  {{ $server := genSelfSignedCert .Values.domain nil nil 365 }}
 
 apiVersion: v1
 kind: Secret
@@ -21,14 +20,16 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
+    kubernetes.io/ingress.class: addon-http-application-routing
     # Configuration for if we are using nginx ingress (harmless otherwise)
-    nginx.ingress.kubernetes.io/proxy-body-size: 8m
+    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize }}
 spec:
   tls:
-    - hosts:
+    - hosts: [{{ .Values.domain }}]
       secretName: {{ if .Values.tls.secretName }} {{.Values.tls.secretName}} {{else}} {{ .Release.Name }}-generated-cert {{end}}
   rules:
-    - http:
+    - host: {{ .Values.domain }}
+      http:
         paths:
           - path: /socket.io/
             backend:

@@ -34,3 +34,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
+{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber") . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---

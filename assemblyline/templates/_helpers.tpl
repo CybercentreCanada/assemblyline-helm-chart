@@ -30,6 +30,13 @@ spec:
           volumeMounts:
             - name: al-config
               mountPath: /etc/assemblyline/
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 0.05
+            limits:
+              memory: 1Gi
+              cpu: 1
       volumes:
         - name: al-config
           configMap:
