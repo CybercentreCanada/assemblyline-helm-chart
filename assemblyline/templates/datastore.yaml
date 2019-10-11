@@ -1,5 +1,17 @@
 ---
 apiVersion: v1
+kind: Secret
+metadata:
+  name: datastore-passwords
+type: Opaque
+data:
+  kibana: {{ .Values.kibanaInternalPassword | b64enc}}
+  apm: {{ .Values.apmInternalPassword | b64enc}}
+  temporarySetup: {{ .Values.elasticSetupPassword | b64enc }}
+  filebeat: {{ .Values.filebeatInternalPassword | b64enc }}
+  metricbeat: {{ .Values.metricbeatInternalPassword | b64enc }}
+---
+apiVersion: v1
 kind: Service
 metadata:
   name: datastore
@@ -43,17 +55,29 @@ spec:
       - name: elasticsearch
         env:
         - name: ES_JAVA_OPTS
-          value: '-Xms512m -Xmx512m'
+          value: '-Xms8192m -Xmx8192m'
         - name: DISCOVERY_TYPE
           value: 'single-node'
-        image: sgaroncse/elasticsearch:7.3.0
-        livenessProbe:
-          httpGet:
-            path: _cluster/health
-            port: 9200
-          periodSeconds: 30
-          timeoutSeconds: 30
-          failureThreshold: 3
+        - name: ELASTIC_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: datastore-passwords
+              key: temporarySetup
+        image: sgaroncse/elasticsearch:7.4.0
+#        livenessProbe:
+#          httpGet:
+#            path: _cluster/health
+#            port: 9200
+#          periodSeconds: 60
+#          timeoutSeconds: 60
+#          failureThreshold: 10
+        resources:
+          requests:
+            memory: 10Gi
+            cpu: 1
+          limits:
+            memory: 10Gi
+            cpu: 4
         ports:
         - containerPort: 9200
         volumeMounts:
@@ -67,4 +91,68 @@ spec:
       storageClassName: {{ .Values.storage.datastore }}
       resources:
         requests:
-          storage: 50Gi
+          storage: 500Gi
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup-elastic
+  labels:
+    app: assemblyline
+    section: core
+    component: setup-elastic
+spec:
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: setup-elastic
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: setup-elastic
+        image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+        command: ['python', '-m', 'assemblyline.run.setup_elastic']
+        imagePullPolicy: Always
+        env:
+          - name: ELASTIC_HOST
+            value: datastore
+          - name: ELASTIC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: datastore-passwords
+                key: temporarySetup
+          - name: KIBANA_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: datastore-passwords
+                key: kibana
+          - name: APM_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: datastore-passwords
+                key: apm
+          - name: FILEBEAT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: datastore-passwords
+                key: filebeat
+          - name: METRICBEAT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: datastore-passwords
+                key: metricbeat
+          - name: SU_USERNAME
+            value: {{ .Values.kibanaAdminUser }}
+          - name: SU_PASSWORD
+            value: {{ .Values.kibanaAdminPassword }}
+          - name: K_USERNAME
+            value: {{ .Values.kibanaUser }}
+          - name: K_PASSWORD
+            value: {{ .Values.kibanaPassword }}
+          - name: AL_PASSWORD
+            value: {{ .Values.assemblylineElasticPassword }}
+  backoffLimit: 500
+  ttlSecondsAfterFinished: 0
+---

@@ -24,8 +24,8 @@ data:
 
     output.elasticsearch:
       hosts: ['${ELASTICSEARCH_HOST:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
-    #  username: ${ELASTICSEARCH_USERNAME}
-    #  password: ${ELASTICSEARCH_PASSWORD}
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
 ---
 apiVersion: extensions/v1beta1
 kind: DaemonSet
@@ -47,7 +47,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: filebeat
-        image: elastic/filebeat:7.1.0
+        image: elastic/filebeat:7.4.0
         args: [
           "-c", "/etc/filebeat.yml",
           "-e",
@@ -57,10 +57,13 @@ spec:
           value: "datastore"
         - name: ELASTICSEARCH_PORT
           value: "9200"
-#        - name: ELASTICSEARCH_USERNAME
-#          value: elastic
-#        - name: ELASTICSEARCH_PASSWORD
-#          value: changeme
+        - name: ELASTICSEARCH_USERNAME
+          value: filebeat
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: datastore-passwords
+              key: filebeat
         securityContext:
           runAsUser: 0
           # If using Red Hat OpenShift uncomment this:

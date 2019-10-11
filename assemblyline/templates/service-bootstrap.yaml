@@ -1,7 +1,7 @@
 #
 #   Launch services so that they auto-install
 #
-{{- range .Values.autoInstallServices }}
+{{- range .Values.autoInstallLegacyServices }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -21,6 +21,36 @@ spec:
       containers:
       - name: alsvc-{{ . }}
         image: cccs/alsvc_{{ . }}:latest
+        imagePullPolicy: Always
+        env:
+          - name: SERVICE_API_HOST
+            value: http://service-server.{{ $.Release.Name }}.svc.cluster.local:5003
+      restartPolicy: Never
+  backoffLimit: 500
+  ttlSecondsAfterFinished: 300
+---
+{{- end }}
+---
+{{- range .Values.autoInstallServices }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ $.Release.Name }}-alsvc-{{ . }}
+  namespace: {{ template "service-namespace" $ }}
+  labels:
+    app: assemblyline-{{ $.Release.Name }}
+    section: analysis
+spec:
+  template:
+    metadata:
+      labels:
+        app: assemblyline-{{ $.Release.Name }}
+        section: analysis
+        component: alsvc_{{ . }}
+    spec:
+      containers:
+      - name: alsvc-{{ . }}
+        image: cccs/assemblyline-service-{{ . }}:latest
         imagePullPolicy: Always
         env:
           - name: SERVICE_API_HOST

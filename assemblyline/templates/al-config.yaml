@@ -12,9 +12,7 @@ data:
         apm_server:
           server_url: http://apm:8200/
         elasticsearch:
-          hosts: ["datastore"]
-        kibana:
-          host: kibana
+          hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@datastore"]
         redis:
           host: redis-volatile
           port: 6379
@@ -29,6 +27,7 @@ data:
         core_namespace: {{ .Release.Name }}
         service_namespace: {{ template "service-namespace" . }}
         service_defaults:
+          backlog: 10
           environment:
             - name: 'SERVICE_API_HOST'
               value: 'http://service-server.{{ $.Release.Name }}.svc.cluster.local:5003'
@@ -42,13 +41,26 @@ data:
               image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
               command: ['python', '-m', 'assemblyline_core.dispatching.run_submissions']
     datastore:
-      elasticsearch:
-        nodes: [datastore:9200]
-      hosts: [datastore:9200]
+      hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@datastore:9200"]
     filestore:
-      cache: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
-      storage: ["s3://al_storage_key:Ch@ngeTh!sPa33w0rd@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
+      cache: ["s3://al_storage_key:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
+      storage: ["s3://al_storage_key:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
     logging:
       log_to_console: true
       log_to_file: false
       log_to_syslog: false
+    ui:
+      fqdn: {{ .Values.domain }}
+      tos_lockout: true
+      tos: >
+        ##This is a development system. Contact us on teams to get your account enabled.
+    auth:
+      internal:
+        signup:
+          enabled: true
+          notify:
+            base_url: https://api.notification.alpha.canada.ca
+            api_key: stagingmlwrca-8d1dcea3-00ae-4e16-8550-5ae9bde4796e-347ac42d-fdac-4ac3-a86b-732f7c177258
+            registration_template: 95f51ab4-5156-4e61-8205-2aced49f016e
+            password_reset_template: a31a905d-df18-41b0-a155-114997ac66f6
+          valid_email_patterns: [".*@165gc\\.onmicrosoft\\.com"]

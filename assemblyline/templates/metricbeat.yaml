@@ -19,6 +19,8 @@ data:
 
     output.elasticsearch:
       hosts: ['datastore:9200']
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
 
     setup:
       kibana.host: "http://kibana:5601/kibana"
@@ -102,7 +104,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.3.0
+        image: docker.elastic.co/beats/metricbeat:7.4.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
@@ -113,6 +115,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: ELASTICSEARCH_USERNAME
+          value: metricbeat
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: datastore-passwords
+              key: metricbeat
         securityContext:
           runAsUser: 0
         resources:
@@ -179,6 +188,8 @@ data:
 
     output.elasticsearch:
       hosts: ["datastore:9200"]
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
 
     setup:
       kibana.host: "http://kibana:5601/kibana"
@@ -239,6 +250,8 @@ data:
         - ml_job
       period: 10s
       hosts: ["datastore:9200"]
+      username: ${ELASTICSEARCH_USERNAME}
+      password: ${ELASTICSEARCH_PASSWORD}
       enabled: true
      # xpack.enabled: true
 
@@ -266,7 +279,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: metricbeat
-        image: docker.elastic.co/beats/metricbeat:7.3.0
+        image: docker.elastic.co/beats/metricbeat:7.4.0
         args: [
           "-c", "/etc/metricbeat.yml",
           "-e",
@@ -276,6 +289,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: spec.nodeName
+        - name: ELASTICSEARCH_USERNAME
+          value: metricbeat
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: datastore-passwords
+              key: metricbeat
         securityContext:
           runAsUser: 0
         resources:
