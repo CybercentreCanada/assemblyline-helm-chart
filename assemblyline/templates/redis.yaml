@@ -97,6 +97,8 @@ spec:
         volumeMounts:
         - name: redis-data
           mountPath: /var/opt/redislabs/
+        - name: redis-data
+          mountPath: /data
   volumeClaimTemplates:
   - metadata:
       name: redis-data
