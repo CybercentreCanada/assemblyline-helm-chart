@@ -18,7 +18,7 @@ data:
       - add_cloud_metadata: ~
 
     output.elasticsearch:
-      hosts: ['datastore:9200']
+      hosts: ['logging-datastore:9200']
       username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
 
@@ -63,6 +63,19 @@ data:
       - drop_event.when.regexp:
           system.filesystem.mount_point: '^/(sys|cgroup|proc|dev|etc|host|lib)($|/)'
   kubernetes.yml: |-
+    - module: docker
+      metricsets:
+        - "container"
+        - "cpu"
+        - "diskio"
+        - "event"
+        - "healthcheck"
+        - "info"
+        - "memory"
+        - "network"
+      hosts: ["unix:///var/run/docker.sock"]
+      period: 10s
+      enabled: true
     - module: kubernetes
       metricsets:
         - node
@@ -187,7 +200,7 @@ data:
       - add_cloud_metadata: ~
 
     output.elasticsearch:
-      hosts: ["datastore:9200"]
+      hosts: ["logging-datastore:9200"]
       username: ${ELASTICSEARCH_USERNAME}
       password: ${ELASTICSEARCH_PASSWORD}
 
@@ -232,28 +245,42 @@ data:
         - "keyspace"
       period: 10s
       hosts: ["redis-persistent:6379"]
-    - module: kibana
-      metricsets: ["status"]
-      period: 10s
-      hosts: ["http://kibana:5601"]
-      basepath: "kibana"
-      enabled: true
-     # xpack.enabled: true
-    - module: elasticsearch
-      metricsets:
-        - node
-        - node_stats
-        - index
-        - index_recovery
-        - index_summary
-        - shard
-        - ml_job
-      period: 10s
-      hosts: ["datastore:9200"]
-      username: ${ELASTICSEARCH_USERNAME}
-      password: ${ELASTICSEARCH_PASSWORD}
-      enabled: true
-     # xpack.enabled: true
+#    - module: kibana
+#      metricsets: ["status"]
+#      period: 10s
+#      hosts: ["http://kibana:5601"]
+#      basepath: "kibana"
+#      enabled: true
+#     # xpack.enabled: true
+#    - module: elasticsearch
+#      metricsets:
+#        - node
+#        - node_stats
+#        - index
+#        - index_recovery
+#        - index_summary
+#        - shard
+#        - ml_job
+#      period: 10s
+#      hosts: ["datastore:9200"]
+#      username: ${ELASTICSEARCH_USERNAME}
+#      password: ${ELASTICSEARCH_PASSWORD}
+#      enabled: true
+#    - module: elasticsearch
+#      metricsets:
+#        - node
+#        - node_stats
+#        - index
+#        - index_recovery
+#        - index_summary
+#        - shard
+#        - ml_job
+#      period: 10s
+#      hosts: ["logging-datastore:9200"]
+#      username: ${ELASTICSEARCH_USERNAME}
+#      password: ${ELASTICSEARCH_PASSWORD}
+#      enabled: true
+#     # xpack.enabled: true
 
 ---
 # Deploy singleton instance in the whole cluster for some unique data sources, like kube-state-metrics
@@ -312,6 +339,9 @@ spec:
         - name: modules
           mountPath: /usr/share/metricbeat/modules.d
           readOnly: true
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+          readOnly: true
       volumes:
       - name: config
         configMap:
@@ -321,6 +351,10 @@ spec:
         configMap:
           defaultMode: 0600
           name: metricbeat-deployment-modules
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+          type: Socket
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: ClusterRoleBinding

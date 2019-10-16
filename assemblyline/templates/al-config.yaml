@@ -12,7 +12,7 @@ data:
         apm_server:
           server_url: http://apm:8200/
         elasticsearch:
-          hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@datastore"]
+          hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@logging-datastore"]
         redis:
           host: redis-volatile
           port: 6379
