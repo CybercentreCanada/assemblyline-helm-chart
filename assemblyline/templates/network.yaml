@@ -1,45 +1,33 @@
-# Deny all attempts to ingress to the core
+# Allow all core pods to talk to other pods
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  namespace: {{ .Release.Name }}
-  name: {{ .Release.Name}}-deny-from-outside
+  name: allow-between-core
   labels:
     app: assemblyline
 spec:
-  # For all pods in the given namespace
   podSelector:
     matchLabels:
-  # Allow ingress from any pods also in given namespace
+      app: assemblyline
+      section: core
   ingress:
   - from:
-    - podSelector: {}
-  # and by implication, deny from anywhere NOT in the given namespace
----
-# Deny all attempts to egress from the core
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  namespace: {{ .Release.Name }}
-  name: {{ .Release.Name}}-deny-to-outside
-  labels:
-    app: assemblyline
-spec:
-  # For all pods in the given namespace
-  podSelector:
-    matchLabels:
-  # Allow egress to any pods also in given namespace
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          section: core
   egress:
   - to:
-    - podSelector: {}
-  # and by implication, deny to any pod NOT in the given namespace
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          section: core
 ---
 # Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  namespace: {{ .Release.Name }}
-  name: {{ .Release.Name }}-allow-dns
+  name: allow-dns
   labels:
     app: assemblyline
 spec:
@@ -65,8 +53,7 @@ spec:
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
-  namespace: {{ .Release.Name }}
-  name: {{ .Release.Name }}-allow-to-endpoints
+  name: allow-into-endpoints
 spec:
   # For the matched services
   podSelector:
@@ -81,66 +68,20 @@ spec:
   ingress:
   - from: []
 ---
-# Deny all traffic to/from/inside the service namespace
+# services to contact the service-server
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  namespace: {{ template "service-namespace" . }}
-  name: {{ template "service-namespace" . }}-default-deny
+  name: allow-service-api
 spec:
   # For all pods in the service namespace
-  podSelector: {}
-  # Your policy for ingress and egress
-  policyTypes:
-  - Ingress
-  - Egress
-  # Is NULL, don't allow any connections
----
-# Allow pods to access DNS
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  namespace: {{ template "service-namespace" . }}
-  name: {{ template "service-namespace" . }}-allow-dns
-  labels:
-    app: assemblyline
-spec:
-  # For all pods in the given namespace
   podSelector:
-    matchLabels:
-  # Allow egress to the dns service in the system namespace
-  egress:
-  - ports:
-      - port: 53
-        protocol: UDP
-      - port: 53
-        protocol: TCP
-#  - to:  # It would be better to use this more specific selection, but its not broadly supported
-#    - namespaceSelector:
-#        matchLabels:
-#          name: kube-system
-#      podSelector:
-#        matchLabels:
-#          k8s-app: kube-dns
----
-# Allow traffic from anyone in the service namespace to the service-api
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  namespace: {{ template "service-namespace" . }}
-  name: {{ template "service-namespace" . }}-allow-api
-spec:
-  # For all pods in the service namespace
-  podSelector: {}
+    app: assemblyline
+    section: service
   # Allow traffic to
   egress:
   - to:
-    # only in the given namespace
-    - namespaceSelector:
-        matchLabels:
-          name: {{ .Release.Name }}
-      # Only the service server pod
-      podSelector:
+    - podSelector:
         matchLabels:
           app: assemblyline
           section: core

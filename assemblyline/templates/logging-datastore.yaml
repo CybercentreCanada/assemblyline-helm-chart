@@ -39,6 +39,9 @@ spec:
     spec:
       terminationGracePeriodSeconds: 60
       priorityClassName: al-infra
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
       containers:
       - name: elasticsearch
         env:
@@ -52,6 +55,13 @@ spec:
               name: datastore-passwords
               key: temporarySetup
         image: sgaroncse/elasticsearch:7.4.0
+        securityContext:
+          capabilities:
+            drop:
+              - ALL
+          # readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
 #        livenessProbe:
 #          httpGet:
 #            path: _cluster/health

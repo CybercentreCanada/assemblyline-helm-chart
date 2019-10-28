@@ -38,3 +38,11 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
+{{with merge (dict "component" "dispatcher-files" "command" "assemblyline_core.dispatching.run_files") . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---
+{{with merge (dict "component" "dispatcher-submissions" "command" "assemblyline_core.dispatching.run_submissions") . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---

@@ -64,3 +64,22 @@ data:
             registration_template: 95f51ab4-5156-4e61-8205-2aced49f016e
             password_reset_template: a31a905d-df18-41b0-a155-114997ac66f6
           valid_email_patterns: [".*@165gc\\.onmicrosoft\\.com"]
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: shutdown-script
+data:
+  script: |
+    if __name__ == '__main__':
+        import sys
+        import platform
+        hostname = platform.node()
+
+        if len(sys.argv) > 1:
+            reason = ' '.join(sys.argv[1:])
+        else:
+            reason = 'No reason was given'
+
+        print(hostname + ' :: This container is being terminated: ' + reason)
