@@ -1,3 +1,9 @@
-#dependencies:
-#  - name: redis
-#    repository
+dependencies:
+  - name: elasticsearch
+    repository: https://helm.elastic.co/
+    version: 7.4.1
+    alias: datastore
+  - name: elasticsearch
+    repository: https://helm.elastic.co/
+    version: 7.4.1
+    alias: logging-datastore
