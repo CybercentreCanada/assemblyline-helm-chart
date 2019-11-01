@@ -14,28 +14,28 @@ maxBodySize: 100M
 tls:
   secretName: ''
 
-autoInstallServices: []
-#  - apkaye
-#  - metapeek
-#  - metadefender
-#  - characterize
-#  - extract
-#  - virustotal-dynamic
-#  - virustotal-static
+autoInstallServices:
+  - apkaye
+  - metapeek
+  - metadefender
+  - characterize
+  - extract
+  - virustotal-dynamic
+  - virustotal-static
 
-autoInstallLegacyServices: []
-#  - pdfid
-#  - peepdf
-#  - unpacker
-#  - cleaver
-#  - espresso
-#  - frankenstrings
-#  - iparse
-#  - pefile
-#  - pixaxe
-#  - swiffer
-#  - torrentslicer
-#  - yara
+autoInstallLegacyServices:
+  - pdfid
+  - peepdf
+  - unpacker
+  - cleaver
+  - espresso
+  - frankenstrings
+  - iparse
+  - pefile
+  - pixaxe
+  - swiffer
+  - torrentslicer
+  - yara
 
 
 serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined

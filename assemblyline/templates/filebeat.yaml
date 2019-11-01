@@ -35,7 +35,7 @@ metadata:
   name: filebeat
   labels:
     app: assemblyline
-    section: metrics
+    section: logging
     component: filebeat
 spec:
   template:
@@ -51,23 +51,23 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: filebeat
-        image: elastic/filebeat:7.4.0
+        image: elastic/filebeat:7.4.1
         args: [
           "-c", "/etc/filebeat.yml",
           "-e",
         ]
         env:
         - name: ELASTICSEARCH_HOST
-          value: "logging-datastore"
+          value: "logging-datastore-master"
         - name: ELASTICSEARCH_PORT
           value: "9200"
         - name: ELASTICSEARCH_USERNAME
-          value: filebeat
+          value: elastic
         - name: ELASTICSEARCH_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: datastore-passwords
-              key: filebeat
+              name: system-passwords
+              key: logging-password
         - name: NODE_NAME
           valueFrom:
            fieldRef:
@@ -148,4 +148,4 @@ metadata:
 #  namespace: kube-system
   labels:
     app: assemblyline
-    section: metrics
+    section: logging
