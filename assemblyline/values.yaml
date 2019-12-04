@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev79'
-uiVersion:   '4.0.0.dev59'
-sapiVersion:   '4.0.0.dev49'
+coreVersion: '4.0.0.dev134'
+uiVersion:   '4.0.0.dev90'
+sapiVersion:   '4.0.0.dev61'
 
 storage:
   filestore: default
@@ -11,8 +11,7 @@ storage:
 domain: localhost
 maxBodySize: 100M
 
-tls:
-  secretName: ''
+tlsSecretName: ''
 
 autoInstallServices:
   - apkaye
@@ -41,16 +40,26 @@ autoInstallLegacyServices:
 serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined
 
 
-filestorePassword: "Ch@ngeTh!sPa33w0rd"
+
 elasticPassword: "Ch@ngeTh!sPa33w0rd"
 loggingPassword: "Ch@ngeTh!sPa33w0rd"
 notebookPassword: "Ch@ngeTh!sPa33w0rd"
+filestorePassword: "Ch@ngeTh!sPa33w0rd"  # URL encoded version of the secretKey in the block below
+
+filestore:
+  fullnameOverride: "filestore"
+  replicas: 1
+  accessKey: "al_filestore"
+  secretKey: "Ch@ngeTh!sPa33w0rd"
+  priorityClassName: 'al-infra'
 
 
 datastore:
   clusterName: "datastore"
   replicas: 3
   extraEnvs:
+    - name: ELASTIC_USERNAME
+      value: elastic
     - name: ELASTIC_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -61,13 +70,12 @@ datastore:
     section: core
     component: datastore
   esJavaOpts: '-Xms6g -Xmx6g'
-#  esConfig:
-#    elasticsearch.yml: |
-#      xpack.security.enabled: true
-#      xpack.security.http.ssl.enabled: true
+  esConfig:
+    elasticsearch.yml: |
+      logger.level=WARN
   resources:
     requests:
-      cpu: 2
+      cpu: 1
       memory: 12Gi
     limits:
       cpu: 6
@@ -85,6 +93,8 @@ logging-datastore:
   clusterName: "logging-datastore"
   replicas: 1
   extraEnvs:
+  - name: ELASTIC_USERNAME
+    value: elastic
   - name: ELASTIC_PASSWORD
     valueFrom:
       secretKeyRef:
@@ -95,13 +105,12 @@ logging-datastore:
     section: core
     component: logging-datastore
   esJavaOpts: '-Xms6g -Xmx6g'
-#  esConfig:
-#    elasticsearch.yml: |
-#      xpack.security.enabled: true
-#      xpack.security.http.ssl.enabled: true
+  esConfig:
+    elasticsearch.yml: |
+      logger.level=WARN
   resources:
     requests:
-      cpu: 2
+      cpu: 1
       memory: 12Gi
     limits:
       cpu: 6
@@ -113,3 +122,4 @@ logging-datastore:
       requests:
         storage: 500Gi
   priorityClassName: 'al-infra'
+

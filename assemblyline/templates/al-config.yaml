@@ -12,7 +12,7 @@ data:
         apm_server:
           server_url: http://apm:8200/
         elasticsearch:
-          hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@logging-datastore"]
+          hosts: ["http://elastic:{{ .Values.loggingPassword }}@logging-datastore-master"]
         redis:
           host: redis-volatile
           port: 6379
@@ -24,27 +24,19 @@ data:
           host: redis-persistent
           port: 6379
       scaler:
-        core_namespace: {{ .Release.Name }}
-        service_namespace: {{ template "service-namespace" . }}
         service_defaults:
           backlog: 10
+          min_instances: 1
+          growth: 60
+          shrink: 20
           environment:
             - name: 'SERVICE_API_HOST'
               value: 'http://service-server.{{ $.Release.Name }}.svc.cluster.local:5003'
-        core_configs:
-          dispatcher_files:
-            container_config:
-              image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
-              command: ['python', '-m', 'assemblyline_core.dispatching.run_files']
-          dispatcher_submissions:
-            container_config:
-              image: 'cccs/assemblyline-core:{{ .Values.coreVersion }}'
-              command: ['python', '-m', 'assemblyline_core.dispatching.run_submissions']
     datastore:
-      hosts: ["http://assemblyline:{{ .Values.assemblylineElasticPassword }}@datastore:9200"]
+      hosts: ["http://elastic:{{ .Values.elasticPassword }}@datastore-master:9200"]
     filestore:
-      cache: ["s3://al_storage_key:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
-      storage: ["s3://al_storage_key:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
+      cache: ["s3://{{ .Values.filestoreKey }}:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
+      storage: ["s3://{{ .Values.filestoreKey }}:{{ .Values.filestorePassword }}@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
     logging:
       log_to_console: true
       log_to_file: false
@@ -64,22 +56,7 @@ data:
             registration_template: 95f51ab4-5156-4e61-8205-2aced49f016e
             password_reset_template: a31a905d-df18-41b0-a155-114997ac66f6
           valid_email_patterns: [".*@165gc\\.onmicrosoft\\.com"]
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: shutdown-script
-data:
-  script: |
-    if __name__ == '__main__':
-        import sys
-        import platform
-        hostname = platform.node()
-
-        if len(sys.argv) > 1:
-            reason = ' '.join(sys.argv[1:])
-        else:
-            reason = 'No reason was given'
-
-        print(hostname + ' :: This container is being terminated: ' + reason)
+#            - name: 'AL_SERVICE_TASK_LIMIT'
+#              value: '50'
+#            - name: 'TASK_REQUEST_TIMEOUT'
+#              value: '10'

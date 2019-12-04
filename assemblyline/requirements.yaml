@@ -7,3 +7,7 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.4.1
     alias: logging-datastore
+  - name: minio
+    repository: https://kubernetes-charts.storage.googleapis.com/
+    version: 2.5.18
+    alias: filestore
