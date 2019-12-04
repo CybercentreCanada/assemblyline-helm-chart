@@ -30,12 +30,6 @@ spec:
           volumeMounts:
             - name: al-config
               mountPath: /etc/assemblyline/
-            - name: shutdown-script
-              mountPath: /media/stopping/
-          lifecycle:
-            preStop:
-              exec:
-                command: ["python", "/media/stopping/log.py"]
           resources:
             requests:
               memory: 128Mi
@@ -50,11 +44,6 @@ spec:
             items:
               - key: config
                 path: config.yml
-        - name: shutdown-script
-          configMap:
-            name: shutdown-script
-            items:
-              - key: script
-                path: log.py
+
 {{ end }}
 
