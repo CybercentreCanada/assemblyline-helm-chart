@@ -123,3 +123,90 @@ logging-datastore:
         storage: 500Gi
   priorityClassName: 'al-infra'
 
+filebeat:
+  extraEnvs:
+    - name: ELASTICSEARCH_HOSTS
+      value: 'logging-datastore-master'
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: system-passwords
+          key: logging-password
+  filebeatConfig:
+    filebeat.yml: |-
+      logging:
+        level: warning
+        json: true
+
+      filebeat.inputs:
+        - type: docker
+          combine_partial: true
+          containers:
+            path: "/var/lib/docker/containers"
+            stream: "all"
+            ids:
+              - "*"
+
+      processors:
+        - add_cloud_metadata: ~
+        - add_host_metadata: ~
+        - add_docker_metadata: ~
+        - add_kubernetes_metadata: ~
+        - decode_json_fields:
+            fields: ["message"]
+            process_array: false
+            max_depth: 1
+            target: ""
+            overwrite_keys: true
+        - drop_event:
+            when:
+              regexp:
+                container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
+
+      output.elasticsearch:
+        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+
+      setup.template.settings:
+        index.number_of_shards: 1
+        index.number_of_replicas: 0
+      setup.ilm:
+        enabled: true
+        policy_file: /usr/share/filebeat/filebeat_policy.json
+    filebeat_policy.json: |-
+      {
+        "policy": {
+          "phases": {
+            "hot": {
+              "min_age": "0ms",
+              "actions": {
+                "rollover": {
+                  "max_age": "1d",
+                  "max_size": "20gb"
+                },
+                "set_priority": {
+                  "priority": 100
+                }
+              }
+            },
+            "warm": {
+              "actions": {
+                "readonly": {},
+                "set_priority": {
+                  "priority": 50
+                }
+              }
+            },
+            "delete": {
+              "min_age": "3d",
+              "actions": {
+                "delete": {}
+              }
+            }
+          }
+        }
+      }
+
