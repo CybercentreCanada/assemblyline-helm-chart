@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev134'
-uiVersion:   '4.0.0.dev90'
-sapiVersion:   '4.0.0.dev61'
+coreVersion: '4.0.0.dev135'
+uiVersion:   '4.0.0.dev91'
+sapiVersion:   '4.0.0.dev62'
 
 storage:
   filestore: default
@@ -210,3 +210,159 @@ filebeat:
         }
       }
 
+metricbeat:
+  extraEnvs:
+    - name: ELASTICSEARCH_HOSTS
+      value: 'logging-datastore-master'
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: system-passwords
+          key: logging-password
+  metricbeatConfig:
+    # Configuration on the daemonset
+    metricbeat.yml: |
+      logging:
+        level: warning
+        json: true
+
+      metricbeat.modules:
+        - module: system
+          period: 10s
+          metricsets:
+            - cpu
+            - load
+            - memory
+            - network
+            - process
+            - process_summary
+            - uptime
+            - socket_summary
+            - socket
+          processes: ['.*']
+          cpu.metrics:  ["percentages"]
+          core.metrics: ["percentages"]
+          process.include_top_n:
+            by_cpu: 5      # include top 5 processes by CPU
+            by_memory: 5   # include top 5 processes by memory
+        - module: system
+          period: 1m
+          metricsets:
+            - diskio
+            - fsstat
+        - module: docker
+          metricsets:
+            - "container"
+            - "cpu"
+            - "diskio"
+            - "event"
+            - "healthcheck"
+            - "info"
+            - "memory"
+            - "network"
+          hosts: ["unix:///var/run/docker.sock"]
+          period: 10s
+          enabled: true
+          processors:
+            - add_docker_metadata: ~
+        - module: kubernetes
+          metricsets:
+            - node
+            - system
+            - pod
+            - container
+            - volume
+          period: 10s
+          host: ${NODE_NAME}
+          hosts: ["localhost:10255"]
+          # If using Red Hat OpenShift remove the previous hosts entry and
+          # uncomment these settings:
+          #hosts: ["https://${HOSTNAME}:10250"]
+          #bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          #ssl.certificate_authorities:
+            #- /var/run/secrets/kubernetes.io/serviceaccount/service-ca.crt
+
+      processors:
+        - add_cloud_metadata: ~
+
+      output.elasticsearch:
+        hosts: ['logging-datastore-master:9200']
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+
+      setup.template.settings:
+        index.number_of_shards: 1
+        index.number_of_replicas: 0
+      setup.ilm:
+        enabled: true
+        policy_file: /usr/share/metricbeat/metricbeat_policy.json
+    # Configuration on the deployment
+    kube-state-metrics-metricbeat.yml: |
+      logging:
+        level: warning
+        json: true
+
+      metricbeat.modules:
+        - module: redis
+          metricsets:
+            - "info"
+            - "keyspace"
+          period: 10s
+          hosts: ["redis-volatile:6379"]
+        - module: redis
+          metricsets:
+            - "info"
+            - "keyspace"
+          period: 10s
+          hosts: ["redis-persistent:6379"]
+
+      processors:
+        - add_cloud_metadata: ~
+
+      output.elasticsearch:
+        hosts: ["logging-datastore-master:9200"]
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+
+      setup.template.settings:
+        index.number_of_shards: 1
+        index.number_of_replicas: 0
+      setup.ilm:
+        enabled: true
+        policy_file: /usr/share/metricbeat/metricbeat_policy.json
+
+    metricbeat_policy.json: |-
+      {
+        "policy": {
+          "phases": {
+            "hot": {
+              "min_age": "0ms",
+              "actions": {
+                "rollover": {
+                  "max_age": "1d",
+                  "max_size": "5gb"
+                },
+                "set_priority": {
+                  "priority": 100
+                }
+              }
+            },
+            "warm": {
+              "actions": {
+                "readonly": {},
+                "set_priority": {
+                  "priority": 50
+                }
+              }
+            },
+            "delete": {
+              "min_age": "4d",
+              "actions": {
+                "delete": {}
+              }
+            }
+          }
+        }
+      }

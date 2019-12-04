@@ -1,0 +1,18 @@
+dependencies:
+- name: elasticsearch
+  repository: https://helm.elastic.co/
+  version: 7.4.1
+- name: elasticsearch
+  repository: https://helm.elastic.co/
+  version: 7.4.1
+- name: minio
+  repository: https://kubernetes-charts.storage.googleapis.com/
+  version: 2.5.18
+- name: filebeat
+  repository: https://helm.elastic.co/
+  version: 7.4.1
+- name: metricbeat
+  repository: https://helm.elastic.co/
+  version: 7.4.1
+digest: sha256:7a7a96375a27287e5c9b3dbf1b52e3d7551e61079791a428d2792a77a59fd42e
+generated: 2019-12-04T15:04:49.1879499-05:00
