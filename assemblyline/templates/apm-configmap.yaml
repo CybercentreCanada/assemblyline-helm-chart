@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: apm-config
+  labels:
+    k8s-app: apm
+data:
+  apm.yml: |
+    apm-server:
+      host: "0.0.0.0:8200"
+
+    logging:
+      level: warning
+      json: true
+
+    output.elasticsearch:
+      hosts: ['logging-datastore-master:9200']
+      username: elastic
+      password: {{ .Values.loggingPassword }}
+
+    setup.template.settings:
+      index.number_of_shards: 1
+      index.number_of_replicas: 0
+    setup.kibana:
+      host: "http://kibana:5601"
+      username: elastic
+      password: devpass
