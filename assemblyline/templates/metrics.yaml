@@ -1,67 +1,31 @@
+
 apiVersion: v1
-kind: Service
+kind: ConfigMap
 metadata:
-  name: kibana
+  name: apm-config
   labels:
-    app: assemblyline
-    section: core
-    component: kibana
-spec:
-  clusterIP: None
-  selector:
-    app: assemblyline
-    section: core
-    component: kibana
-  ports:
-  - protocol: TCP
-    port: 5601
-    targetPort: 5601
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: kibana
-  labels:
-    app: assemblyline
-    section: core
-    component: kibana
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: assemblyline
-      section: core
-      component: kibana
-  template:
-    metadata:
-      labels:
-        app: assemblyline
-        section: core
-        component: kibana
-    spec:
-      priorityClassName: al-core-priority
-      containers:
-        - name: kibana
-          image: docker.elastic.co/kibana/kibana:7.4.0
-          imagePullPolicy: Always
-          env:
-          - name: SERVER_NAME
-            value: localhost
-          - name: ELASTICSEARCH_HOSTS
-            value: http://logging-datastore:9200
-          - name: ELASTICSEARCH_USERNAME
-            value: kibana
-          - name: ELASTICSEARCH_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: datastore-passwords
-                key: kibana
-          - name: SERVER_BASEPATH
-            value: /kibana
-          - name: SERVER_REWRITEBASEPATH
-            value: "true"
-          ports:
-          - containerPort: 5601
+    k8s-app: apm
+data:
+  apm.yml: |
+    apm-server:
+      host: "0.0.0.0:8200"
+
+    logging:
+      level: warning
+      json: true
+
+    output.elasticsearch:
+      hosts: ['logging-datastore-master:9200']
+      username: elastic
+      password: {{ .Values.loggingPassword }}
+
+    setup.template.settings:
+      index.number_of_shards: 1
+      index.number_of_replicas: 0
+    setup.kibana:
+      host: "http://kibana:5601"
+      username: elastic
+      password: devpass
 ---
 apiVersion: v1
 kind: Service
@@ -69,13 +33,13 @@ metadata:
   name: apm
   labels:
     app: assemblyline
-    section: core
+    section: logging
     component: apm
 spec:
   clusterIP: None
   selector:
     app: assemblyline
-    section: core
+    section: logging
     component: apm
   ports:
   - protocol: TCP
@@ -88,38 +52,36 @@ metadata:
   name: apm
   labels:
     app: assemblyline
-    section: core
+    section: logging
     component: apm
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: assemblyline
-      section: core
+      section: logging
       component: apm
   template:
     metadata:
       labels:
         app: assemblyline
-        section: core
+        section: logging
         component: apm
     spec:
       priorityClassName: al-core-priority
       containers:
         - name: apm
-          image: sgaroncse/apm-server:7.4.0
-          imagePullPolicy: Always
-          env:
-          - name: ES_HOSTS
-            value: logging-datastore:9200
-          - name: ELASTICSEARCH_USERNAME
-            value: apm
-          - name: ELASTICSEARCH_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: datastore-passwords
-                key: apm
-          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.username=$$ELASTICSEARCH_USERNAME -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
+          image: docker.elastic.co/apm/apm-server:7.4.1
+#          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200
-
+          volumeMounts:
+          - name: config
+            mountPath: /usr/share/apm-server/apm-server.yml
+            readOnly: true
+            subPath: apm.yml
+      volumes:
+      - name: config
+        configMap:
+          defaultMode: 0644
+          name: apm-config

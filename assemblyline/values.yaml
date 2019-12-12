@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev138'
-uiVersion:   '4.0.0.dev93'
-sapiVersion:   '4.0.0.dev63'
+coreVersion: '4.0.0.dev144'
+uiVersion:   '4.0.0.dev94'
+sapiVersion:   '4.0.0.dev67'
 
 storage:
   filestore: default
@@ -367,3 +367,26 @@ metricbeat:
           }
         }
       }
+
+kibana:
+  fullnameOverride: kibana
+  elasticsearchHosts: http://logging-datastore-master:9200
+  healthCheckPath: /kibana/app/kibana
+  extraEnvs:
+    - name: SERVER_NAME
+      value: localhost
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: system-passwords
+          key: logging-password
+    - name: SERVER_BASEPATH
+      value: /kibana
+    - name: SERVER_REWRITEBASEPATH
+      value: "true"
+    - name: LOGGING_QUIET
+      value: "true"
+  priorityClassName: al-core-priority
+

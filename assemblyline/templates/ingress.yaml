@@ -26,7 +26,7 @@ metadata:
 spec:
   tls:
     - hosts: [{{ .Values.domain }}]
-      secretName: {{ if .Values.tls.secretName }} {{.Values.tls.secretName}} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
   rules:
     - host: {{ .Values.domain }}
       http:
@@ -41,5 +41,5 @@ spec:
               servicePort: 5000
           - path: /kibana/
             backend:
-              serviceName: kibana
+              serviceName: al-kibana
               servicePort: 5601
