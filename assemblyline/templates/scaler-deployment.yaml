@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: scaler
+  labels:
+    app: assemblyline
+    section: core
+    component: scaler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: scaler
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: scaler
+    spec:
+      serviceAccountName: {{ .Release.Name }}-scaling-manager
+      priorityClassName: al-core-priority
+      containers:
+        - name: scaler
+          image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+          imagePullPolicy: Always
+          command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
+          volumeMounts:
+            - name: al-config
+              mountPath: /etc/assemblyline/
+            - name: update-directory
+              mountPath: /mount/update_root/
+          env:
+            - name: KUBERNETES_AL_CONFIG
+              value: {{ .Release.Name }}-global-config
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: FILE_UPDATE_VOLUME
+              value: update-directory
+            - name: FILE_UPDATE_DIRECTORY
+              value: /mount/update_root/
+      volumes:
+        - name: al-config
+          configMap:
+            name: {{ .Release.Name }}-global-config
+            items:
+              - key: config
+                path: config.yml
+        - name: update-directory
+          persistentVolumeClaim:
+            claimName: update-directory
