@@ -51,6 +51,8 @@ spec:
               mountPath: /etc/assemblyline/
           ports:
             - containerPort: 5000
+          command: ["gunicorn"]
+          args: ["--config=/usr/local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py", "assemblyline_ui.app:app"]
       volumes:
         - name: al-config
           configMap:
