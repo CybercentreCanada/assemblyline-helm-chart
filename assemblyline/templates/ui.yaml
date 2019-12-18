@@ -62,6 +62,78 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: internal-ui
+  labels:
+    app: assemblyline
+    section: core
+    component: internal-ui
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: internal-ui
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  sessionAffinity: ClientIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: internal-ui
+  labels:
+    app: assemblyline
+    section: core
+    component: internal-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: internal-ui
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: internal-ui
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+        - name: internal-ui
+          image: cccs/assemblyline-ui:{{ .Values.uiVersion }}
+          env:
+            - name: AL_UNSECURED_UI
+              value: "true"
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: al-config
+              mountPath: /etc/assemblyline/
+            - name: ssl-certs
+              mountPath: "/etc/internal-ssl/"
+              readOnly: true
+          ports:
+            - containerPort: 5000
+          command: ["gunicorn"]
+          args: ["--config=/usr/local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py",  "--log-level=debug", "assemblyline_ui.app:app"]
+          #"--keyfile=/etc/internal-ssl/tls.key", "--certfile=/etc/internal-ssl/tls.crt",
+      volumes:
+        - name: al-config
+          configMap:
+            name: {{ .Release.Name }}-global-config
+            items:
+              - key: config
+                path: config.yml
+        - name: ssl-certs
+          secret:
+            secretName: ui-internal-generated-cert
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: socketio
   labels:
     app: assemblyline
