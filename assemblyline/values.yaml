@@ -66,7 +66,6 @@ datastore:
           name: system-passwords
           key: datastore-password
   labels:
-    app: assemblyline
     section: core
     component: datastore
   esJavaOpts: '-Xms6g -Xmx6g'
@@ -101,7 +100,6 @@ logging-datastore:
         name: system-passwords
         key: logging-password
   labels:
-    app: assemblyline
     section: core
     component: logging-datastore
   esJavaOpts: '-Xms6g -Xmx6g'
@@ -303,7 +301,7 @@ metricbeat:
       logging:
         level: warning
         json: true
-      name: ${NODE_NAME}
+      #name: ${NODE_NAME}
 
       metricbeat.modules:
         - module: redis
