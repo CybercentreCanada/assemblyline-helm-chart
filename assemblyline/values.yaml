@@ -157,7 +157,7 @@ filebeat:
             - rename:
                 fields:
                   - from: "error"
-                    to: "message"
+                    to: "error_msg"
                 ignore_missing: true
             - script:
                 lang: javascript
