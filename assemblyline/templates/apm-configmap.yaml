@@ -10,7 +10,9 @@ data:
       host: "0.0.0.0:8200"
       kibana:
         enabled: true
-        host: "http://kibana:5601"
+        host: kibana:5601
+        path: kibana
+        protocol: http
         username: elastic
         password: {{ .Values.loggingPassword }}
 
@@ -23,6 +25,6 @@ data:
       username: elastic
       password: {{ .Values.loggingPassword }}
 
-    setup.template.settings:
-      index.number_of_shards: 1
-      index.number_of_replicas: 0
+    setup.template.settings.index:
+      number_of_shards: 1
+      number_of_replicas: 0
