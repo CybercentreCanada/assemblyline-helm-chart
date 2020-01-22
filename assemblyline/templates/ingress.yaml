@@ -42,11 +42,7 @@ spec:
               servicePort: 5000
           - path: /kibana/
             backend:
-              serviceName: al-kibana
-              servicePort: 5601
-          - path: /core-kibana/
-            backend:
-              serviceName: core-kibana
+              serviceName: kibana
               servicePort: 5601
           - path: /notebook/
             backend:
