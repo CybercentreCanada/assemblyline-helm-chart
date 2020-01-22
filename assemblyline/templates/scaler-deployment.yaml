@@ -50,6 +50,8 @@ spec:
             items:
               - key: config
                 path: config.yml
+              - key: classification
+                path: classification.yml
         - name: update-directory
           persistentVolumeClaim:
             claimName: update-directory

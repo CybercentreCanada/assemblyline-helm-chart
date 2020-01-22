@@ -44,6 +44,7 @@ spec:
             items:
               - key: config
                 path: config.yml
-
+              - key: classification
+                path: classification.yml
 {{ end }}
 

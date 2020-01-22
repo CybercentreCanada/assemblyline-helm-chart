@@ -71,6 +71,8 @@ spec:
             items:
               - key: config
                 path: config.yml
+              - key: classification
+                path: classification.yml
 ---
 apiVersion: v1
 kind: Service
@@ -140,6 +142,8 @@ spec:
             items:
               - key: config
                 path: config.yml
+              - key: classification
+                path: classification.yml
         - name: ssl-certs
           secret:
             secretName: ui-internal-generated-cert
@@ -202,3 +206,5 @@ spec:
             items:
               - key: config
                 path: config.yml
+              - key: classification
+                path: classification.yml
