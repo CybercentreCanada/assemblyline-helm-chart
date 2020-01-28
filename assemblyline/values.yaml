@@ -157,14 +157,14 @@ filebeat:
             - rename:
                 fields:
                   - from: "error"
-                    to: "error_msg"
+                    to: "error.message"
                 ignore_missing: true
             - script:
                 lang: javascript
                 id: log_level
                 source: >
                   function process(event) {
-                      var value = event.Get("level");
+                      var value = event.Get("log.level");
                       if (value === null){
                         value = "INFO"
                       }
@@ -174,7 +174,7 @@ filebeat:
                       else if (value.toLowerCase() == "err"){
                         value = "ERROR"
                       }
-                      event.Put("level", value.toUpperCase());
+                      event.Put("log.level", value.toUpperCase());
                   }
 
       processors:
