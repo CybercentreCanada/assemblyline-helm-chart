@@ -63,7 +63,7 @@ spec:
           ports:
             - containerPort: 5000
           command: ["gunicorn"]
-          args: ["--config=/usr/local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py", "assemblyline_ui.app:app"]
+          args: ["--config=/var/lib/assemblyline/.local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py", "assemblyline_ui.app:app"]
       volumes:
         - name: al-config
           configMap:
@@ -133,8 +133,7 @@ spec:
           ports:
             - containerPort: 5000
           command: ["gunicorn"]
-          args: ["--config=/usr/local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py",  "--log-level=debug", "assemblyline_ui.app:app"]
-          #"--keyfile=/etc/internal-ssl/tls.key", "--certfile=/etc/internal-ssl/tls.crt",
+          args: ["--config=/var/lib/assemblyline/.local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py",  "--log-level=debug", "assemblyline_ui.app:app"]
       volumes:
         - name: al-config
           configMap:

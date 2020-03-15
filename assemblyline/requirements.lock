@@ -17,5 +17,5 @@ dependencies:
 - name: kibana
   repository: https://helm.elastic.co/
   version: 7.6.0
-digest: sha256:6b731c62a2f34027dc1ea657d10c6d09e14cf0515d8e9c942a6431e7aa9eb67c
-generated: 2020-01-10T10:41:07.205659-05:00
+digest: sha256:16cb3cf93a8e9751bf7b44b13b543b49f5e4830f919a2a35b7a20d6122610986
+generated: 2020-03-14T20:00:56.980976914-04:00
