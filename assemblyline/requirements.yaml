@@ -3,10 +3,6 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.6.0
     alias: datastore
-  - name: elasticsearch
-    repository: https://helm.elastic.co/
-    version: 7.6.0
-    alias: logging-datastore
   - name: minio
     repository: https://kubernetes-charts.storage.googleapis.com/
     version: 2.5.18
@@ -19,7 +15,3 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.6.0
     alias: metricbeat
-  - name: kibana
-    repository: https://helm.elastic.co/
-    version: 7.6.0
-    alias: kibana
