@@ -1,8 +1,6 @@
-# Default values for assemblyline.
-
-coreVersion: '4.0.0.dev149'
-uiVersion:   '4.0.0.dev97'
-sapiVersion:   '4.0.0.dev69'
+coreVersion: '4.0.0'
+uiVersion:   '4.0.0'
+sapiVersion:   '4.0.0'
 
 storage:
   filestore: default
@@ -12,6 +10,7 @@ domain: localhost
 maxBodySize: 100M
 
 tlsSecretName: ''
+
 
 autoInstallServices:
   - apkaye
@@ -37,11 +36,9 @@ autoInstallLegacyServices:
   - yara
 
 
-serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined
-
-
 
 elasticPassword: "Ch@ngeTh!sPa33w0rd"
+loggingElasticURL: &loggingElasticURL ""
 loggingPassword: "Ch@ngeTh!sPa33w0rd"
 notebookPassword: "Ch@ngeTh!sPa33w0rd"
 filestorePassword: "Ch@ngeTh!sPa33w0rd"  # URL encoded version of the secretKey in the block below
@@ -50,7 +47,7 @@ filestore:
   fullnameOverride: "filestore"
   replicas: 1
   accessKey: "al_filestore"
-  secretKey: "Ch@ngeTh!sPa33w0rd"
+  secretKey: "Ch@ngeTh!sPa33w0rd"  # Non-URL encoded version of filestorePassword
   priorityClassName: 'al-infra'
 
 
@@ -68,51 +65,17 @@ datastore:
   labels:
     section: core
     component: datastore
-  esJavaOpts: '-Xms6g -Xmx6g'
+  esJavaOpts: '-Xms3g -Xmx3g'
   esConfig:
     elasticsearch.yml: |
       logger.level=WARN
   resources:
     requests:
       cpu: 1
-      memory: 12Gi
+      memory: 2Gi
     limits:
-      cpu: 6
-      memory: 12Gi
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: default
-    resources:
-      requests:
-        storage: 500Gi
-  priorityClassName: 'al-infra'
-
-
-logging-datastore:
-  clusterName: "logging-datastore"
-  replicas: 1
-  extraEnvs:
-  - name: ELASTIC_USERNAME
-    value: elastic
-  - name: ELASTIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: system-passwords
-        key: logging-password
-  labels:
-    section: core
-    component: logging-datastore
-  esJavaOpts: '-Xms6g -Xmx6g'
-  esConfig:
-    elasticsearch.yml: |
-      logger.level=WARN
-  resources:
-    requests:
-      cpu: 1
-      memory: 12Gi
-    limits:
-      cpu: 6
-      memory: 12Gi
+      cpu: 4
+      memory: 4Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
@@ -124,7 +87,7 @@ logging-datastore:
 filebeat:
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: 'logging-datastore-master'
+      value: *loggingElasticURL
     - name: ELASTICSEARCH_USERNAME
       value: elastic
     - name: ELASTICSEARCH_PASSWORD
@@ -235,7 +198,7 @@ filebeat:
 metricbeat:
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: 'logging-datastore-master'
+      value: *loggingElasticURL
     - name: ELASTICSEARCH_USERNAME
       value: elastic
     - name: ELASTICSEARCH_PASSWORD
@@ -384,26 +347,3 @@ metricbeat:
           }
         }
       }
-
-kibana:
-  fullnameOverride: kibana
-  elasticsearchHosts: http://logging-datastore-master:9200
-  healthCheckPath: /kibana/app/kibana
-  extraEnvs:
-    - name: SERVER_NAME
-      value: localhost
-    - name: ELASTICSEARCH_USERNAME
-      value: elastic
-    - name: ELASTICSEARCH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: system-passwords
-          key: logging-password
-    - name: SERVER_BASEPATH
-      value: /kibana
-    - name: SERVER_REWRITEBASEPATH
-      value: "true"
-    - name: LOGGING_QUIET
-      value: "true"
-  priorityClassName: al-core-priority
-
