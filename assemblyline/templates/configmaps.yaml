@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-settings
+data:
+  logging-host: {{ .Values.loggingHost }}
+  logging-username: {{ .Values.loggingUsername }}
