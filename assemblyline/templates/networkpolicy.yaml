@@ -76,8 +76,9 @@ metadata:
 spec:
   # For all pods in the service namespace
   podSelector:
-    app: assemblyline
-    section: service
+    matchLabels:
+      app: assemblyline
+      section: service
   # Allow traffic to
   egress:
   - to:
