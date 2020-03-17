@@ -12,6 +12,11 @@ maxBodySize: 100M
 
 tlsSecretName: ''
 
+loggingHost:
+loggingUsername: "elastic"
+loggingPassword:
+elasticPassword:
+
 
 autoInstallServices:
   - apkaye
@@ -21,25 +26,6 @@ autoInstallServices:
   - extract
   - virustotal-dynamic
   - virustotal-static
-
-loggingHost:
-loggingUsername: "elastic"
-loggingPassword:
-
-
-elasticPassword: "Ch@ngeTh!sPa33w0rd"
-loggingElasticURL: &loggingElasticURL ""
-loggingPassword: "Ch@ngeTh!sPa33w0rd"
-notebookPassword: "Ch@ngeTh!sPa33w0rd"
-filestorePassword: "Ch@ngeTh!sPa33w0rd"  # URL encoded version of the secretKey in the block below
-
-filestore:
-  fullnameOverride: "filestore"
-  replicas: 1
-  accessKey: "al_filestore"
-  secretKey: "Ch@ngeTh!sPa33w0rd"  # Non-URL encoded version of filestorePassword
-  priorityClassName: 'al-infra'
-
 
 datastore:
   clusterName: "datastore"
