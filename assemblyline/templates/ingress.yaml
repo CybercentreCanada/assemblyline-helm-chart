@@ -40,11 +40,11 @@ spec:
             backend:
               serviceName: ui
               servicePort: 5000
-          - path: /kibana/
-            backend:
-              serviceName: kibana
-              servicePort: 5601
-          - path: /notebook/
-            backend:
-              serviceName: notebook
-              servicePort: 8888
+#          - path: /kibana/
+#            backend:
+#              serviceName: kibana
+#              servicePort: 5601
+#          - path: /notebook/
+#            backend:
+#              serviceName: notebook
+#              servicePort: 8888
