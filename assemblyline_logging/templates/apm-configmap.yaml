@@ -10,10 +10,10 @@ data:
       host: "0.0.0.0:8200"
       kibana:
         enabled: true
-        host: kibana:5601
-        path: kibana
+        host: {{ .Values.loggingKibanaHost }}:5601
+        path: {{ .Values.loggingKibanaPath }}
         protocol: http
-        username: elastic
+        username: {{ .Values.loggingUsername }}
         password: {{ .Values.loggingPassword }}
 
     logging:
@@ -21,8 +21,8 @@ data:
       json: true
 
     output.elasticsearch:
-      hosts: ['logging-datastore-master:9200']
-      username: elastic
+      hosts: ['{{ .Values.loggingHost }}']
+      username: {{ .Values.loggingUsername }}
       password: {{ .Values.loggingPassword }}
 
     setup.template.settings.index:
