@@ -10,13 +10,15 @@ storage:
 domain: localhost
 maxBodySize: 100M
 
-tlsSecretName: ''
+tlsSecretName:
 
 loggingHost:
 loggingUsername: "elastic"
 loggingPassword:
 elasticPassword:
 
+filestore:
+filestoreCaching:
 
 autoInstallServices:
   - apkaye
