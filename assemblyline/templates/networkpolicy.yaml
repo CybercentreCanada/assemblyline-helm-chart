@@ -8,19 +8,16 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: assemblyline
       section: core
   ingress:
   - from:
     - podSelector:
         matchLabels:
-          app: assemblyline
           section: core
   egress:
   - to:
     - podSelector:
         matchLabels:
-          app: assemblyline
           section: core
 ---
 # Allow pods to access DNS
@@ -92,7 +89,6 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  namespace: {{ .Release.Name }}
   name: {{ .Release.Name }}-allow-scaler
   labels:
     app: assemblyline

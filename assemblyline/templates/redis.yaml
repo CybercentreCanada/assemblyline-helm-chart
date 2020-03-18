@@ -104,7 +104,7 @@ spec:
       name: redis-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: {{ .Values.storage.redis }}
+      storageClassName: {{ .Values.redisStorageClass }}
       resources:
         requests:
           storage: 20Gi
