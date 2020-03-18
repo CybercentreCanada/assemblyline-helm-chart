@@ -1,7 +1,7 @@
 # Default values for assemblyline.
 
 coreVersion: '4.0.0.dev191'
-uiVersion:   '4.0.0.dev135'
+uiVersion:   '4.0.0.dev136'
 sapiVersion:   '4.0.0.dev95'
 
 storage:
