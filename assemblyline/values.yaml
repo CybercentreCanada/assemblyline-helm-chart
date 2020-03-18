@@ -3,9 +3,7 @@ coreVersion: '4.0.0'
 uiVersion:   '4.0.0'
 sapiVersion:   '4.0.0'
 
-storage:
-  filestore: default
-  redis: default
+redisStorageClass: default
 
 domain: localhost
 maxBodySize: 100M
@@ -43,17 +41,17 @@ datastore:
   labels:
     section: core
     component: datastore
-  esJavaOpts: '-Xms3g -Xmx3g'
+  esJavaOpts: '-Xms4g -Xmx4g'
   esConfig:
     elasticsearch.yml: |
-      logger.level=WARN
+      logger.level: WARN
   resources:
     requests:
       cpu: 1
-      memory: 2Gi
+      memory: 5Gi
     limits:
       cpu: 4
-      memory: 4Gi
+      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default

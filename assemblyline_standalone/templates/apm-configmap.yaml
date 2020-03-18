@@ -10,20 +10,20 @@ data:
       host: "0.0.0.0:8200"
       kibana:
         enabled: true
-        host: {{ .Values.loggingKibanaHost }}:5601
-        path: {{ .Values.loggingKibanaPath }}
+        host: kibana:5601
+        path: kibana
         protocol: http
-        username: {{ .Values.loggingUsername }}
-        password: {{ .Values.loggingPassword }}
+        username: {{ .Values.assemblyline.loggingUsername }}
+        password: {{ .Values.assemblyline.loggingPassword }}
 
     logging:
       level: warning
       json: true
 
     output.elasticsearch:
-      hosts: ['{{ .Values.loggingHost }}']
-      username: {{ .Values.loggingUsername }}
-      password: {{ .Values.loggingPassword }}
+      hosts: ['{{ .Values.assemblyline.loggingHost }}']
+      username: {{ .Values.assemblyline.loggingUsername }}
+      password: {{ .Values.assemblyline.loggingPassword }}
 
     setup.template.settings.index:
       number_of_shards: 1

@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-kibana-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts: [{{ .Values.assemblyline.domain }}]
+      secretName: {{ if .Values.assemblyline.tlsSecretName }} {{.Values.assemblyline.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+  rules:
+    - host: {{ .Values.assemblyline.domain }}
+      http:
+        paths:
+          - path: /kibana/
+            backend:
+              serviceName: kibana
+              servicePort: 5601

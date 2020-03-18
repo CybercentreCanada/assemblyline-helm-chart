@@ -1,0 +1,12 @@
+dependencies:
+  - name: assemblyline
+    repository: file://../assemblyline
+    version: 4.0.0
+  - name: elasticsearch
+    repository: https://helm.elastic.co/
+    version: 7.6.0
+    alias: log-storage
+  - name: kibana
+    repository: https://helm.elastic.co/
+    version: 7.6.0
+    alias: kibana

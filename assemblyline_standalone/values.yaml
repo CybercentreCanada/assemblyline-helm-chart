@@ -1,0 +1,66 @@
+
+assemblyline:
+  loggingHost: "http://log-storage-master:9200"
+  loggingUsername: "elastic"
+  loggingPassword:
+
+kibana:
+  fullnameOverride: kibana
+  elasticsearchHosts: http://log-storage-master:9200
+  healthCheckPath: /kibana/app/kibana
+  labels:
+    section: core
+  service:
+    labels:
+      section: core
+  extraEnvs:
+    - name: SERVER_NAME
+      value: localhost
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: system-passwords
+          key: logging-password
+    - name: SERVER_BASEPATH
+      value: /kibana
+    - name: SERVER_REWRITEBASEPATH
+      value: "true"
+    - name: LOGGING_QUIET
+      value: "true"
+  priorityClassName: al-core-priority
+
+
+log-storage:
+  clusterName: "log-storage"
+  replicas: 1
+  extraEnvs:
+  - name: ELASTIC_USERNAME
+    value: elastic
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: system-passwords
+        key: logging-password
+  labels:
+    section: core
+    component: log-storage
+  esJavaOpts: '-Xms4g -Xmx4g'
+  esConfig:
+    elasticsearch.yml: |
+      logger.level: WARN
+  resources:
+    requests:
+      cpu: 1
+      memory: 5Gi
+    limits:
+      cpu: 6
+      memory: 6Gi
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: default
+    resources:
+      requests:
+        storage: 500Gi
+  priorityClassName: 'al-infra'
