@@ -59,48 +59,59 @@ data:
   classification: |
     enforce: true
     groups:
-    - aliases: [DEPTS, ANY]
-      description: Users of department 1.
-      name: DEPARTMENT 1
-      short_name: D1
-      solitary_display_name: ANY
-    - aliases: [DEPTS]
-      description: Users of department 2.
-      name: DEPARTMENT 2
-      short_name: D2
+    - aliases: []
+      auto_select: true
+      description: Employees of CSE
+      name: CSE
+      short_name: CSE
     levels:
-    - aliases: []
-      css: {banner: alert-default, label: label-default, text: text-muted}
-      description: No restrictions applied to data.
+    - aliases:
+      - UNRESTRICTED
+      css:
+        banner: alert-default
+        label: label-default
+        text: text-muted
+      description: Data is not classified
       lvl: 100
-      name: UNRESTRICTED
+      name: UNCLASSIFIED
       short_name: U
-    - aliases: [CLASSIFIED, DO NOT LOOK]
-      css: {banner: alert-info, label: label-primary, text: text-primary}
-      description: Data restricted to a certain few...
-      lvl: 200
-      name: RESTRICTED
-      short_name: R
+    - aliases: []
+      css:
+        banner: alert-success
+        label: label-success
+        text: text-success
+      description: Recipients may share TLP:GREEN information with peers and partner organizations
+        within their sector or community, but not via publicly accessible channels. Information
+        in this category can be circulated widely within a particular community. TLP:GREEN
+        information may not be released outside of the community.
+      lvl: 110
+      name: TLP:GREEN
+      short_name: TLP:G
+    - aliases: []
+      css:
+        banner: alert-warning2
+        label: label-warning
+        text: text-warning2
+      description: Recipients may only share TLP:AMBER information with members of their
+        own organization and with clients or customers who need to know the information
+        to protect themselves or prevent further harm.
+      lvl: 120
+      name: TLP:AMBER
+      short_name: TLP:A
     required:
-    - aliases: []
-      description: Gotta be a super user to see this!
-      name: SUPER USER
-      require_lvl: 200
-      short_name: SU
-    - aliases: [GOD]
-      description: Gotta be an administrator to see this!
-      name: ADMIN
-      short_name: ADM
-    restricted: R//GOD//ANY
+      - aliases: []
+        description: Produced using a commercial tool with limited distribution
+        name: COMMERCIAL
+        short_name: CMR
     subgroups:
-    - aliases: []
-      description: Users of group 1 (which are part of deparment 1).
-      limited_to_group: D1
-      name: GROUP 1
-      require_group: D1
-      short_name: G1
-    - aliases: []
-      description: Users of group 2 (can be part of any department).
-      name: GROUP 2
-      short_name: G2
+      - aliases: []
+        description: Member of Incident Response team
+        name: IR_TEAM
+        short_name: IR
+      - aliases: []
+        description: Member of the Canadian Centre for Cyber Security
+        require_group: CSE
+        name: CCCS
+        short_name: CCCS
+    restricted: TLP:A
     unrestricted: U
