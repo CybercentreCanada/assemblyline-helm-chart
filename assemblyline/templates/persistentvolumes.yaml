@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: update-directory
+  labels:
+    section: core
+spec:
+  resources:
+    requests:
+      storage: 200Gi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ .Values.updateStorageClass }}

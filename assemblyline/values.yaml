@@ -4,6 +4,7 @@ uiVersion:   '4.0.0'
 sapiVersion:   '4.0.0'
 
 redisStorageClass: default
+updateStorageClass: default
 
 domain: localhost
 maxBodySize: 100M
@@ -61,6 +62,9 @@ datastore:
   priorityClassName: 'al-infra'
 
 filebeat:
+  labels:
+    section: core
+    component: filebeat
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       valueFrom:
@@ -133,7 +137,7 @@ filebeat:
                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
 
       output.elasticsearch:
-        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 
