@@ -182,6 +182,9 @@ filebeat:
       }
 
 metricbeat:
+  labels:
+    section: core
+    component: metricbeat
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       valueFrom:
@@ -219,7 +222,7 @@ metricbeat:
             - uptime
             - socket_summary
             - socket
-          processes: ['.*']
+          processes: [".*"]
           cpu.metrics:  ["percentages"]
           core.metrics: ["percentages"]
           process.include_top_n:
@@ -260,7 +263,7 @@ metricbeat:
         - add_cloud_metadata: ~
 
       output.elasticsearch:
-        hosts: [${ELASTICSEARCH_HOSTS}]
+        hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 
@@ -295,7 +298,7 @@ metricbeat:
         - add_cloud_metadata: ~
 
       output.elasticsearch:
-        hosts: [${ELASTICSEARCH_HOSTS}]
+        hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 

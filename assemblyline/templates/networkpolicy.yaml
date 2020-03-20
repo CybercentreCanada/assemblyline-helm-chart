@@ -103,3 +103,40 @@ spec:
   egress:
   - to: []
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-allow-state-metrics
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kube-state-metrics
+  egress:
+  - to: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-allow-metricbeat-daemon
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Release.Name }}-metricbeat-metrics
+  egress:
+  - to: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-metricbeat-to-core
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: {{ .Release.Name }}-metricbeat-metrics
