@@ -1,8 +1,8 @@
 # Default values for assemblyline.
 
-coreVersion: '4.0.0.dev192'
-uiVersion:   '4.0.0.dev137'
-sapiVersion:   '4.0.0.dev96'
+coreVersion: '4.0.0.dev193'
+sapiVersion:   '4.0.0.dev97'
+uiVersion:   '4.0.0.dev138'
 
 storage:
   filestore: default
