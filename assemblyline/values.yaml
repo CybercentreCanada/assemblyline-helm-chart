@@ -9,6 +9,7 @@ updateStorageClass: default
 domain: localhost
 
 tlsSecretName:
+ingressAnnotations: {}
 
 loggingHost:
 loggingUsername: "elastic"
