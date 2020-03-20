@@ -37,6 +37,17 @@ spec:
             limits:
               memory: 1Gi
               cpu: 1
+          env:
+          - name: LOGGING_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: logging-password
+          - name: ELASTIC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: datastore-password
       volumes:
         - name: al-config
           configMap:
