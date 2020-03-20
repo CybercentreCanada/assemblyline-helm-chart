@@ -7,7 +7,6 @@ redisStorageClass: default
 updateStorageClass: default
 
 domain: localhost
-maxBodySize: 100M
 
 tlsSecretName:
 

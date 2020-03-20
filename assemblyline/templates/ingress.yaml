@@ -20,10 +20,9 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    # Configuration for if we are using nginx ingress (harmless otherwise)
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize }}
-    cert-manager.io/issuer: "letsencrypt-prod"
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   tls:
     - hosts: [{{ .Values.domain }}]
@@ -40,11 +39,3 @@ spec:
             backend:
               serviceName: ui
               servicePort: 5000
-#          - path: /kibana/
-#            backend:
-#              serviceName: kibana
-#              servicePort: 5601
-#          - path: /notebook/
-#            backend:
-#              serviceName: notebook
-#              servicePort: 8888
