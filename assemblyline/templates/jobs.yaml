@@ -1,43 +1,27 @@
-{{ define "assemblyline.coreService" }}
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: batch/v1
+kind: Job
 metadata:
-  name: {{ .component }}
+  name: bootstrap-admin-account
   labels:
-    app: assemblyline
     section: core
-    component: {{ .component }}
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: assemblyline
-      section: core
-      component: {{ .component }}
   template:
     metadata:
       labels:
         app: assemblyline
         section: core
-        component: {{ .component }}
+        component: bootstrap
     spec:
-      priorityClassName: al-core-priority
       containers:
-        - name: {{ .component }}
-          image: cccs/assemblyline-core:{{ .Values.coreVersion }}
-          imagePullPolicy: Always
-          command: ['python', '-m', '{{ .command }}']
-          volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
-          resources:
-            requests:
-              memory: 128Mi
-              cpu: 0.05
-            limits:
-              memory: 1Gi
-              cpu: 1
-          env:
+      - name: pi
+        image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+        command: ["python",  "/mount/bootstrap.py"]
+        env:
+          - name: INITIAL_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: initial-admin-password
           - name: LOGGING_PASSWORD
             valueFrom:
               secretKeyRef:
@@ -53,6 +37,11 @@ spec:
               secretKeyRef:
                 name: assemblyline-system-passwords
                 key: filestore-password
+        volumeMounts:
+          - name: script-volume
+            mountPath: /mount
+          - name: al-config
+            mountPath: /etc/assemblyline/
       volumes:
         - name: al-config
           configMap:
@@ -62,5 +51,11 @@ spec:
                 path: config.yml
               - key: classification
                 path: classification.yml
-{{ end }}
-
+        - name: script-volume
+          configMap:
+            name: {{ .Release.Name }}-bootstrap-script
+            items:
+              - key: bootstrap.py
+                path: bootstrap.py
+      restartPolicy: Never
+  backoffLimit: 4
