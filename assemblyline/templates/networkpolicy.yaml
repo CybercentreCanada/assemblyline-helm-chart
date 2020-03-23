@@ -9,16 +9,15 @@ spec:
   podSelector:
     matchLabels:
       section: core
+  # Connections may come in from other core pods
   ingress:
   - from:
     - podSelector:
         matchLabels:
           section: core
+  # Connections may go out to anywhere
   egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          section: core
+  - to: []
 ---
 # Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
@@ -55,7 +54,6 @@ spec:
   # For the matched services
   podSelector:
     matchLabels:
-      app: assemblyline
       section: core
     matchExpressions:
     - key: component
@@ -74,34 +72,14 @@ spec:
   # For all pods in the service namespace
   podSelector:
     matchLabels:
-      app: assemblyline
       section: service
   # Allow traffic to
   egress:
   - to:
     - podSelector:
         matchLabels:
-          app: assemblyline
           section: core
           component: service-server
----
-# Let the scaler do whatever it wants
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: {{ .Release.Name }}-allow-scaler
-  labels:
-    app: assemblyline
-spec:
-  # For the scaler
-  podSelector:
-    matchLabels:
-      app: assemblyline
-      section: core
-      component: scaler
-  # Allow egress to whatever
-  egress:
-  - to: []
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
