@@ -39,10 +39,10 @@ data:
             - name: 'SERVICE_API_HOST'
               value: 'http://service-server:5003'
     datastore:
-      hosts: ["http://elastic:${DATASTORE_PASSWORD}@datastore-master:9200"]
+      hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
     filestore:
-      cache: [{{ .Values.filestoreCaching }}]
-      storage: [{{ .Values.filestore }}]
+      cache: ["{{ .Values.filestoreCaching }}"]
+      storage: ["{{ .Values.filestore }}"]
     logging:
       log_to_console: true
       log_to_file: false
