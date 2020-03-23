@@ -31,6 +31,8 @@ spec:
               mountPath: /etc/assemblyline/
           ports:
             - containerPort: 5003
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
         - name: al-config
           configMap:
