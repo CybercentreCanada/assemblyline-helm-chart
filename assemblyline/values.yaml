@@ -2,7 +2,7 @@
 
 coreVersion: '4.0.0.dev195'
 sapiVersion:   '4.0.0.dev99'
-uiVersion:   '4.0.0.dev143'
+uiVersion:   '4.0.0.dev144'
 
 storage:
   filestore: default
