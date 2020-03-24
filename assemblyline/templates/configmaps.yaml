@@ -13,42 +13,7 @@ metadata:
   name: {{ .Release.Name }}-global-config
 data:
   config: |
-    core:
-      alerter:
-        delay: 0
-      metrics:
-        elasticsearch:
-          hosts: ["http://{{ .Values.loggingUsername }}:${LOGGING_PASSWORD}@{{ .Values.loggingHost }}"]
-        redis:
-          host: redis-volatile
-          port: 6379
-      redis:
-        nonpersistent:
-          host: redis-volatile
-          port: 6379
-        persistent:
-          host: redis-persistent
-          port: 6379
-      scaler:
-        service_defaults:
-          backlog: 10
-          min_instances: 1
-          growth: 60
-          shrink: 20
-          environment:
-            - name: 'SERVICE_API_HOST'
-              value: 'http://service-server:5003'
-    datastore:
-      hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
-    filestore:
-      cache: ["{{ .Values.filestoreCaching }}"]
-      storage: ["{{ .Values.filestore }}"]
-    logging:
-      log_to_console: true
-      log_to_file: false
-      log_to_syslog: false
-    ui:
-      fqdn: {{ .Values.domain }}
+{{ .Values.configuration | toYaml | indent 4 }}
   classification: |
     enforce: true
     groups:

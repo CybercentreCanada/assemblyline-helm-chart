@@ -6,16 +6,11 @@ sapiVersion:   '4.0.0'
 redisStorageClass: default
 updateStorageClass: default
 
-domain: localhost
-
-tlsSecretName:
-ingressAnnotations: {}
-
 loggingHost:
 loggingUsername: "elastic"
 
-filestore:
-filestoreCaching:
+tlsSecretName:
+ingressAnnotations: {}
 
 autoInstallServices:
   - apkaye
@@ -25,6 +20,45 @@ autoInstallServices:
   - extract
   - virustotal-dynamic
   - virustotal-static
+
+configuration:
+  core:
+    alerter:
+      delay: 0
+    metrics:
+      elasticsearch:
+        hosts: ["http://${LOGGING_USERNAME}:${LOGGING_PASSWORD}@${LOGGING_HOST}"]
+      redis:
+        host: redis-volatile
+        port: 6379
+    redis:
+      nonpersistent:
+        host: redis-volatile
+        port: 6379
+      persistent:
+        host: redis-persistent
+        port: 6379
+    scaler:
+      service_defaults:
+        backlog: 10
+        min_instances: 1
+        growth: 60
+        shrink: 20
+        environment:
+          - name: 'SERVICE_API_HOST'
+            value: 'http://service-server:5003'
+  datastore:
+    hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
+  filestore:
+    cache:
+    storage:
+  logging:
+    log_to_console: true
+    log_to_file: false
+    log_to_syslog: false
+  ui:
+    fqdn: "localhost"
+
 
 datastore:
   clusterName: "datastore"

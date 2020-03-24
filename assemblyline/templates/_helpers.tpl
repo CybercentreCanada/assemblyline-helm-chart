@@ -4,6 +4,16 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: logging-password
+- name: LOGGING_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: system-settings
+      key: logging-host
+- name: LOGGING_USERNAME
+  valueFrom:
+    configMapKeyRef:
+      name: system-settings
+      key: logging-username
 - name: ELASTIC_PASSWORD
   valueFrom:
     secretKeyRef:
