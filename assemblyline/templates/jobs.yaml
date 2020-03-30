@@ -1,3 +1,4 @@
+{{ if .Values.createAdminAccount }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -59,3 +60,4 @@ spec:
                 path: bootstrap.py
       restartPolicy: Never
   backoffLimit: 4
+{{ end }}

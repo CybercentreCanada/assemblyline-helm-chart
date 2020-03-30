@@ -39,5 +39,7 @@ Others have a default, but are likely to be changed:
 | `loggingUsername`                           | The username used to connect to the log server                                                            | `elastic`
 | `tlsSecretName`                             | The secret which will be given to the ingress for TLS termination <br> (If empty a self signed cert will be generated) | 
 | `ingressAnnotations`                        | Annotations to add to the ingress                                       | `{}`
-
+| `coreEnv`                                   | Additional environment variables to add to core containers              | `[]`
+| `createAdminAccount`                        | Create an admin account with password drawn from the password secret    | `false`
+| `ingressHost`                               | Use this instead of `configuration.ui.fqdn` for the ingress host       | 
 

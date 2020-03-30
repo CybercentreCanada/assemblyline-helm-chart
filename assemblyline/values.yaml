@@ -5,6 +5,7 @@ sapiVersion:   '4.0.0'
 
 redisStorageClass: default
 updateStorageClass: default
+createAdminAccount: false
 
 loggingHost:
 loggingUsername: "elastic"
