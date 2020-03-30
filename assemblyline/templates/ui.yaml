@@ -75,6 +75,8 @@ spec:
                 path: config.yml
               - key: classification
                 path: classification.yml
+              - key: tag_whitelist
+                path: tag_whitelist.yml
 ---
 apiVersion: v1
 kind: Service
@@ -146,6 +148,8 @@ spec:
                 path: config.yml
               - key: classification
                 path: classification.yml
+              - key: tag_whitelist
+                path: tag_whitelist.yml
         - name: ssl-certs
           secret:
             secretName: ui-internal-generated-cert
@@ -212,3 +216,5 @@ spec:
                 path: config.yml
               - key: classification
                 path: classification.yml
+              - key: tag_whitelist
+                path: tag_whitelist.yml

@@ -79,5 +79,7 @@ spec:
                 path: config.yml
               - key: classification
                 path: classification.yml
+              - key: tag_whitelist
+                path: tag_whitelist.yml
 {{ end }}
 
