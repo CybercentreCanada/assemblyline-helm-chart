@@ -11,6 +11,7 @@ loggingUsername: "elastic"
 
 tlsSecretName:
 ingressAnnotations: {}
+ingressHost:
 
 autoInstallServices:
   - apkaye

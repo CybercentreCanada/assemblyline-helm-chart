@@ -1,4 +1,4 @@
-{{ $server := genSelfSignedCert .Values.domain nil nil 365 }}
+{{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil nil 365 }}
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/tls
