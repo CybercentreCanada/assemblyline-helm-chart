@@ -24,6 +24,9 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: filestore-password
+{{ if .Values.coreEnv }}
+{{- .Values.coreEnv | toYaml -}}
+{{ end }}
 {{ end }}
 ---
 {{ define "assemblyline.coreService" }}

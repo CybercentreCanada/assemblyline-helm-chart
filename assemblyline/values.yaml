@@ -21,6 +21,8 @@ autoInstallServices:
   - virustotal-dynamic
   - virustotal-static
 
+coreEnv: []
+
 configuration:
   core:
     alerter:
