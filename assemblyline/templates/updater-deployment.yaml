@@ -33,6 +33,7 @@ spec:
             - name: update-directory
               mountPath: /mount/update_root/
           env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
               value: {{ .Release.Name }}-global-config
             - name: NAMESPACE

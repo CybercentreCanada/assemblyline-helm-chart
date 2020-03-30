@@ -4,26 +4,26 @@ metadata:
   name: apm
   labels:
     app: assemblyline
-    section: logging
+    section: core
     component: apm
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: assemblyline
-      section: logging
+      section: core
       component: apm
   template:
     metadata:
       labels:
         app: assemblyline
-        section: logging
+        section: core
         component: apm
     spec:
       priorityClassName: al-core-priority
       containers:
         - name: apm
-          image: docker.elastic.co/apm/apm-server:7.4.1
+          image: docker.elastic.co/apm/apm-server:7.6.0
 #          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200

@@ -1,17 +1,18 @@
-# Default values for assemblyline.
 
-coreVersion: '4.0.0.dev198'
-sapiVersion:   '4.0.0.dev102'
-uiVersion:   '4.0.0.dev152'
+coreVersion: '4.0.0'
+uiVersion:   '4.0.0'
+sapiVersion:   '4.0.0'
 
-storage:
-  filestore: default
-  redis: default
+redisStorageClass: default
+updateStorageClass: default
+createAdminAccount: false
 
-domain: localhost
-maxBodySize: 100M
+loggingHost:
+loggingUsername: "elastic"
 
-tlsSecretName: ''
+tlsSecretName:
+ingressAnnotations: {}
+ingressHost:
 
 autoInstallServices:
   - apkaye
@@ -22,36 +23,45 @@ autoInstallServices:
   - virustotal-dynamic
   - virustotal-static
 
-autoInstallLegacyServices:
-  - pdfid
-  - peepdf
-  - unpacker
-  - cleaver
-  - espresso
-  - frankenstrings
-  - iparse
-  - pefile
-  - pixaxe
-  - swiffer
-  - torrentslicer
-  - yara
+coreEnv: []
 
-
-serviceNamespace: null  # Will be {{ .Release.Name }}-services if not defined
-
-
-
-elasticPassword: "Ch@ngeTh!sPa33w0rd"
-loggingPassword: "Ch@ngeTh!sPa33w0rd"
-notebookPassword: "Ch@ngeTh!sPa33w0rd"
-filestorePassword: "Ch@ngeTh!sPa33w0rd"  # URL encoded version of the secretKey in the block below
-
-filestore:
-  fullnameOverride: "filestore"
-  replicas: 1
-  accessKey: "al_filestore"
-  secretKey: "Ch@ngeTh!sPa33w0rd"
-  priorityClassName: 'al-infra'
+configuration:
+  core:
+    alerter:
+      delay: 0
+    metrics:
+      elasticsearch:
+        hosts: ["http://${LOGGING_USERNAME}:${LOGGING_PASSWORD}@${LOGGING_HOST}"]
+      redis:
+        host: redis-volatile
+        port: 6379
+    redis:
+      nonpersistent:
+        host: redis-volatile
+        port: 6379
+      persistent:
+        host: redis-persistent
+        port: 6379
+    scaler:
+      service_defaults:
+        backlog: 10
+        min_instances: 1
+        growth: 60
+        shrink: 20
+        environment:
+          - name: 'SERVICE_API_HOST'
+            value: 'http://service-server:5003'
+  datastore:
+    hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
+  filestore:
+    cache:
+    storage:
+  logging:
+    log_to_console: true
+    log_to_file: false
+    log_to_syslog: false
+  ui:
+    fqdn: "localhost"
 
 
 datastore:
@@ -63,56 +73,22 @@ datastore:
     - name: ELASTIC_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: system-passwords
+          name: assemblyline-system-passwords
           key: datastore-password
   labels:
     section: core
     component: datastore
-  esJavaOpts: '-Xms6g -Xmx6g'
+  esJavaOpts: '-Xms4g -Xmx4g'
   esConfig:
     elasticsearch.yml: |
-      logger.level=WARN
+      logger.level: WARN
   resources:
     requests:
       cpu: 1
-      memory: 12Gi
+      memory: 5Gi
     limits:
-      cpu: 6
-      memory: 12Gi
-  volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
-    storageClassName: default
-    resources:
-      requests:
-        storage: 500Gi
-  priorityClassName: 'al-infra'
-
-
-logging-datastore:
-  clusterName: "logging-datastore"
-  replicas: 1
-  extraEnvs:
-  - name: ELASTIC_USERNAME
-    value: elastic
-  - name: ELASTIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: system-passwords
-        key: logging-password
-  labels:
-    section: core
-    component: logging-datastore
-  esJavaOpts: '-Xms6g -Xmx6g'
-  esConfig:
-    elasticsearch.yml: |
-      logger.level=WARN
-  resources:
-    requests:
-      cpu: 1
-      memory: 12Gi
-    limits:
-      cpu: 6
-      memory: 12Gi
+      cpu: 4
+      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
@@ -122,15 +98,24 @@ logging-datastore:
   priorityClassName: 'al-infra'
 
 filebeat:
+  labels:
+    section: core
+    component: filebeat
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: 'logging-datastore-master'
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-host
     - name: ELASTICSEARCH_USERNAME
-      value: elastic
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-username
     - name: ELASTICSEARCH_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: system-passwords
+          name: assemblyline-system-passwords
           key: logging-password
     - name: NODE_NAME
       valueFrom:
@@ -188,7 +173,7 @@ filebeat:
                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
 
       output.elasticsearch:
-        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}:${ELASTICSEARCH_PORT:9200}']
+        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 
@@ -233,16 +218,29 @@ filebeat:
       }
 
 metricbeat:
+  labels:
+    section: core
+    component: metricbeat
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
-      value: 'logging-datastore-master'
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-host
     - name: ELASTICSEARCH_USERNAME
-      value: elastic
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-username
     - name: ELASTICSEARCH_PASSWORD
       valueFrom:
         secretKeyRef:
-          name: system-passwords
+          name: assemblyline-system-passwords
           key: logging-password
+    - name: NODE_NAME
+      valueFrom:
+        fieldRef:
+          fieldPath: spec.nodeName
   metricbeatConfig:
     # Configuration on the daemonset
     metricbeat.yml: |
@@ -264,7 +262,7 @@ metricbeat:
             - uptime
             - socket_summary
             - socket
-          processes: ['.*']
+          processes: [".*"]
           cpu.metrics:  ["percentages"]
           core.metrics: ["percentages"]
           process.include_top_n:
@@ -305,7 +303,7 @@ metricbeat:
         - add_cloud_metadata: ~
 
       output.elasticsearch:
-        hosts: ['logging-datastore-master:9200']
+        hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 
@@ -340,7 +338,7 @@ metricbeat:
         - add_cloud_metadata: ~
 
       output.elasticsearch:
-        hosts: ["logging-datastore-master:9200"]
+        hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
 
@@ -384,26 +382,3 @@ metricbeat:
           }
         }
       }
-
-kibana:
-  fullnameOverride: kibana
-  elasticsearchHosts: http://logging-datastore-master:9200
-  healthCheckPath: /kibana/app/kibana
-  extraEnvs:
-    - name: SERVER_NAME
-      value: localhost
-    - name: ELASTICSEARCH_USERNAME
-      value: elastic
-    - name: ELASTICSEARCH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: system-passwords
-          key: logging-password
-    - name: SERVER_BASEPATH
-      value: /kibana
-    - name: SERVER_REWRITEBASEPATH
-      value: "true"
-    - name: LOGGING_QUIET
-      value: "true"
-  priorityClassName: al-core-priority
-

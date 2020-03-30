@@ -1,7 +1,7 @@
 {{- if not .Values.tlsSecretName }}
 #  {{ $ca := genCA "svc-cat-ca" 3650 }}
 #  {{ $cn := .Values.domain }}
-  {{ $server := genSelfSignedCert .Values.domain nil nil 365 }}
+  {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil nil 365 }}
 
 apiVersion: v1
 kind: Secret
@@ -20,16 +20,15 @@ kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
   annotations:
-    kubernetes.io/ingress.class: "nginx"
-    # Configuration for if we are using nginx ingress (harmless otherwise)
-    nginx.ingress.kubernetes.io/proxy-body-size: {{ .Values.maxBodySize }}
-    cert-manager.io/issuer: "letsencrypt-prod"
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   tls:
-    - hosts: [{{ .Values.domain }}]
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
       secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
   rules:
-    - host: {{ .Values.domain }}
+    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn }} {{end}}
       http:
         paths:
           - path: /socket.io/
@@ -40,11 +39,3 @@ spec:
             backend:
               serviceName: ui
               servicePort: 5000
-          - path: /kibana/
-            backend:
-              serviceName: kibana
-              servicePort: 5601
-          - path: /notebook/
-            backend:
-              serviceName: notebook
-              servicePort: 8888

@@ -8,20 +8,16 @@ metadata:
 spec:
   podSelector:
     matchLabels:
-      app: assemblyline
       section: core
+  # Connections may come in from other core pods
   ingress:
   - from:
     - podSelector:
         matchLabels:
-          app: assemblyline
           section: core
+  # Connections may go out to anywhere
   egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline
-          section: core
+  - to: []
 ---
 # Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
@@ -58,7 +54,6 @@ spec:
   # For the matched services
   podSelector:
     matchLabels:
-      app: assemblyline
       section: core
     matchExpressions:
     - key: component
@@ -76,33 +71,50 @@ metadata:
 spec:
   # For all pods in the service namespace
   podSelector:
-    app: assemblyline
-    section: service
+    matchLabels:
+      section: service
   # Allow traffic to
   egress:
   - to:
     - podSelector:
         matchLabels:
-          app: assemblyline
           section: core
           component: service-server
 ---
-# Let the scaler do whatever it wants
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  namespace: {{ .Release.Name }}
-  name: {{ .Release.Name }}-allow-scaler
-  labels:
-    app: assemblyline
+  name: {{ .Release.Name }}-allow-state-metrics
 spec:
-  # For the scaler
   podSelector:
     matchLabels:
-      app: assemblyline
-      section: core
-      component: scaler
-  # Allow egress to whatever
+      app.kubernetes.io/name: kube-state-metrics
   egress:
   - to: []
 ---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ .Release.Name }}-allow-metricbeat-daemon
+spec:
+  podSelector:
+    matchLabels:
+      app: {{ .Release.Name }}-metricbeat-metrics
+  egress:
+  - to: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-metricbeat-to-core
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: {{ .Release.Name }}-metricbeat-metrics

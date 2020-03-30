@@ -13,17 +13,17 @@ data:
         host: kibana:5601
         path: kibana
         protocol: http
-        username: elastic
-        password: {{ .Values.loggingPassword }}
+        username: {{ .Values.assemblyline.loggingUsername }}
+        password: {{ .Values.assemblyline.loggingPassword }}
 
     logging:
       level: warning
       json: true
 
     output.elasticsearch:
-      hosts: ['logging-datastore-master:9200']
-      username: elastic
-      password: {{ .Values.loggingPassword }}
+      hosts: ['{{ .Values.assemblyline.loggingHost }}']
+      username: {{ .Values.assemblyline.loggingUsername }}
+      password: {{ .Values.assemblyline.loggingPassword }}
 
     setup.template.settings.index:
       number_of_shards: 1

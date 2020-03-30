@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: system-settings
+data:
+  logging-host: {{ .Values.loggingHost }}
+  logging-username: {{ .Values.loggingUsername }}
+---
+# The assemblyline config that will be projected into all the assemblyline pods
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-global-config
+data:
+  config: |
+{{ .Values.configuration | toYaml | indent 4 }}
+  classification: |
+    enforce: true
+    groups:
+    - aliases: [DEPTS, ANY]
+      description: Users of department 1.
+      name: DEPARTMENT 1
+      short_name: D1
+      solitary_display_name: ANY
+    - aliases: [DEPTS]
+      description: Users of department 2.
+      name: DEPARTMENT 2
+      short_name: D2
+    levels:
+    - aliases: []
+      css: {banner: alert-default, label: label-default, text: text-muted}
+      description: No restrictions applied to data.
+      lvl: 100
+      name: UNRESTRICTED
+      short_name: U
+    - aliases: [CLASSIFIED, DO NOT LOOK]
+      css: {banner: alert-info, label: label-primary, text: text-primary}
+      description: Data restricted to a certain few...
+      lvl: 200
+      name: RESTRICTED
+      short_name: R
+    required:
+    - aliases: []
+      description: Gotta be a super user to see this!
+      name: SUPER USER
+      require_lvl: 200
+      short_name: SU
+    - aliases: [GOD]
+      description: Gotta be an administrator to see this!
+      name: ADMIN
+      short_name: ADM
+    restricted: R//GOD//ANY
+    subgroups:
+    - aliases: []
+      description: Users of group 1 (which are part of deparment 1).
+      limited_to_group: D1
+      name: GROUP 1
+      require_group: D1
+      short_name: G1
+    - aliases: []
+      description: Users of group 2 (can be part of any department).
+      name: GROUP 2
+      short_name: G2
+    unrestricted: U
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-bootstrap-script
+data:
+  bootstrap.py: |
+    from assemblyline.odm.models.user_settings import UserSettings
+    from assemblyline.common.security import get_password_hash
+    from assemblyline.odm.models.user import User
+    from assemblyline.common import forge
+    import os
+
+    ADMIN_USER = 'admin'
+    INITIAL_ADMIN_PASSWORD = os.environ['INITIAL_ADMIN_PASSWORD']
+
+    if __name__ == '__main__':
+        ds = forge.get_datastore()
+        if not ds.user.get_if_exists(ADMIN_USER):
+            user_data = User({
+                "agrees_with_tos": "NOW",
+                "classification": "RESTRICTED",
+                "name": "Admin user",
+                "password": get_password_hash(INITIAL_ADMIN_PASSWORD),
+                "uname": ADMIN_USER,
+                "type": [ADMIN_USER, "user", "signature_importer"]})
+            ds.user.save(ADMIN_USER, user_data)
+            ds.user_settings.save(ADMIN_USER, UserSettings())
+            print("Initial user setup finished.")
+        else:
+            print(f"User {ADMIN_USER} already found, system is already setup.")

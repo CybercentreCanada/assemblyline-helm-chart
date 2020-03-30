@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-kibana-ingress
+  annotations:
+    {{- range $key, $value := .Values.assemblyline.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+spec:
+  tls:
+    - hosts: [{{ .Values.assemblyline.domain }}]
+      secretName: {{ if .Values.assemblyline.tlsSecretName }} {{.Values.assemblyline.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+  rules:
+    - host: {{ .Values.assemblyline.domain }}
+      http:
+        paths:
+          - path: /kibana/
+            backend:
+              serviceName: kibana
+              servicePort: 5601

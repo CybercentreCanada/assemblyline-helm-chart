@@ -1,0 +1,63 @@
+{{ if .Values.createAdminAccount }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: bootstrap-admin-account
+  labels:
+    section: core
+spec:
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: bootstrap
+    spec:
+      containers:
+      - name: pi
+        image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+        command: ["python",  "/mount/bootstrap.py"]
+        env:
+          - name: INITIAL_ADMIN_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: initial-admin-password
+          - name: LOGGING_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: logging-password
+          - name: ELASTIC_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: datastore-password
+          - name: FILESTORE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: assemblyline-system-passwords
+                key: filestore-password
+        volumeMounts:
+          - name: script-volume
+            mountPath: /mount
+          - name: al-config
+            mountPath: /etc/assemblyline/
+      volumes:
+        - name: al-config
+          configMap:
+            name: {{ .Release.Name }}-global-config
+            items:
+              - key: config
+                path: config.yml
+              - key: classification
+                path: classification.yml
+        - name: script-volume
+          configMap:
+            name: {{ .Release.Name }}-bootstrap-script
+            items:
+              - key: bootstrap.py
+                path: bootstrap.py
+      restartPolicy: Never
+  backoffLimit: 4
+{{ end }}

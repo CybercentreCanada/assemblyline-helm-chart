@@ -4,13 +4,13 @@ metadata:
   name: apm
   labels:
     app: assemblyline
-    section: logging
+    section: core
     component: apm
 spec:
   clusterIP: None
   selector:
     app: assemblyline
-    section: logging
+    section: core
     component: apm
   ports:
   - protocol: TCP
