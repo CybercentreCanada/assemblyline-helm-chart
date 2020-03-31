@@ -33,9 +33,6 @@
 - name: al-config
   mountPath: /etc/assemblyline/config.yml
   subPath: config
-- name: al-config
-  mountPath: /etc/assemblyline/classification.yml
-  subPath: classification
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
