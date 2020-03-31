@@ -31,7 +31,11 @@
 ---
 {{ define "assemblyline.coreMounts" }}
 - name: al-config
-  mountPath: /etc/assemblyline/
+  mountPath: /etc/assemblyline/config.yml
+  subPath: config
+- name: al-config
+  mountPath: /etc/assemblyline/classification.yml
+  subPath: classification
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
@@ -41,11 +45,6 @@
 - name: al-config
   configMap:
     name: {{ .Release.Name }}-global-config
-    items:
-      - key: config
-        path: config.yml
-      - key: classification
-        path: classification.yml
 {{ if .Values.coreVolumes }}
 {{- .Values.coreVolumes | toYaml -}}
 {{ end }}
