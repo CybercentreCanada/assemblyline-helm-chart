@@ -29,6 +29,28 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.coreMounts" }}
+- name: al-config
+  mountPath: /etc/assemblyline/
+{{ if .Values.coreMounts }}
+{{- .Values.coreMounts | toYaml -}}
+{{ end }}
+{{ end }}
+---
+{{ define "assemblyline.coreVolumes" }}
+- name: al-config
+  configMap:
+    name: {{ .Release.Name }}-global-config
+    items:
+      - key: config
+        path: config.yml
+      - key: classification
+        path: classification.yml
+{{ if .Values.coreVolumes }}
+{{- .Values.coreVolumes | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreService" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -59,8 +81,7 @@ spec:
           imagePullPolicy: Always
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
             requests:
               memory: 128Mi
@@ -71,13 +92,6 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{ end }}
 

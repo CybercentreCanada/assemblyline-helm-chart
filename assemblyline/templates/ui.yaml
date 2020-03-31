@@ -58,8 +58,7 @@ spec:
           image: cccs/assemblyline-ui:{{ .Values.uiVersion }}
           imagePullPolicy: Always
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5000
           command: ["gunicorn"]
@@ -67,14 +66,7 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
 apiVersion: v1
 kind: Service
@@ -128,8 +120,7 @@ spec:
               value: "true"
           imagePullPolicy: Always
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
             - name: ssl-certs
               mountPath: "/etc/internal-ssl/"
               readOnly: true
@@ -138,14 +129,7 @@ spec:
           command: ["gunicorn"]
           args: ["--config=/var/lib/assemblyline/.local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py",  "--log-level=debug", "assemblyline_ui.app:app"]
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: ssl-certs
           secret:
             secretName: ui-internal-generated-cert
@@ -197,18 +181,10 @@ spec:
           image: cccs/assemblyline-socketio:{{ .Values.uiVersion }}
           imagePullPolicy: Always
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5002
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}

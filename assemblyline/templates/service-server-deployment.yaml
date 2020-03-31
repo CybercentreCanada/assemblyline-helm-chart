@@ -27,18 +27,10 @@ spec:
           command: ["python", "-m", "assemblyline_service_server.app"]
           imagePullPolicy: Always
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5003
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}

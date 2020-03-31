@@ -39,6 +39,8 @@ autoInstallServices:
   - yara
 
 coreEnv: []
+coreMounts: []
+coreVolumes: []
 
 configuration:
   core:

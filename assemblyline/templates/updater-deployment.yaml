@@ -28,8 +28,7 @@ spec:
           imagePullPolicy: Always
           command: ['python', '-m', 'assemblyline_core.updater.run_updater']
           volumeMounts:
-            - name: al-config
-              mountPath: /etc/assemblyline/
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
             - name: update-directory
               mountPath: /mount/update_root/
           env:
@@ -47,14 +46,7 @@ spec:
             - name: UI_SERVER
               value: http://internal-ui:5000
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
-              - key: classification
-                path: classification.yml
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: update-directory
           persistentVolumeClaim:
             claimName: update-directory
