@@ -1,0 +1,14 @@
+# Allow all ingress traffic to UI/socket-io/service-api
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-into-kibana
+spec:
+  # For the matched services
+  podSelector:
+    matchLabels:
+      section: core
+      app: kibana
+  # Allow ingress from all sources, regardless of origin
+  ingress:
+  - from: []

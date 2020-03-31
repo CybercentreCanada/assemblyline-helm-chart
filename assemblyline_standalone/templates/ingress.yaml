@@ -8,10 +8,10 @@ metadata:
     {{- end }}
 spec:
   tls:
-    - hosts: [{{ .Values.assemblyline.domain }}]
+    - hosts: [{{ .Values.assemblyline.configuration.ui.fqdn }}]
       secretName: {{ if .Values.assemblyline.tlsSecretName }} {{.Values.assemblyline.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
   rules:
-    - host: {{ .Values.assemblyline.domain }}
+    - host: {{ if .Values.assemblyline.ingressHost }} {{.Values.assemblyline.ingressHost }} {{else}} {{ .Values.assemblyline.configuration.ui.fqdn }} {{end}}
       http:
         paths:
           - path: /kibana/
