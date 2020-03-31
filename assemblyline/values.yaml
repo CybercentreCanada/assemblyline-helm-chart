@@ -21,6 +21,7 @@ autoInstallServices:
   - cuckoo
   - espresso
   - extract
+  - floss
   - iparse
   - metadefender
   - metapeek
