@@ -6,5 +6,5 @@ description: Assemblyline is a malware detection and analysis tool developed by 
 keywords: [assemblyline, malware, gc, canada, cse-cst, cse, cst, cyber, cccs]
 home: https://cyber.gc.ca/en/assemblyline
 sources:
-  - https://bitbucket.org/cse-assemblyline/
+  - https://github.com/CybercentreCanada/
 icon: https://bitbucket-assetroot.s3.amazonaws.com/c/photos/2018/Nov/06/2199173190-1-alv4-logo_avatar.png
