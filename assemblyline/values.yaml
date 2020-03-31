@@ -16,12 +16,26 @@ ingressHost:
 
 autoInstallServices:
   - apkaye
-  - metapeek
-  - metadefender
   - characterize
+  - cleaver
+  - cuckoo
+  - espresso
   - extract
+  - iparse
+  - metadefender
+  - metapeek
+  - oletools
+  - pdfid
+  - peepdf
+  - pefile
+  - suricata
+  - swiffer
+  - torrentslicer
+  - unpacker
+  - vipermonkey
   - virustotal-dynamic
   - virustotal-static
+  - yara
 
 coreEnv: []
 
