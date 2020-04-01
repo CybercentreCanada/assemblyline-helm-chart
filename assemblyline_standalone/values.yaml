@@ -2,7 +2,12 @@
 assemblyline:
   loggingHost: "http://log-storage-master:9200"
   loggingUsername: "elastic"
-  loggingPassword:
+
+  configuration:
+    core:
+      metrics:
+        apm_server:
+          server_url: http://apm:8200
 
 kibana:
   fullnameOverride: kibana
@@ -47,9 +52,18 @@ log-storage:
     section: core
     component: log-storage
   esJavaOpts: '-Xms4g -Xmx4g'
+  protocol: http
   esConfig:
     elasticsearch.yml: |
       logger.level: WARN
+      xpack.security.enabled: true
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.http.ssl.enabled: false
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
   resources:
     requests:
       cpu: 1
@@ -64,3 +78,17 @@ log-storage:
       requests:
         storage: 500Gi
   priorityClassName: 'al-infra'
+  extraInitContainers: |
+    - name: create-certs
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.6.0
+      command: ['bash', '-c', "if [ ! -f /data/logging-certificates.p12 ]; then mkdir /tmp/certs/ && elasticsearch-certutil cert --name security-master --dns security-master --ca /data/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /tmp/certs/logging-certificates.p12 && mv -n /tmp/certs/* /data/; fi"]
+      volumeMounts:
+        - name: elastic-certificates
+          mountPath: /data/
+  extraVolumes: |
+    - name: elastic-certificates
+      persistentVolumeClaim:
+        claimName: update-directory
+  extraVolumeMounts: |
+    - name: elastic-certificates
+      mountPath: /usr/share/elasticsearch/config/certs
