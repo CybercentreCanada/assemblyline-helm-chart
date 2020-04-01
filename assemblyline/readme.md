@@ -24,7 +24,7 @@ Some parameters are required:
 Others have a default, but are likely to be changed:
  - `tlsSecretName`
  - `redisStorageClass`
- - `updateStorageClass`
+ - `sharedStorageClass`
  - `configuration.ui.fqdn`
 
 
@@ -34,7 +34,7 @@ Others have a default, but are likely to be changed:
 | `uiVersion`                                 | Override the image tag used for the containers that host the ui                                           | `4.0.0`
 | `sapiVersion`                               | Override the image tag used for the containers that host the service api                                  | `4.0.0`
 | `redisStorageClass`                         | Set the storage class used for redis data persistence                                                     | `default`
-| `updateStorageClass`                        | Set the storage class used for update data volume, must support mounting RWX                              | `default`
+| `sharedStorageClass`                        | Set the storage class used for shared data volumes, must support mounting RWX                             | `default`
 | `loggingHost`                               | The elasticsearch hostname to write logs to
 | `loggingUsername`                           | The username used to connect to the log server                                                            | `elastic`
 | `tlsSecretName`                             | The secret which will be given to the ingress for TLS termination <br> (If empty a self signed cert will be generated) | 

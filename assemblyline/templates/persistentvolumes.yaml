@@ -11,3 +11,18 @@ spec:
   accessModes:
     - ReadWriteMany
   storageClassName: {{ .Values.updateStorageClass }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: datastore-certificates
+  labels:
+    section: core
+spec:
+  resources:
+    requests:
+      storage: 10Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: {{ .Values.updateStorageClass }}
+---
