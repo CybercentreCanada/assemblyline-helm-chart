@@ -18,6 +18,7 @@ autoInstallServices:
   - apkaye
   - characterize
   - cleaver
+  - crowbar
   - cuckoo
   - espresso
   - extract
