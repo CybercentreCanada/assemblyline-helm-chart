@@ -1,13 +1,13 @@
 
 assemblyline:
-  loggingHost: "http://log-storage-master:9200"
+  loggingHost: "log-storage-master:9200"
   loggingUsername: "elastic"
 
   configuration:
     core:
       metrics:
         apm_server:
-          server_url: http://apm:8200
+          server_url: "http://apm:8200"
 
 kibana:
   fullnameOverride: kibana
