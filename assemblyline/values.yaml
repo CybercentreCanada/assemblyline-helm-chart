@@ -4,7 +4,8 @@ uiVersion:   '4.0.0'
 sapiVersion:   '4.0.0'
 
 redisStorageClass: default
-sharedStorageClass: default
+updateStorageClass: default
+sharedStorageClass:
 createAdminAccount: false
 
 loggingHost:
@@ -133,7 +134,7 @@ datastore:
   extraVolumes: |
     - name: elastic-certificates
       persistentVolumeClaim:
-        claimName: update-directory
+        claimName: datastore-certificates
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs

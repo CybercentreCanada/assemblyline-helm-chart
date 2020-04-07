@@ -24,5 +24,5 @@ spec:
       storage: 10Mi
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ .Values.updateStorageClass }}
+  storageClassName: {{ if .Values.sharedStorageClass }} {{.Values.sharedStorageClass }} {{else}} {{ .Values.updateStorageClass }} {{end}}
 ---
