@@ -21,6 +21,7 @@ autoInstallServices:
   - cleaver
   - crowbar
   - cuckoo
+  - emlparser
   - espresso
   - extract
   - floss
@@ -33,6 +34,7 @@ autoInstallServices:
   - pefile
   - suricata
   - swiffer
+  - tagcheck
   - torrentslicer
   - unpacker
   - vipermonkey
