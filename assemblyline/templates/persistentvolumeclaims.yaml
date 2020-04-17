@@ -21,8 +21,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 10Mi
+      storage: 1Gi
   accessModes:
     - ReadWriteMany
   storageClassName: {{ if .Values.sharedStorageClass }} {{.Values.sharedStorageClass }} {{else}} {{ .Values.updateStorageClass }} {{end}}
----
