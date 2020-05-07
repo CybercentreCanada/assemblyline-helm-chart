@@ -212,8 +212,11 @@ filebeat:
         - add_kubernetes_metadata: ~
         - drop_event:
             when:
-              regexp:
-                container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
+              or:
+                - regexp:
+                    container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
+                - equals:
+                    kubernetes.namespace: kube-system
 
       output.elasticsearch:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
