@@ -5,6 +5,10 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.6.0
     alias: datastore
+  - name: logstash
+    repository: https://helm.elastic.co/
+    version: 7.6.0
+    alias: logstash
   - name: filebeat
     repository: https://helm.elastic.co/
     version: 7.6.0

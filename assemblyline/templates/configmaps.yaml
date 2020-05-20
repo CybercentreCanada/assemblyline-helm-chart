@@ -19,6 +19,29 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: {{ .Release.Name }}-logstash-pipelines
+data:
+  pipeline.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+{{ .Values.extraLogstashFilters | indent 6 }}
+    }
+    output {
+{{ .Values.extraLogstashOutputs | indent 6 }}
+      elasticsearch {
+        hosts => ["${ELASTICSEARCH_HOSTS}"]
+        user => "${ELASTICSEARCH_USERNAME}"
+        password => "${ELASTICSEARCH_PASSWORD}"
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: {{ .Release.Name }}-bootstrap-script
 data:
   bootstrap.py: |
