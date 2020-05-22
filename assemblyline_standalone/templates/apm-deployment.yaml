@@ -27,6 +27,22 @@ spec:
 #          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200
+          env:
+            - name: LOGGING_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: assemblyline-system-passwords
+                  key: logging-password
+            - name: LOGGING_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: system-settings
+                  key: logging-host
+            - name: LOGGING_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: system-settings
+                  key: logging-username
           volumeMounts:
           - name: config
             mountPath: /usr/share/apm-server/apm-server.yml

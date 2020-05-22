@@ -9,6 +9,7 @@ assemblyline:
         apm_server:
           server_url: "http://apm:8200"
 
+kibanaHost: http://kibana
 kibana:
   fullnameOverride: kibana
   elasticsearchHosts: http://log-storage-master:9200
