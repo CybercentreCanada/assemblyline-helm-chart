@@ -15,8 +15,8 @@ data:
         protocol: https
         username: ${LOGGING_USERNAME}
         password: ${LOGGING_PASSWORD}
-       # ssl:
-       #   verification_mode: none
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
 
     logging:
       level: warning
@@ -26,8 +26,8 @@ data:
       hosts: ['${LOGGING_URL}']
       username: ${LOGGING_USERNAME}
       password: ${LOGGING_PASSWORD}
-     # ssl:
-      #  verification_mode: none
+      ssl:
+        verification_mode: ${LOGGING_TLS_VERIFY}
 
     setup.template.settings.index:
       number_of_shards: 1

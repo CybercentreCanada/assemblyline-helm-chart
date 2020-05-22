@@ -10,6 +10,7 @@ createAdminAccount: false
 
 loggingHost:
 loggingUsername: "elastic"
+loggingTLSVerify: "full"
 
 tlsSecretName:
 ingressAnnotations: {}
@@ -160,6 +161,11 @@ filebeat:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+    - name: LOGGING_TLS_VERIFY
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-tls-verify
     - name: NODE_NAME
       valueFrom:
         fieldRef:
@@ -222,6 +228,8 @@ filebeat:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
 
       setup.template.settings:
         index.number_of_shards: 1
@@ -283,6 +291,11 @@ metricbeat:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+    - name: LOGGING_TLS_VERIFY
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-tls-verify
     - name: NODE_NAME
       valueFrom:
         fieldRef:
@@ -352,6 +365,8 @@ metricbeat:
         hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
 
       setup.template.settings:
         index.number_of_shards: 1
@@ -387,6 +402,8 @@ metricbeat:
         hosts: ["${ELASTICSEARCH_HOSTS}"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
 
       setup.template.settings:
         index.number_of_shards: 1

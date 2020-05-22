@@ -5,6 +5,7 @@ metadata:
 data:
   logging-host: {{ .Values.loggingHost }}
   logging-username: {{ .Values.loggingUsername }}
+  logging-tls-verify: {{ .Values.loggingTLSVerify }}
 ---
 # The assemblyline config that will be projected into all the assemblyline pods
 apiVersion: v1

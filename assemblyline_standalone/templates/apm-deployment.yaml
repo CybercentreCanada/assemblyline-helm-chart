@@ -43,6 +43,11 @@ spec:
                 configMapKeyRef:
                   name: system-settings
                   key: logging-username
+            - name: LOGGING_TLS_VERIFY
+              valueFrom:
+                configMapKeyRef:
+                  name: system-settings
+                  key: logging-tls-verify
           volumeMounts:
           - name: config
             mountPath: /usr/share/apm-server/apm-server.yml
