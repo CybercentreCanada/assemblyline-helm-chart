@@ -19,7 +19,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-logstash-pipelines
+  name: logstash-config-files
 data:
   pipeline.conf: |
     input {

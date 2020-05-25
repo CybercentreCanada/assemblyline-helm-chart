@@ -145,6 +145,7 @@ datastore:
       mountPath: /usr/share/elasticsearch/config/certs
 
 logstash:
+  fullNameOverride: logstash
   labels:
     section: core
     component: logstash
@@ -164,6 +165,15 @@ logstash:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+  extraVolumes:
+    - name: logstash-config-files
+      configMap:
+        name: logstash-config-files
+  extraVolumeMounts:
+    - name: logstash-config-files
+      key: pipeline.conf
+      mountPath: /usr/share/logstash/pipeline/pipeline.conf
+
   # logstashConfig:
   #   log4j2.properties: |-
   #     logger.
@@ -193,39 +203,7 @@ logstash:
     #   setup.ilm:
     #     enabled: true
     #     policy_file: /usr/share/filebeat/filebeat_policy.json
-    # filebeat_policy.json: |-
-    #   {
-    #     "policy": {
-    #       "phases": {
-    #         "hot": {
-    #           "min_age": "0ms",
-    #           "actions": {
-    #             "rollover": {
-    #               "max_age": "1d",
-    #               "max_size": "20gb"
-    #             },
-    #             "set_priority": {
-    #               "priority": 100
-    #             }
-    #           }
-    #         },
-    #         "warm": {
-    #           "actions": {
-    #             "readonly": {},
-    #             "set_priority": {
-    #               "priority": 50
-    #             }
-    #           }
-    #         },
-    #         "delete": {
-    #           "min_age": "3d",
-    #           "actions": {
-    #             "delete": {}
-    #           }
-    #         }
-    #       }
-    #     }
-    #   }
+
 
 filebeat:
   labels:
@@ -310,52 +288,48 @@ filebeat:
                 - equals:
                     kubernetes.namespace: kube-system
 
-      output.elasticsearch:
-        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
-        username: ${ELASTICSEARCH_USERNAME}
-        password: ${ELASTICSEARCH_PASSWORD}
-        ssl:
-          verification_mode: ${LOGGING_TLS_VERIFY}
+      output.logstash:
+        hosts: ['logstash:5044']
 
-      setup.template.settings:
-        index.number_of_shards: 1
-        index.number_of_replicas: 0
-      setup.ilm:
-        enabled: true
-        policy_file: /usr/share/filebeat/filebeat_policy.json
-    filebeat_policy.json: |-
-      {
-        "policy": {
-          "phases": {
-            "hot": {
-              "min_age": "0ms",
-              "actions": {
-                "rollover": {
-                  "max_age": "1d",
-                  "max_size": "20gb"
-                },
-                "set_priority": {
-                  "priority": 100
-                }
-              }
-            },
-            "warm": {
-              "actions": {
-                "readonly": {},
-                "set_priority": {
-                  "priority": 50
-                }
-              }
-            },
-            "delete": {
-              "min_age": "3d",
-              "actions": {
-                "delete": {}
-              }
-            }
-          }
-        }
-      }
+    # setup.template.settings:
+    #   index.number_of_shards: 1
+    #   index.number_of_replicas: 0
+    # setup.ilm:
+    #   enabled: true
+    #   policy_file: /usr/share/filebeat/filebeat_policy.json
+    # filebeat_policy.json: |-
+    #   {
+    #     "policy": {
+    #       "phases": {
+    #         "hot": {
+    #           "min_age": "0ms",
+    #           "actions": {
+    #             "rollover": {
+    #               "max_age": "1d",
+    #               "max_size": "20gb"
+    #             },
+    #             "set_priority": {
+    #               "priority": 100
+    #             }
+    #           }
+    #         },
+    #         "warm": {
+    #           "actions": {
+    #             "readonly": {},
+    #             "set_priority": {
+    #               "priority": 50
+    #             }
+    #           }
+    #         },
+    #         "delete": {
+    #           "min_age": "3d",
+    #           "actions": {
+    #             "delete": {}
+    #           }
+    #         }
+    #       }
+    #     }
+    #   }
 
 metricbeat:
   labels:
@@ -447,19 +421,15 @@ metricbeat:
       processors:
         - add_cloud_metadata: ~
 
-      output.elasticsearch:
-        hosts: ["${ELASTICSEARCH_HOSTS}"]
-        username: ${ELASTICSEARCH_USERNAME}
-        password: ${ELASTICSEARCH_PASSWORD}
-        ssl:
-          verification_mode: ${LOGGING_TLS_VERIFY}
+      output.logstash:
+        hosts: ['logstash:5044']
 
-      setup.template.settings:
-        index.number_of_shards: 1
-        index.number_of_replicas: 0
-      setup.ilm:
-        enabled: true
-        policy_file: /usr/share/metricbeat/metricbeat_policy.json
+    # setup.template.settings:
+    #   index.number_of_shards: 1
+    #   index.number_of_replicas: 0
+    # setup.ilm:
+    #   enabled: true
+    #   policy_file: /usr/share/metricbeat/metricbeat_policy.json
     # Configuration on the deployment
     kube-state-metrics-metricbeat.yml: |
       logging:
@@ -484,50 +454,46 @@ metricbeat:
       processors:
         - add_cloud_metadata: ~
 
-      output.elasticsearch:
-        hosts: ["${ELASTICSEARCH_HOSTS}"]
-        username: ${ELASTICSEARCH_USERNAME}
-        password: ${ELASTICSEARCH_PASSWORD}
-        ssl:
-          verification_mode: ${LOGGING_TLS_VERIFY}
+      output.logstash:
+        hosts: ['logstash:5044']
 
-      setup.template.settings:
-        index.number_of_shards: 1
-        index.number_of_replicas: 0
-      setup.ilm:
-        enabled: true
-        policy_file: /usr/share/metricbeat/metricbeat_policy.json
-
-    metricbeat_policy.json: |-
-      {
-        "policy": {
-          "phases": {
-            "hot": {
-              "min_age": "0ms",
-              "actions": {
-                "rollover": {
-                  "max_age": "1d",
-                  "max_size": "5gb"
-                },
-                "set_priority": {
-                  "priority": 100
-                }
-              }
-            },
-            "warm": {
-              "actions": {
-                "readonly": {},
-                "set_priority": {
-                  "priority": 50
-                }
-              }
-            },
-            "delete": {
-              "min_age": "4d",
-              "actions": {
-                "delete": {}
-              }
-            }
-          }
-        }
-      }
+    #   setup.template.settings:
+    #     index.number_of_shards: 1
+    #     index.number_of_replicas: 0
+    #   setup.ilm:
+    #     enabled: true
+    #     policy_file: /usr/share/metricbeat/metricbeat_policy.json
+    #
+    # metricbeat_policy.json: |-
+    #   {
+    #     "policy": {
+    #       "phases": {
+    #         "hot": {
+    #           "min_age": "0ms",
+    #           "actions": {
+    #             "rollover": {
+    #               "max_age": "1d",
+    #               "max_size": "5gb"
+    #             },
+    #             "set_priority": {
+    #               "priority": 100
+    #             }
+    #           }
+    #         },
+    #         "warm": {
+    #           "actions": {
+    #             "readonly": {},
+    #             "set_priority": {
+    #               "priority": 50
+    #             }
+    #           }
+    #         },
+    #         "delete": {
+    #           "min_age": "4d",
+    #           "actions": {
+    #             "delete": {}
+    #           }
+    #         }
+    #       }
+    #     }
+    #   }
