@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: logstash
+  labels:
+    section: core
+    component: logstash
+spec:
+  clusterIP: None
+  selector:
+    section: core
+    component: logstash
+  ports:
+    - name: beats
+      port: 5044
+      protocol: TCP
+      targetPort: 5044

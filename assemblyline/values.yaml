@@ -145,7 +145,13 @@ datastore:
       mountPath: /usr/share/elasticsearch/config/certs
 
 logstash:
-  fullNameOverride: logstash
+#  fullnameOverride: logstash
+  service:
+    ports:
+      - name: beats
+        port: 5044
+        protocol: TCP
+        targetPort: 5044
   labels:
     section: core
     component: logstash
@@ -165,14 +171,30 @@ logstash:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
-  extraVolumes:
-    - name: logstash-config-files
-      configMap:
-        name: logstash-config-files
-  extraVolumeMounts:
-    - name: logstash-config-files
-      key: pipeline.conf
-      mountPath: /usr/share/logstash/pipeline/pipeline.conf
+  logstashPipeline:
+    logstash.conf: |
+      input {
+        beats {
+          port => 5044
+        }
+      }
+      filter {
+      }
+      output {
+        elasticsearch {
+          hosts => ["${ELASTICSEARCH_HOSTS}"]
+          user => "${ELASTICSEARCH_USERNAME}"
+          password => "${ELASTICSEARCH_PASSWORD}"
+        }
+      }
+#  extraVolumes: |-
+#    - name: logstash-config-files
+#      configMap:
+#        name: logstash-config-files
+#  extraVolumeMounts: |-
+#    - name: logstash-config-files
+#      subPath: pipeline.conf
+#      mountPath: /usr/share/logstash/pipeline/pipeline.conf
 
   # logstashConfig:
   #   log4j2.properties: |-

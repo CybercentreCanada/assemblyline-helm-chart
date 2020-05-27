@@ -106,6 +106,31 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
+  name: allow-metrics-output
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+      component: metrics
+  egress:
+  - to: []
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-logstash-output
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+      component: logstash
+  egress:
+  - to: []
+---
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
   name: allow-metricbeat-to-core
   labels:
     app: assemblyline
