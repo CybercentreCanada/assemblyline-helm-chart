@@ -3,17 +3,17 @@
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co/
-    version: 7.6.0
+    version: 7.7.0
     alias: datastore
   - name: logstash
     repository: https://helm.elastic.co/
-    version: 7.6.0
+    version: 7.7.0
     alias: logstash
   - name: filebeat
     repository: https://helm.elastic.co/
-    version: 7.6.0
+    version: 7.7.0
     alias: filebeat
   - name: metricbeat
     repository: https://helm.elastic.co/
-    version: 7.6.0
+    version: 7.7.0
     alias: metricbeat
