@@ -1,14 +1,11 @@
 # If you change the elasticsearch version, remember to also change the version at:
 #   - values.yaml: the init container image tag
+#   - logstash-deployment.yaml: It isn't launched via chart due to compatibility issues
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co/
     version: 7.7.0
     alias: datastore
-  - name: logstash
-    repository: https://helm.elastic.co/
-    version: 7.7.0
-    alias: logstash
   - name: filebeat
     repository: https://helm.elastic.co/
     version: 7.7.0
@@ -17,3 +14,7 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.7.0
     alias: metricbeat
+#  - name: logstash
+#    repository: https://helm.elastic.co/
+#    version: 7.7.0
+#    alias: logstash

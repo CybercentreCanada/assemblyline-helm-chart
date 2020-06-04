@@ -1,0 +1,98 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    section: core
+    component: logstash
+  name: logstash
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      section: core
+      component: logstash
+  template:
+    metadata:
+      labels:
+        component: logstash
+        section: core
+      name: logstash
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels:
+                component: logstash
+                section: core
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - image: docker.elastic.co/logstash/logstash:7.7.0
+        env:
+        {{ include "assemblyline.coreEnv" . | indent 8 }}
+        - name: LS_JAVA_OPTS
+          value: -Xmx1g -Xms1g
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 300
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /
+            port: http
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 10
+          successThreshold: 3
+          timeoutSeconds: 5
+        name: logstash
+        ports:
+        - containerPort: 9600
+          name: http
+          protocol: TCP
+        - containerPort: 5044
+          name: beats
+          protocol: TCP
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1536Mi
+          requests:
+            cpu: 100m
+            memory: 1536Mi
+        securityContext:
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+          runAsUser: 1000
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /usr/share/logstash/config/logstash.yml
+          name: logstashconfig
+          subPath: logstash.yml
+        - mountPath: /usr/share/logstash/pipeline/logstash.conf
+          name: logstashpipeline
+          subPath: logstash.conf
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+      terminationGracePeriodSeconds: 120
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: default-logstash-config
+        name: logstashconfig
+      - configMap:
+          defaultMode: 420
+          name: default-logstash-pipeline
+        name: logstashpipeline

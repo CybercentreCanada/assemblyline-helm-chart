@@ -63,6 +63,41 @@ spec:
   ingress:
   - from: []
 ---
+# Allow all ingress traffic to UI/socket-io/service-api
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-into-logstash
+spec:
+  # For the matched services
+  podSelector:
+    matchLabels:
+      component: logstash
+      section: core
+  # Allow ingress from all sources, regardless of origin
+  ingress:
+  - from: []
+---
+# Allow all core pods to talk to other pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-core-to-logstash
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+  # Connections may go out to anywhere
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          component: logstash
+          section: core
+---
+
 # services to contact the service-server
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy

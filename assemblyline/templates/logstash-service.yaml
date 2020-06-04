@@ -15,3 +15,7 @@ spec:
       port: 5044
       protocol: TCP
       targetPort: 5044
+    - targetPort: 9600
+      port: 9600
+      name: http
+      protocol: TCP

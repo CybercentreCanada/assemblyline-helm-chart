@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-logstash-config
+data:
+  logstash.yml: |
+    monitoring.enabled: false
+    http.host: 0.0.0.0
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: default-logstash-pipeline
+data:
+  logstash.conf: |
+    input {
+      beats {
+        port => 5044
+      }
+    }
+    filter {
+        mutate { add_field => {
+          "[@metadata][target_index]" => "%{[@metadata][beat]}-%{[@metadata][version]}"
+        } }
+    }
+    output {
+      elasticsearch {
+        hosts => ["${LOGGING_HOST}"]
+        user => "${LOGGING_USERNAME}"
+        password => "${LOGGING_PASSWORD}"
+        sniffing => false
+        index => "%{[@metadata][target_index]}"
+        ilm_enabled => true
+        ssl_certificate_verification => {{ if eq .Values.loggingTLSVerify "none" }}false{{ else }}true{{ end }}
+      }
+    }

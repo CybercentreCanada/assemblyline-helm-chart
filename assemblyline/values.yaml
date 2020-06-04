@@ -144,93 +144,85 @@ datastore:
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
 
-logstash:
+#logstash:
 #  fullnameOverride: logstash
-  service:
-    ports:
-      - name: beats
-        port: 5044
-        protocol: TCP
-        targetPort: 5044
-  labels:
-    section: core
-    component: logstash
-  extraEnvs:
-    - name: ELASTICSEARCH_HOSTS
-      valueFrom:
-        configMapKeyRef:
-          name: system-settings
-          key: logging-host
-    - name: ELASTICSEARCH_USERNAME
-      valueFrom:
-        configMapKeyRef:
-          name: system-settings
-          key: logging-username
-    - name: ELASTICSEARCH_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: assemblyline-system-passwords
-          key: logging-password
-  logstashPipeline:
-    logstash.conf: |
-      input {
-        beats {
-          port => 5044
-        }
-      }
-      filter {
-      }
-      output {
-        elasticsearch {
-          hosts => ["${ELASTICSEARCH_HOSTS}"]
-          user => "${ELASTICSEARCH_USERNAME}"
-          password => "${ELASTICSEARCH_PASSWORD}"
-        }
-      }
-#  extraVolumes: |-
-#    - name: logstash-config-files
-#      configMap:
-#        name: logstash-config-files
-#  extraVolumeMounts: |-
-#    - name: logstash-config-files
-#      subPath: pipeline.conf
-#      mountPath: /usr/share/logstash/pipeline/pipeline.conf
+#  service:
+#    ports:
+#      - name: http
+#        port: 9600
+#        protocol: TCP
+#        targetPort: 9600
+#      - name: beats
+#        port: 5044
+#        protocol: TCP
+#        targetPort: 5044
+#  labels:
+#    section: core
+#    component: logstash
+#  extraEnvs:
+#    - name: ELASTICSEARCH_HOSTS
+#      valueFrom:
+#        configMapKeyRef:
+#          name: system-settings
+#          key: logging-host
+#    - name: ELASTICSEARCH_USERNAME
+#      valueFrom:
+#        configMapKeyRef:
+#          name: system-settings
+#          key: logging-username
+#    - name: ELASTICSEARCH_PASSWORD
+#      valueFrom:
+#        secretKeyRef:
+#          name: assemblyline-system-passwords
+#          key: logging-password
+#  logstashPipeline:
+#    logstash.conf: |
+#      input {
+#        beats {
+#          port => 5044
+#        }
+#      }
+#      filter {
+#      }
+#      output {
+#        elasticsearch {
+#          hosts => ["${ELASTICSEARCH_HOSTS}"]
+#          user => "${ELASTICSEARCH_USERNAME}"
+#          password => "${ELASTICSEARCH_PASSWORD}"
+#          sniffing => false
+#          index => "%{[@metadata][target_index]}"
+#          ilm_enabled => true
+#          ssl_certificate_verification => {{ if eq .Values.loggingTLSVerify "none" }}false{{ else }}true{{ end }}
+#        }
+#      }
 
-  # logstashConfig:
-  #   log4j2.properties: |-
-  #     logger.
-  #   logstash.yml: |-
-  #     logging:
-  #       level: warning
-  #       json: true
-  #
-  # logstashPipeline:
-  #
-    #
-    #   processors:
-    #     - drop_event:
-    #         when:
-    #           or:
-    #             - regexp:
-    #                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
-    #             - equals:
-    #                 kubernetes.namespace: kube-system
-    #
-    #   output.elasticsearch:
+#   processors:
+#     - drop_event:
+#         when:
+#           or:
+#             - regexp:
+#                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
+#             - equals:
+#                 kubernetes.namespace: kube-system
+#
+#   output.elasticsearch:
 
-    #
-    #   setup.template.settings:
-    #     index.number_of_shards: 1
-    #     index.number_of_replicas: 0
-    #   setup.ilm:
-    #     enabled: true
-    #     policy_file: /usr/share/filebeat/filebeat_policy.json
+#
+#   setup.template.settings:
+#     index.number_of_shards: 1
+#     index.number_of_replicas: 0
+#   setup.ilm:
+#     enabled: true
+#     policy_file: /usr/share/filebeat/filebeat_policy.json
 
 
 filebeat:
   labels:
     section: core
     component: filebeat
+  extraPorts:
+    - name: beats
+      containerPort: 5044
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       valueFrom:
@@ -311,7 +303,7 @@ filebeat:
                     kubernetes.namespace: kube-system
 
       output.logstash:
-        hosts: ['logstash:5044']
+        hosts: ["logstash:5044"]
 
     # setup.template.settings:
     #   index.number_of_shards: 1
@@ -443,15 +435,19 @@ metricbeat:
       processors:
         - add_cloud_metadata: ~
 
-      output.logstash:
-        hosts: ['logstash:5044']
+      output.elasticsearch:
+        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
+      setup.template.settings:
+        index.number_of_shards: 1
+        index.number_of_replicas: 0
+      setup.ilm:
+        enabled: true
+        policy_file: /usr/share/metricbeat/metricbeat_policy.json
 
-    # setup.template.settings:
-    #   index.number_of_shards: 1
-    #   index.number_of_replicas: 0
-    # setup.ilm:
-    #   enabled: true
-    #   policy_file: /usr/share/metricbeat/metricbeat_policy.json
     # Configuration on the deployment
     kube-state-metrics-metricbeat.yml: |
       logging:
@@ -476,46 +472,50 @@ metricbeat:
       processors:
         - add_cloud_metadata: ~
 
-      output.logstash:
-        hosts: ['logstash:5044']
+      output.elasticsearch:
+        hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
 
-    #   setup.template.settings:
-    #     index.number_of_shards: 1
-    #     index.number_of_replicas: 0
-    #   setup.ilm:
-    #     enabled: true
-    #     policy_file: /usr/share/metricbeat/metricbeat_policy.json
-    #
-    # metricbeat_policy.json: |-
-    #   {
-    #     "policy": {
-    #       "phases": {
-    #         "hot": {
-    #           "min_age": "0ms",
-    #           "actions": {
-    #             "rollover": {
-    #               "max_age": "1d",
-    #               "max_size": "5gb"
-    #             },
-    #             "set_priority": {
-    #               "priority": 100
-    #             }
-    #           }
-    #         },
-    #         "warm": {
-    #           "actions": {
-    #             "readonly": {},
-    #             "set_priority": {
-    #               "priority": 50
-    #             }
-    #           }
-    #         },
-    #         "delete": {
-    #           "min_age": "4d",
-    #           "actions": {
-    #             "delete": {}
-    #           }
-    #         }
-    #       }
-    #     }
-    #   }
+       setup.template.settings:
+         index.number_of_shards: 1
+         index.number_of_replicas: 0
+       setup.ilm:
+         enabled: true
+         policy_file: /usr/share/metricbeat/metricbeat_policy.json
+
+    metricbeat_policy.json: |-
+       {
+         "policy": {
+           "phases": {
+             "hot": {
+               "min_age": "0ms",
+               "actions": {
+                 "rollover": {
+                   "max_age": "1d",
+                   "max_size": "5gb"
+                 },
+                 "set_priority": {
+                   "priority": 100
+                 }
+               }
+             },
+             "warm": {
+               "actions": {
+                 "readonly": {},
+                 "set_priority": {
+                   "priority": 50
+                 }
+               }
+             },
+             "delete": {
+               "min_age": "4d",
+               "actions": {
+                 "delete": {}
+               }
+             }
+           }
+         }
+       }

@@ -2,14 +2,11 @@ dependencies:
 - name: elasticsearch
   repository: https://helm.elastic.co/
   version: 7.7.0
-- name: logstash
-  repository: https://helm.elastic.co/
-  version: 7.7.0
 - name: filebeat
   repository: https://helm.elastic.co/
   version: 7.7.0
 - name: metricbeat
   repository: https://helm.elastic.co/
   version: 7.7.0
-digest: sha256:74962bb990b5cf93dd2f00a54ef06e2577eeee962d03277be5884d7d4a4c7d77
-generated: "2020-05-28T11:53:26.926887594-04:00"
+digest: sha256:017f78a8665ec141fbb356b9da54d3a4454b70d2fcbef98afa9a376acccb84de
+generated: "2020-06-04T12:56:48.338015139-04:00"
