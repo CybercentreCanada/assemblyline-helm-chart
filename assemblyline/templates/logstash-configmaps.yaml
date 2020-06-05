@@ -10,9 +10,12 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: default-logstash-pipeline
+  name: logstash-pipeline
 data:
   logstash.conf: |
+{{ if .Values.customLogstashPipeline }}
+{{ .Values.customLogstashPipeline | indent 4}}
+{{ else }}
     input {
       beats {
         port => 5044
@@ -34,3 +37,4 @@ data:
         ssl_certificate_verification => {{ if eq .Values.loggingTLSVerify "none" }}false{{ else }}true{{ end }}
       }
     }
+{{ end }}

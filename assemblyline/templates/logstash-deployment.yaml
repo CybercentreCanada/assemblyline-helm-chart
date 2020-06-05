@@ -94,5 +94,5 @@ spec:
         name: logstashconfig
       - configMap:
           defaultMode: 420
-          name: default-logstash-pipeline
+          name: logstash-pipeline
         name: logstashpipeline
