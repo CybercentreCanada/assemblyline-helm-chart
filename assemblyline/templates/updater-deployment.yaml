@@ -45,6 +45,8 @@ spec:
               value: /mount/update_root/
             - name: UI_SERVER
               value: http://internal-ui:5000
+            - name: SERVICE_API_HOST
+              value: http://service-server:5003
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: update-directory
