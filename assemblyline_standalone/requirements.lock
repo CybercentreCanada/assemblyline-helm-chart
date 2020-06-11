@@ -1,12 +1,12 @@
 dependencies:
 - name: assemblyline
   repository: file://../assemblyline
-  version: 4.0.5
+  version: 4.0.6
 - name: elasticsearch
   repository: https://helm.elastic.co/
   version: 7.7.0
 - name: kibana
   repository: https://helm.elastic.co/
   version: 7.7.0
-digest: sha256:d84b3a62b206c916b324f3a0ec455349c6ef26580a1796c8f390740426789845
-generated: "2020-05-28T14:19:35.210090211-04:00"
+digest: sha256:3d78d7401800312d80554fc97aaa3ddd936fc76aecf1b3b0414d237683f3c57f
+generated: "2020-06-11T11:27:38.152096725-04:00"

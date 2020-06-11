@@ -287,6 +287,14 @@ metricbeat:
   labels:
     section: core
     component: metricbeat
+  deployment:
+    extraVolumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+    extraVolumes:
+    - name: dockersock
+      hostPath:
+        path: /var/run/docker.sock
   extraEnvs:
     - name: ELASTICSEARCH_HOSTS
       valueFrom:
