@@ -3,8 +3,8 @@ kind: ConfigMap
 metadata:
   name: system-settings
 data:
-  logging-host: {{ .Values.loggingHost }}
-  logging-username: {{ .Values.loggingUsername }}
+  logging-host: {{ if .Values.internalLogging }}log-storage-master:9200{{ else }}{{ .Values.loggingHost }}{{ end }}
+  logging-username: {{ if .Values.internalLogging }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
   logging-tls-verify: {{ .Values.loggingTLSVerify }}
 ---
 # The assemblyline config that will be projected into all the assemblyline pods

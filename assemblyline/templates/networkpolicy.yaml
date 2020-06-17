@@ -157,3 +157,16 @@ spec:
     - podSelector:
         matchLabels:
           app: {{ .Release.Name }}-metricbeat-metrics
+---
+# Allow all traffic inbound to kibana
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-into-kibana
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+      app: kibana
+  ingress:
+  - from: []

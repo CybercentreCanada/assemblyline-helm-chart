@@ -6,16 +6,24 @@ sapiVersion:   '4.0.0'
 redisStorageClass: default
 updateStorageClass: default
 sharedStorageClass:
-createAdminAccount: false
 
+# When true an elk stack is launched inside assemblyline to collect logs and metrics
+internalLogging: false
+enableAPM: false
+
+# If internal logging is not used, this specifies where to write metrics and logs
 loggingHost:
+kibanaHost: http://kibana/kibana
 loggingUsername: "elastic"
 loggingTLSVerify: "full"
 
+# Settings used to control the ingress
 tlsSecretName:
 ingressAnnotations: {}
 ingressHost:
 
+# Bootstrap process settings
+createAdminAccount: false
 autoInstallServices:
   - apkaye
   - characterize
@@ -42,17 +50,22 @@ autoInstallServices:
   - virustotal-static
   - yara
 
+# Extra environment variables, mounts, and volumes shared by all core containers
 coreEnv: []
 coreMounts: []
 coreVolumes: []
 
+#
 customLogstashPipeline: null
 
+# Configuration used for the assemblyline system itself
 configuration:
   core:
     alerter:
       delay: 0
     metrics:
+      apm_server:
+        server_url: "http://apm:8200"
       elasticsearch:
         hosts: ["http://${LOGGING_USERNAME}:${LOGGING_PASSWORD}@${LOGGING_HOST}"]
       redis:
@@ -465,3 +478,88 @@ metricbeat:
            }
          }
        }
+
+
+kibana:
+  fullnameOverride: kibana
+  elasticsearchHosts: http://log-storage-master:9200
+  healthCheckPath: /kibana/app/kibana
+  labels:
+    section: core
+  service:
+    labels:
+      section: core
+  extraEnvs:
+    - name: SERVER_NAME
+      value: localhost
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
+    - name: ELASTICSEARCH_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: assemblyline-system-passwords
+          key: logging-password
+    - name: SERVER_BASEPATH
+      value: /kibana
+    - name: SERVER_REWRITEBASEPATH
+      value: "true"
+    - name: LOGGING_QUIET
+      value: "true"
+  priorityClassName: al-core-priority
+
+
+log-storage:
+  clusterName: "log-storage"
+  replicas: 1
+  extraEnvs:
+  - name: ELASTIC_USERNAME
+    value: elastic
+  - name: ELASTIC_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: assemblyline-system-passwords
+        key: logging-password
+  labels:
+    section: core
+    component: log-storage
+  esJavaOpts: '-Xms4g -Xmx4g'
+  protocol: http
+  esConfig:
+    elasticsearch.yml: |
+      logger.level: WARN
+      xpack.security.enabled: true
+      xpack.security.transport.ssl.enabled: true
+      xpack.security.transport.ssl.verification_mode: certificate
+      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.http.ssl.enabled: false
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+  resources:
+    requests:
+      cpu: 1
+      memory: 5Gi
+    limits:
+      cpu: 6
+      memory: 6Gi
+  volumeClaimTemplate:
+    accessModes: [ "ReadWriteOnce" ]
+    storageClassName: default
+    resources:
+      requests:
+        storage: 500Gi
+  priorityClassName: 'al-infra'
+  extraInitContainers: |
+    - name: create-certs
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+      command: ['bash', '-c', "if [ ! -f /data/logging-certificates.p12 ]; then mkdir /tmp/certs/ && elasticsearch-certutil cert --name security-master --dns security-master --ca /data/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /tmp/certs/logging-certificates.p12 && mv -n /tmp/certs/* /data/; fi"]
+      volumeMounts:
+        - name: elastic-certificates
+          mountPath: /data/
+  extraVolumes: |
+    - name: elastic-certificates
+      persistentVolumeClaim:
+        claimName: datastore-certificates
+  extraVolumeMounts: |
+    - name: elastic-certificates
+      mountPath: /usr/share/elasticsearch/config/certs

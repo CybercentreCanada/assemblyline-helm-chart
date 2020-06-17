@@ -18,3 +18,13 @@ dependencies:
 #    repository: https://helm.elastic.co/
 #    version: 7.7.0
 #    alias: logstash
+  - name: elasticsearch
+    repository: https://helm.elastic.co/
+    version: 7.7.0
+    alias: log-storage
+    condition: internalLogging
+  - name: kibana
+    repository: https://helm.elastic.co/
+    version: 7.7.0
+    alias: kibana
+    condition: internalLogging

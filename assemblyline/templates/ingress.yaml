@@ -39,3 +39,9 @@ spec:
             backend:
               serviceName: ui
               servicePort: 5000
+          {{ if .Values.internalLogging }}
+          - path: /kibana/
+            backend:
+              serviceName: kibana
+              servicePort: 5601
+          {{ end }}
