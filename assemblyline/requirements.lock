@@ -8,5 +8,11 @@ dependencies:
 - name: metricbeat
   repository: https://helm.elastic.co/
   version: 7.7.0
-digest: sha256:017f78a8665ec141fbb356b9da54d3a4454b70d2fcbef98afa9a376acccb84de
-generated: "2020-06-04T12:56:48.338015139-04:00"
+- name: elasticsearch
+  repository: https://helm.elastic.co/
+  version: 7.7.0
+- name: kibana
+  repository: https://helm.elastic.co/
+  version: 7.7.0
+digest: sha256:c51023562e8128daae0df2e5c16e5d836b292cc3e07eb725ef719e657665c64b
+generated: "2020-06-17T17:58:09.275787763-04:00"
