@@ -30,6 +30,10 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
+{{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator") . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---
 {{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
