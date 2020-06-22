@@ -24,7 +24,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: apm
-          image: docker.elastic.co/apm/apm-server:7.7.0
+          image: docker.elastic.co/apm/apm-server:7.8.0
 #          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200
