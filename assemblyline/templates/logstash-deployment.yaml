@@ -83,6 +83,7 @@ spec:
         - mountPath: /usr/share/logstash/pipeline/logstash.conf
           name: logstashpipeline
           subPath: logstash.conf
+{{ if  .Values.logstashMounts  }}{{ .Values.logstashMounts | toYaml | indent 8 }}{{ end }}
       securityContext:
         fsGroup: 1000
         runAsUser: 1000
@@ -96,3 +97,4 @@ spec:
           defaultMode: 420
           name: logstash-pipeline
         name: logstashpipeline
+{{ if  .Values.logstashVolumes }}{{ .Values.logstashVolumes | toYaml | indent 6 }}{{ end }}

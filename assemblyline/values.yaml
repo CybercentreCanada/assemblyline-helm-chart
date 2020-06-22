@@ -479,6 +479,8 @@ metricbeat:
          }
        }
 
+logstashVolumes:
+logstashMounts:
 
 kibana:
   fullnameOverride: kibana
