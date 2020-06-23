@@ -50,8 +50,6 @@ spec:
             items:
               - key: config
                 path: config.yml
-              - key: classification
-                path: classification.yml
         - name: script-volume
           configMap:
             name: {{ .Release.Name }}-bootstrap-script
