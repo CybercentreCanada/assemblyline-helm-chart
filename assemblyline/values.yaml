@@ -448,6 +448,7 @@ metricbeat:
         index.number_of_replicas: 0
       setup.ilm:
         enabled: true
+        rollover_alias: ${METRICBEAT_INDEX}
         policy_file: /usr/share/metricbeat/metricbeat_policy.json
 
     # Configuration on the deployment
@@ -490,6 +491,7 @@ metricbeat:
         index.number_of_replicas: 0
       setup.ilm:
         enabled: true
+        rollover_alias: ${METRICBEAT_INDEX}
         policy_file: /usr/share/metricbeat/metricbeat_policy.json
 
     metricbeat_policy.json: |-
