@@ -296,6 +296,8 @@ filebeat:
     #     }
     #   }
 
+metricbeatIndex: "metricbeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+
 metricbeat:
   labels:
     section: core
@@ -329,6 +331,11 @@ metricbeat:
           configMapKeyRef:
             name: system-settings
             key: logging-tls-verify
+      - name: METRICBEAT_INDEX
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: metricbeat-index
       - name: NODE_NAME
         valueFrom:
           fieldRef:
@@ -355,6 +362,11 @@ metricbeat:
           configMapKeyRef:
             name: system-settings
             key: logging-tls-verify
+      - name: METRICBEAT_INDEX
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: metricbeat-index
       - name: NODE_NAME
         valueFrom:
           fieldRef:
@@ -424,6 +436,7 @@ metricbeat:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        index: "${METRICBEAT_INDEX}"
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY:full}
 
@@ -462,6 +475,7 @@ metricbeat:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        index: "${METRICBEAT_INDEX}"
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY}
 
