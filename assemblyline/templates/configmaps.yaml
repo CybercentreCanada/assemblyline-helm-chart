@@ -6,7 +6,7 @@ data:
   logging-host: {{ if .Values.internalLogging }}log-storage-master:9200{{ else }}{{ .Values.loggingHost }}{{ end }}
   logging-username: {{ if .Values.internalLogging }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
   logging-tls-verify: {{ .Values.loggingTLSVerify }}
-  metricbeat-index: {{ .Values.metricbeatIndex }}
+  metricbeat-index-prefix: {{ .Values.metricbeatIndexPrefix }}
 
 ---
 # The assemblyline config that will be projected into all the assemblyline pods

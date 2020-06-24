@@ -296,7 +296,7 @@ filebeat:
     #     }
     #   }
 
-metricbeatIndex: "metricbeat-%{[agent.version]}-%{+yyyy.MM.dd}"
+metricbeatIndexPrefix: "metricbeat"
 
 metricbeat:
   labels:
@@ -335,7 +335,7 @@ metricbeat:
         valueFrom:
           configMapKeyRef:
             name: system-settings
-            key: metricbeat-index
+            key: metricbeat-index-prefix
       - name: NODE_NAME
         valueFrom:
           fieldRef:
@@ -366,7 +366,7 @@ metricbeat:
         valueFrom:
           configMapKeyRef:
             name: system-settings
-            key: metricbeat-index
+            key: metricbeat-index-prefix
       - name: NODE_NAME
         valueFrom:
           fieldRef:
@@ -436,9 +436,12 @@ metricbeat:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
-        index: "${METRICBEAT_INDEX}"
+        index: "${METRICBEAT_INDEX}-%{[agent.version]}-%{+yyyy.MM.dd}"
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY:full}
+
+      setup.template.name: "${METRICBEAT_INDEX}"
+      setup.template.pattern: "${METRICBEAT_INDEX}-*"
 
       setup.template.settings:
         index.number_of_shards: 1
@@ -475,9 +478,12 @@ metricbeat:
         hosts: ['${ELASTICSEARCH_HOSTS:elasticsearch}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
-        index: "${METRICBEAT_INDEX}"
+        index: "${METRICBEAT_INDEX}-%{[agent.version]}-%{+yyyy.MM.dd}"
         ssl:
-          verification_mode: ${LOGGING_TLS_VERIFY}
+          verification_mode: ${LOGGING_TLS_VERIFY:full}
+
+      setup.template.name: "${METRICBEAT_INDEX}"
+      setup.template.pattern: "${METRICBEAT_INDEX}-*"
 
       setup.template.settings:
         index.number_of_shards: 1
