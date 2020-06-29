@@ -1,10 +1,8 @@
-{{ required "A filestore URI needs to be define. See assemblyline manual." .Values.configuration.filestore.cache }}
-{{ required "A filestore URI needs to be define. See assemblyline manual." .Values.configuration.filestore.storage }}
-{{ required "Set a storage class for persisted redis data." .Values.redisStorageClass }}
-{{ required "Set a RWX storage class for sharing updates with service containers." .Values.updateStorageClass }}
-{{ required "Set a RWX storage class for sharing information inside core services." .Values.sharedStorageClass }}
-
-
+# {{ required "A configuration.filestore.cache URI needs to be define. See assemblyline manual." .Values.configuration.filestore.cache }}
+# {{ required "A configuration.filestore.storage URI needs to be define. See assemblyline manual." .Values.configuration.filestore.storage }}
+# {{ required "Set a storage class for persisted redis data." .Values.redisStorageClass }}
+# {{ required "Set a RWX storage class for sharing updates with service containers." .Values.updateStorageClass }}
+# {{ required "Set a RWX storage class for sharing information inside core services." .Values.sharedStorageClass }}
 ---
 apiVersion: v1
 kind: ConfigMap
