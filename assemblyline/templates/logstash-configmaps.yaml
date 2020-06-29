@@ -38,3 +38,13 @@ data:
       }
     }
 {{ end }}
+
+#   processors:
+#     - drop_event:
+#         when:
+#           or:
+#             - regexp:
+#                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
+#             - equals:
+#                 kubernetes.namespace: kube-system
+

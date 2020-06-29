@@ -9,6 +9,17 @@ Note
 When deployed from this chart each Assemblyline instance must be in its own 
 namespace. The chart is deliberately written to fail if this isn't done. 
 
+Installation
+------------
+
+Things to consider while configuring this chart, aside from 
+required parameters called out below. Provider specific guides 
+should come out sooner or later.
+
+1. Make sure you have an ingress controller and storage classes appropriate 
+   for databases and read-write-multiple mounting.
+2. Decide where you want files stored, set the appropriate configuration.
+3. Enable/disable/configure logging features, (disabled by default).
 
 Parameters
 ----------

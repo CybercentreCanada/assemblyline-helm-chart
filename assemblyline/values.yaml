@@ -1,29 +1,52 @@
-
+# Tags for the containers used
 coreVersion: '4.0.0'
-uiVersion:   '4.0.0'
-sapiVersion:   '4.0.0'
+uiVersion: '4.0.0'
+sapiVersion: '4.0.0'
 
-redisStorageClass: default
-updateStorageClass: default
+# Storage classes for persistent data.
+redisStorageClass:
+updateStorageClass:
 sharedStorageClass:
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
+# Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
+
+# Launch an elastic APM server to collect profiling data and report it to the logging
+# elasticsearch database.
+# TODO The assemblyline config entry for apm address is statically set to this
+#      whether it is created or not. Some way to switch it off when this is false
+#      would be nice
 enableAPM: false
 
-# If internal logging is not used, this specifies where to write metrics and logs
+# If internal logging is not used, this specifies where to write metrics and logs.
+# Ignored when internal logging is set.
 loggingHost:
 kibanaHost: http://kibana/kibana
 loggingUsername: "elastic"
 loggingTLSVerify: "full"
 
-# Settings used to control the ingress
-tlsSecretName:
+# Values used to configure the ingress
 ingressAnnotations: {}
+# This field is not required and will be set automatically if the field
+# configuration.ui.fqdn is defined. Only set this field directly when you need
+# the ingress to use a different value. Otherwise, set your domain there.
 ingressHost:
+# If a tls secret name is given here, that certificate will be used for https
+# If left null, a self signed cert will be generated.
+tlsSecretName:
 
 # Bootstrap process settings
-createAdminAccount: false
+# Whether an admin account should be created by the back end.
+#   Accepted Values:
+#     'on-install' only try to create an admin user when performing a helm install
+#     'always' run the create command on every helm upgrade and install
+#     'never' (or any other value) will not run the setup container
+# The password for this admin account will be drawn from the initial-admin-password
+# key of the assemblyline-system-passwords secret
+createAdminAccount: 'on-install'
+
+# A list of services to be installed, only run during a helm install.
 autoInstallServices:
   - apkaye
   - characterize
@@ -51,14 +74,27 @@ autoInstallServices:
   - yara
 
 # Extra environment variables, mounts, and volumes shared by all core containers
+# Any environment variables set here can be used in the value strings of any
+# field under the configuration.* block. This is the proper way to pass a secret
+# to the assemblyline core components. These values won't be passed to analysis
+# services.
 coreEnv: []
 coreMounts: []
 coreVolumes: []
 
-#
+# A logstash pipeline is set by default that will write to the internal elasticsearch
+# instance or to the given 'loggingHost' value. A pipeline passed as a string here
+# can be used for deeper customization
 customLogstashPipeline: null
 
-# Configuration used for the assemblyline system itself
+# You may want mount custom pipeline files or certificates if you are using
+# a custom logstash pipeline
+logstashVolumes:
+logstashMounts:
+
+# Internal configuration for assemblyline components. See the assemblyline
+# administration documentation for more details.
+# https://cybercentrecanada.github.io/assemblyline4_docs/
 configuration:
   core:
     alerter:
@@ -99,7 +135,11 @@ configuration:
   ui:
     fqdn: "localhost"
 
-
+# Configuration for the elasticsearch instance used for system data.
+# Values an administrator is likely to want to change to scale their deployment are:
+#     replicas
+#     resources
+#     volumeClaimTemplate
 datastore:
   clusterName: "datastore"
   replicas: 3
@@ -155,16 +195,6 @@ datastore:
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
-
-
-#   processors:
-#     - drop_event:
-#         when:
-#           or:
-#             - regexp:
-#                 container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
-#             - equals:
-#                 kubernetes.namespace: kube-system
 
 
 filebeat:
@@ -256,45 +286,6 @@ filebeat:
       output.logstash:
         hosts: ["logstash:5044"]
 
-    # setup.template.settings:
-    #   index.number_of_shards: 1
-    #   index.number_of_replicas: 0
-    # setup.ilm:
-    #   enabled: true
-    #   policy_file: /usr/share/filebeat/filebeat_policy.json
-    # filebeat_policy.json: |-
-    #   {
-    #     "policy": {
-    #       "phases": {
-    #         "hot": {
-    #           "min_age": "0ms",
-    #           "actions": {
-    #             "rollover": {
-    #               "max_age": "1d",
-    #               "max_size": "20gb"
-    #             },
-    #             "set_priority": {
-    #               "priority": 100
-    #             }
-    #           }
-    #         },
-    #         "warm": {
-    #           "actions": {
-    #             "readonly": {},
-    #             "set_priority": {
-    #               "priority": 50
-    #             }
-    #           }
-    #         },
-    #         "delete": {
-    #           "min_age": "3d",
-    #           "actions": {
-    #             "delete": {}
-    #           }
-    #         }
-    #       }
-    #     }
-    #   }
 
 metricbeatIndexPrefix: "metricbeat"
 
@@ -528,8 +519,6 @@ metricbeat:
          }
        }
 
-logstashVolumes:
-logstashMounts:
 
 kibana:
   fullnameOverride: kibana
@@ -559,6 +548,8 @@ kibana:
   priorityClassName: al-core-priority
 
 
+# Configuration for the internal logging elasticsearch instance, only used
+# if the internal logging flag is set
 log-storage:
   clusterName: "log-storage"
   replicas: 1
