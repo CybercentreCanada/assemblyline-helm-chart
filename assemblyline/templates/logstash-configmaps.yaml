@@ -47,7 +47,6 @@ data:
           match => [ "message", "\A%{S3_REQUEST_LINE:action} \(U:%{USERNAME:username} - IP:%{IP:user_ip}\)%{GREEDYDATA}"]
         }
         geoip{
-          database => "/usr/share/logstash/db/GeoLite2-City.mmdb"
           source => "user_ip"
         }
       }
