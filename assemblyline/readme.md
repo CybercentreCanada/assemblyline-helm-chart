@@ -1,56 +1,53 @@
 Assemblyline
 ============
 
-A chart to deploy assemblyline.
+Assemblyline is a platform for the analysis of malicious files. It is designed 
+to assist cyber-defence teams to automate the analysis of files and to better 
+use the time of security analysts. 
+
+**This helm chart is in development**
+
+Assemblyline version 4 is currently in beta status, this chart is mostly lacking
+documentation.
 
 Note
 ----
 
-When deployed from this chart each Assemblyline instance must be in its own 
-namespace. The chart is deliberately written to fail if this isn't done. 
+When deployed from this chart an Assemblyline instance must be in its own namespace.
 
 Installation
 ------------
 
-Things to consider while configuring this chart, aside from 
-required parameters called out below. Provider specific guides 
-should come out sooner or later.
+More detailed installation instructions, and pre-prepared deployment configurations 
+for specific kubernetes environments should be available in the future.
 
-1. Make sure you have an ingress controller and storage classes appropriate 
-   for databases and read-write-multiple mounting.
-2. Decide where you want files stored, set the appropriate configuration.
-3. Enable/disable/configure logging features, (disabled by default).
+1. Make sure you have an ingress controller, set any values for the
+   `ingressAnnotations`, `tlsSecretName`, and `configuration.ui.fqdn` parameters.
+2. Make sure you have storage classes appropriate for databases and 
+   read-write-multiple mounting. Setup the parameters `redisStorageClass`,
+   `updateStorageClass`, `sharedStorageClass`, `log-storage.volumeClaimTemplate`,
+   and `datastore.volumeClaimTemplate` to use them.
+3. Decide where you want files stored, set the appropriate URI in 
+   the `configuration.filestore.*` fields.
+4. Enable/disable/configure logging features, (disabled by default).
+5. Create a secret based on this template with appropriate passwords:
+
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: assemblyline-system-passwords
+type: Opaque
+stringData:
+  datastore-password:
+  logging-password:
+    # If this is the password for backends like azure blob storage, the password may need to be url encoded
+    # if it includes non alphanum characters
+  filestore-password:
+  initial-admin-password:
+```
 
 Parameters
 ----------
 
-This is a table of configurable parameters for the Assemblyline chart, and also exposes
-the system configuration fields under the `configuration.*` mapping.
-
-Some parameters are required:
- - `loggingHost` (probably want to set loggingUsername as well, the password will be drawn from the password secret)
- - `configuration.filestore.cache`
- - `configuration.filestore.storage`
-
-Others have a default, but are likely to be changed:
- - `tlsSecretName`
- - `redisStorageClass`
- - `sharedStorageClass`
- - `configuration.ui.fqdn`
-
-
-| Parameter                                   | Description                                                                                               | Default
-| ------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------
-| `coreVersion`                               | Override the image tag used for the core assemblyline containers                                          | `4.0.0`
-| `uiVersion`                                 | Override the image tag used for the containers that host the ui                                           | `4.0.0`
-| `sapiVersion`                               | Override the image tag used for the containers that host the service api                                  | `4.0.0`
-| `redisStorageClass`                         | Set the storage class used for redis data persistence                                                     | `default`
-| `sharedStorageClass`                        | Set the storage class used for shared data volumes, must support mounting RWX                             | `default`
-| `loggingHost`                               | The elasticsearch hostname to write logs to
-| `loggingUsername`                           | The username used to connect to the log server                                                            | `elastic`
-| `tlsSecretName`                             | The secret which will be given to the ingress for TLS termination <br> (If empty a self signed cert will be generated) | 
-| `ingressAnnotations`                        | Annotations to add to the ingress                                       | `{}`
-| `coreEnv`                                   | Additional environment variables to add to core containers              | `[]`
-| `createAdminAccount`                        | Create an admin account with password drawn from the password secret    | `false`
-| `ingressHost`                               | Use this instead of `configuration.ui.fqdn` for the ingress host       | 
-
+See values.yaml

@@ -1,6 +1,6 @@
 Assemblyline Helm
 =================
 
-This chart is a WIP. It should build a generic assemblyline instance suitable for 
-use directly, or as a component in more complex deployment setups or charts.
+This is the base helm chart for deploying Assemblyline. 
 
+This is still in development, and should be use with caution.
