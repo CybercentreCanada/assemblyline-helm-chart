@@ -22,9 +22,41 @@ data:
       }
     }
     filter {
-        mutate { add_field => {
+      mutate {
+        add_field => {
           "[@metadata][target_index]" => "%{[@metadata][beat]}-%{[@metadata][version]}"
-        } }
+        }
+      }
+      if "Starting task" in [message]{
+        grok{
+          match => [ "message" , "\AStarting task: %{NOTSPACE:submission}%{SPACE}%{NOTSPACE:filetype}"]
+        }
+      }
+      if "will count towards" in [message]{
+        grok{
+          match => [ "message" , "\A%{NOTSPACE} %{WORD:action} will count towards %{USERNAME:username} quota"]
+        }
+      }
+      if "::" in [message]{
+        grok{
+          match => [ "message", "\A%{USERNAME:username} %{NOTSPACE:classification} :: %{WORD:action}%{GREEDYDATA:params}"]
+        }
+      }
+      if "IP:" in [message]{
+        grok{
+          match => [ "message", "\A%{S3_REQUEST_LINE:action} \(U:%{USERNAME:username} - IP:%{IP:user_ip}\)%{GREEDYDATA}"]
+        }
+        geoip{
+          database => "/usr/share/logstash/db/GeoLite2-City.mmdb"
+          source => "user_ip"
+        }
+      }
+      if "beats_input_codec_plain_applied" in [tags] {
+          mutate {
+              remove_tag => ["beats_input_codec_plain_applied"]
+          }
+      }
+      mutate { lowercase => ["username"] }
     }
     output {
       elasticsearch {
