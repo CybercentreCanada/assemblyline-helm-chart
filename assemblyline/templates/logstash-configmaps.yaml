@@ -39,7 +39,7 @@ data:
       }
       if "::" in [message]{
         grok{
-          match => [ "message", "\A%{USERNAME:username} %{NOTSPACE:classification} :: %{WORD:action}%{GREEDYDATA:params}"]
+          match => [ "message", "\A%{USERNAME:username} %{SYSLOG5424SD:classification} :: %{WORD:action}%{GREEDYDATA:params}"]
         }
       }
       if "IP:" in [message]{
