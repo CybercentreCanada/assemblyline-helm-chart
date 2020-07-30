@@ -25,7 +25,7 @@ for specific kubernetes environments should be available in the future.
    `ingressAnnotations`, `tlsSecretName`, and `configuration.ui.fqdn` parameters.
 2. Make sure you have storage classes appropriate for databases and 
    read-write-multiple mounting. Setup the parameters `redisStorageClass`,
-   `updateStorageClass`, `sharedStorageClass`, `log-storage.volumeClaimTemplate`,
+   `updateStorageClass`, `log-storage.volumeClaimTemplate`,
    and `datastore.volumeClaimTemplate` to use them.
 3. Decide where you want files stored, set the appropriate URI in 
    the `configuration.filestore.*` fields.

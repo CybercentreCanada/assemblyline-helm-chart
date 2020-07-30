@@ -1,0 +1,25 @@
+{{ if .Values.internalNFS }}
+kind: Service
+apiVersion: v1
+metadata:
+  name: nfs-update-directory
+spec:
+  ports:
+    - port: 2049
+  selector:
+    app: assemblyline
+    section: core
+    component: nfs-update-directory
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nfs-datastore-certificates
+spec:
+  ports:
+    - port: 2049
+  selector:
+    app: assemblyline
+    section: core
+    component: nfs-datastore-certificates
+{{ end }}

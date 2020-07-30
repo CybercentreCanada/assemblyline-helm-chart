@@ -1,0 +1,75 @@
+{{ if .Values.internalNFS }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-update-directory
+  labels:
+    app: assemblyline
+    section: core
+    component: nfs-update-directory
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: nfs-update-directory
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: nfs-update-directory
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+      - name: nfs-update-directory
+        image: apnar/nfs-ganesha:latest
+        ports:
+          - name: nfs
+            containerPort: 2049
+        volumeMounts:
+          - mountPath: /export
+            name: data-pvc
+      volumes:
+        - name: data-pvc
+          persistentVolumeClaim:
+            claimName: update-directory-single
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-datastore-certificates
+  labels:
+    app: assemblyline
+    section: core
+    component: nfs-datastore-certificates
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: nfs-datastore-certificates
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: nfs-datastore-certificates
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+      - name: nfs-datastore-certificates
+        image: apnar/nfs-ganesha:latest
+        ports:
+          - name: nfs
+            containerPort: 2049
+        volumeMounts:
+          - mountPath: /export
+            name: data-pvc
+      volumes:
+        - name: data-pvc
+          persistentVolumeClaim:
+            claimName: datastore-certificates-single
+{{ end }}
