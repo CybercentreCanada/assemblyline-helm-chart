@@ -109,5 +109,5 @@ spec:
       storage: 1Gi
   accessModes:
     - ReadWriteMany
-  storageClassName: {{ .Values.updateStorageClass }}
+  storageClassName: {{ if .Values.sharedStorageClass }} {{.Values.sharedStorageClass }} {{else}} {{ .Values.updateStorageClass }} {{end}}
 {{ end }}
