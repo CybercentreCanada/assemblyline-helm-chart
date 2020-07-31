@@ -17,6 +17,12 @@ internalLogging: false
 # Otherwise, the storage class for updateStorageClass needs to support RWX
 internalNFS: true
 
+# If you have an ftp server, s3 bucket, azure blob storage account or other
+# supported blob storage where you would like assemblyline to store the files
+# that are submitted set `internalFilestore` to false, and set the url
+# for your storage system to the `configuration.filestore.*` fields.
+internalFilestore: true
+
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
 # TODO The assemblyline config entry for apm address is statically set to this
@@ -131,8 +137,8 @@ configuration:
   datastore:
     hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
   filestore:
-    cache:
-    storage:
+    cache: ["s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
+    storage: ["s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
   logging:
     log_to_console: true
     log_to_file: false
@@ -610,3 +616,9 @@ log-storage:
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
+
+filestore:
+  podLabels:
+    section: core
+    component: filestore
+  existingSecret: internal-filestore-keys

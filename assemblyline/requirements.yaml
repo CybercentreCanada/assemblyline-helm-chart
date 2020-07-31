@@ -28,3 +28,7 @@ dependencies:
     version: 7.8.0
     alias: kibana
     condition: internalLogging
+  - name: minio
+    version: 5.0
+    alias: filestore
+    condition: internalFilestore

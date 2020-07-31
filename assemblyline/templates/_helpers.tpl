@@ -19,11 +19,24 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: datastore-password
+{{ if .Values.internalFilestore }}
+- name: INTERNAL_FILESTORE_ACCESS
+  valueFrom:
+    secretKeyRef:
+      name: internal-filestore-keys
+      key: accesskey
+- name: INTERNAL_FILESTORE_KEY
+  valueFrom:
+    secretKeyRef:
+      name: internal-filestore-keys
+      key: secretkey
+{{ else }}
 - name: FILESTORE_PASSWORD
   valueFrom:
     secretKeyRef:
       name: assemblyline-system-passwords
       key: filestore-password
+{{ end }}
 {{ if .Values.coreEnv }}
 {{- .Values.coreEnv | toYaml -}}
 {{ end }}
