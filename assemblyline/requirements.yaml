@@ -29,6 +29,7 @@ dependencies:
     alias: kibana
     condition: internalLogging
   - name: minio
+    repository: https://kubernetes-charts.storage.googleapis.com
     version: 5.0
     alias: filestore
     condition: internalFilestore

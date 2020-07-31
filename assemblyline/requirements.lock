@@ -14,5 +14,8 @@ dependencies:
 - name: kibana
   repository: https://helm.elastic.co/
   version: 7.8.0
-digest: sha256:d3c0b4661888f21c606449f05d3429040f67fe941808263122608fc40cf4a285
-generated: "2020-06-22T13:45:02.785609567-04:00"
+- name: minio
+  repository: https://kubernetes-charts.storage.googleapis.com
+  version: 5.0.32
+digest: sha256:aea5583b1a25a21efed522df21db823ee55263103bac61a31f5bdef8a58fcb0b
+generated: "2020-07-31T11:33:17.512852958-04:00"
