@@ -47,6 +47,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: datastore-certificates
 spec:
+  resources:
+    requests:
+      storage: 1Gi
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -74,6 +77,9 @@ kind: PersistentVolumeClaim
 metadata:
   name: update-directory
 spec:
+  resources:
+    requests:
+      storage: 200Gi
   accessModes:
     - ReadWriteMany
   storageClassName: ""
