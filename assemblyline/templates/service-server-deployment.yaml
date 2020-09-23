@@ -23,7 +23,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: service-server
-          image: cccs/assemblyline-service-server:{{ .Values.sapiVersion }}
+          image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.sapiVersion }}
           command: ["python", "-m", "assemblyline_service_server.app"]
           imagePullPolicy: Always
           volumeMounts:

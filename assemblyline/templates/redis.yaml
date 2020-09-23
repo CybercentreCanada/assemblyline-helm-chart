@@ -24,7 +24,7 @@ spec:
       priorityClassName: al-infra
       containers:
         - name: redis
-          image: redis
+          image: {{ .Values.redisImage }}
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
@@ -89,7 +89,7 @@ spec:
       priorityClassName: al-infra
       containers:
       - name: redis
-        image: redis
+        image: {{ .Values.redisImage }}
         command: ['redis-server']
         args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '0']
         ports:

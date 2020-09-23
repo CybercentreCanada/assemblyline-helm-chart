@@ -55,7 +55,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: ui
-          image: cccs/assemblyline-ui:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -113,7 +113,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: internal-ui
-          image: cccs/assemblyline-ui:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: AL_UNSECURED_UI

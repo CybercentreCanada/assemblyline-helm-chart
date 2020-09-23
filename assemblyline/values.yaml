@@ -3,6 +3,16 @@ coreVersion: '4.0.0'
 uiVersion: '4.0.0'
 sapiVersion: '4.0.0'
 
+# Images for containers used
+assemblylineCoreImage: cccs/assemblyline-core
+assemblylineUIImage: cccs/assemblyline-ui
+assemblylineServiceAPIImage: cccs/assemblyline-service-server
+assemblylineServiceImagePrefix: cccs/assemblyline-service-
+elasticAPMImage: docker.elastic.co/apm/apm-server
+elasticLogstashImage: docker.elastic.co/logstash/logstash
+NFSImage: apnar/nfs-ganesha
+redisImage: redis
+
 # Storage classes for persistent data.
 redisStorageClass:
 updateStorageClass:

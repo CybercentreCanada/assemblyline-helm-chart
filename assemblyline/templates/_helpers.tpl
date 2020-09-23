@@ -86,7 +86,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: {{ .component }}
-          image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:

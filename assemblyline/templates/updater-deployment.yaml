@@ -24,7 +24,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: updater
-          image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
           command: ['python', '-m', 'assemblyline_core.updater.run_updater']
           volumeMounts:

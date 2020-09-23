@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: pi
-        image: cccs/assemblyline-core:{{ .Values.coreVersion }}
+        image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
         command: ["python",  "/mount/bootstrap.py"]
         env:
           - name: INITIAL_ADMIN_PASSWORD
@@ -82,7 +82,7 @@ spec:
     spec:
       containers:
       - name: alsvc-{{ . }}
-        image: cccs/assemblyline-service-{{ . }}:latest
+        image: {{ .Values.assemblylineServiceImagePrefix }}{{ . }}:latest
         imagePullPolicy: Always
         env:
           - name: SERVICE_API_HOST

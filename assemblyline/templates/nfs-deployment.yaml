@@ -24,7 +24,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: nfs-update-directory
-        image: apnar/nfs-ganesha:latest
+        image: {{ .Values.NFSImage }}:latest
         ports:
           - name: nfs
             containerPort: 2049
@@ -61,7 +61,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
       - name: nfs-datastore-certificates
-        image: apnar/nfs-ganesha:latest
+        image: {{ .Values.NFSImage }}:latest
         ports:
           - name: nfs
             containerPort: 2049
