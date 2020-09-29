@@ -24,7 +24,6 @@ spec:
       containers:
         - name: service-server
           image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.sapiVersion }}
-          command: ["python", "-m", "assemblyline_service_server.app"]
           imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}

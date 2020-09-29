@@ -120,6 +120,10 @@ configuration:
   core:
     alerter:
       delay: 0
+    dispatcher:
+      max_inflight: 10000
+    ingester:
+      max_inflight: 6000
     metrics:
       apm_server:
         server_url: "http://apm:8200"
