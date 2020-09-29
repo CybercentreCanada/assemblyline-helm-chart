@@ -61,8 +61,6 @@ spec:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5000
-          command: ["gunicorn"]
-          args: ["--config=/var/lib/assemblyline/.local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py", "assemblyline_ui.app:app"]
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
@@ -126,8 +124,6 @@ spec:
               readOnly: true
           ports:
             - containerPort: 5000
-          command: ["gunicorn"]
-          args: ["--config=/var/lib/assemblyline/.local/lib/python3.7/site-packages/assemblyline_ui/gunicorn_config.py",  "--log-level=debug", "assemblyline_ui.app:app"]
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: ssl-certs
