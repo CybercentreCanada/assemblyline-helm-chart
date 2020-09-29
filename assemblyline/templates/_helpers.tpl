@@ -70,7 +70,7 @@ metadata:
     section: core
     component: {{ .component }}
 spec:
-  replicas: 1
+  replicas: {{ .replicas | default 1 }}
   selector:
     matchLabels:
       app: assemblyline
