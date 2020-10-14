@@ -68,7 +68,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ $.Release.Name }}-alsvc-{{ . }}
+  name: install-alsvc-{{ . }}
   labels:
     app: assemblyline-{{ $.Release.Name }}
     section: service
@@ -81,7 +81,7 @@ spec:
         component: alsvc_{{ . }}
     spec:
       containers:
-      - name: alsvc-{{ . }}
+      - name: install-alsvc-{{- . }}
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:latest
         imagePullPolicy: Always
         env:

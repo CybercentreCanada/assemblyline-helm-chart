@@ -174,7 +174,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: socketio
-          image: cccs/assemblyline-socketio:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
           imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}

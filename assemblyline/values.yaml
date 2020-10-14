@@ -1,11 +1,12 @@
 # Tags for the containers used
-coreVersion: '4.0.0'
-uiVersion: '4.0.0'
-sapiVersion: '4.0.0'
+coreVersion: '4.0.0.stable2'
+sapiVersion: '4.0.0.stable1'
+uiVersion: '4.0.0.stable1'
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
 assemblylineUIImage: cccs/assemblyline-ui
+assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 elasticAPMImage: docker.elastic.co/apm/apm-server
