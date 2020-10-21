@@ -71,12 +71,15 @@ createAdminAccount: 'on-install'
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
   - apkaye
+  - beaver
   - characterize
-  - crowbar
+  - configextractor
   - cuckoo
+  - deobfuscripter
   - emlparser
   - espresso
   - extract
+  - frankenstrings
   - floss
   - iparse
   - metadefender
@@ -85,6 +88,7 @@ autoInstallServices:
   - pdfid
   - peepdf
   - pefile
+  - pixaxe
   - suricata
   - swiffer
   - tagcheck
@@ -93,6 +97,7 @@ autoInstallServices:
   - vipermonkey
   - virustotal-dynamic
   - virustotal-static
+  - xlmmacrodeobfuscator
   - yara
 
 # Extra environment variables, mounts, and volumes shared by all core containers
