@@ -5,11 +5,6 @@ Assemblyline is a platform for the analysis of malicious files. It is designed
 to assist cyber-defence teams to automate the analysis of files and to better 
 use the time of security analysts. 
 
-**This helm chart is in development**
-
-Assemblyline version 4 is currently in beta status, this chart is mostly lacking
-documentation.
-
 Note
 ----
 
