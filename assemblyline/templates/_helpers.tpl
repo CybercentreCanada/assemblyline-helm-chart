@@ -100,6 +100,55 @@ spec:
               cpu: 1
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+          livenessProbe:
+            exec:
+              command: ["bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"]
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+{{ end }}
+---
+{{ define "assemblyline.coreServiceNoCheck" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .component }}
+  labels:
+    app: assemblyline
+    section: core
+    component: {{ .component }}
+spec:
+  replicas: {{ .replicas | default 1 }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: {{ .component }}
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: {{ .component }}
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+        - name: {{ .component }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          imagePullPolicy: Always
+          command: ['python', '-m', '{{ .command }}']
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 0.05
+            limits:
+              memory: 1Gi
+              cpu: 1
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{ end }}

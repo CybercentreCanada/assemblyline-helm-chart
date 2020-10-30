@@ -47,6 +47,11 @@ spec:
               value: http://internal-ui:5000
             - name: SERVICE_API_HOST
               value: http://service-server:5003
+          livenessProbe:
+            exec:
+              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]
+            initialDelaySeconds: 30
+            periodSeconds: 30
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: update-directory
