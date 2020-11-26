@@ -7,7 +7,7 @@ metadata:
     section: core
     component: service-server
 spec:
-  replicas: 3
+  replicas: {{ .Values.serviceServerCount }}
   selector:
     matchLabels:
       app: assemblyline

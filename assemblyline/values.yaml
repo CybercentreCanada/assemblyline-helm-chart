@@ -119,6 +119,8 @@ customLogstashPipeline: null
 logstashVolumes:
 logstashMounts:
 
+serviceServerCount: 3
+
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/
