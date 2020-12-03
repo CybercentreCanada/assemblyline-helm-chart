@@ -1,7 +1,5 @@
 # {{ required "A configuration.filestore.cache URI needs to be define. See assemblyline manual." .Values.configuration.filestore.cache }}
 # {{ required "A configuration.filestore.storage URI needs to be define. See assemblyline manual." .Values.configuration.filestore.storage }}
-# {{ required "Set a storage class for persisted redis data." .Values.redisStorageClass }}
-# {{ required "Set a storage class for sharing updates with service containers." .Values.updateStorageClass }}
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -53,3 +51,28 @@ data:
             print("Initial user setup finished.")
         else:
             print(f"User {ADMIN_USER} already found, system is already setup.")
+  share_certificate.py: |
+    import os
+    import logging
+    from flask import Flask, request, abort
+
+    app = Flask(__name__)
+
+    FILES = {
+        'elastic-certificates.p12': '/data/elastic-certificates.p12',
+        'elastic-stack-ca.p12': '/data/elastic-stack-ca.p12'
+    }
+
+    @app.route("/<filename>")
+    def read_file(filename):
+        if request.headers.get('Authorization', '') != 'Bearer ' + os.environ['SECRET_KEY']:
+            abort(401, 'token refused')
+
+        if filename not in FILES:
+            abort(404)
+
+        return open(FILES[filename], 'rb').read()
+
+    if __name__ == "__main__":
+        logging.basicConfig(level=logging.INFO)
+        app.run(ssl_context='adhoc', host='0.0.0.0', port=8000)

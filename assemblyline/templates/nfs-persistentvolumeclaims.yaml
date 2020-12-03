@@ -14,50 +14,6 @@ spec:
   storageClassName: {{ .Values.updateStorageClass }}
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: datastore-certificates-single
-  labels:
-    section: core
-spec:
-  resources:
-    requests:
-      storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  storageClassName: {{ .Values.updateStorageClass }}
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: datastore-certificates
-  labels:
-    fixed-volume-for: datastore-certificates
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  nfs:
-    server: nfs-datastore-certificates
-    path: "/"
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: datastore-certificates
-spec:
-  resources:
-    requests:
-      storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: ""
-  selector:
-    matchLabels:
-      fixed-volume-for: datastore-certificates
----
-apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: update-directory
@@ -102,18 +58,4 @@ spec:
   accessModes:
     - ReadWriteMany
   storageClassName: {{ .Values.updateStorageClass }}
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: datastore-certificates
-  labels:
-    section: core
-spec:
-  resources:
-    requests:
-      storage: 1Gi
-  accessModes:
-    - ReadWriteMany
-  storageClassName: {{ if .Values.sharedStorageClass }} {{.Values.sharedStorageClass }} {{else}} {{ .Values.updateStorageClass }} {{end}}
 {{ end }}
