@@ -91,7 +91,7 @@ spec:
       - name: redis
         image: {{ .Values.redisImage }}
         command: ['redis-server']
-        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '0']
+        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '200']
         ports:
         - containerPort: 6379
         volumeMounts:
