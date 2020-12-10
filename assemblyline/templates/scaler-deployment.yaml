@@ -43,11 +43,11 @@ spec:
               value: update-directory
             - name: FILE_UPDATE_DIRECTORY
               value: /mount/update_root/
-          livenessProbe:
-            exec:
-              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]
-            initialDelaySeconds: 30
-            periodSeconds: 30
+#          livenessProbe:
+#            exec:
+#              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]
+#            initialDelaySeconds: 30
+#            periodSeconds: 30
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: update-directory
