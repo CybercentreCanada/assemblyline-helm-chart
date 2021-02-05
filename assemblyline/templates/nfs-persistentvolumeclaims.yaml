@@ -57,5 +57,6 @@ spec:
       storage: 200Gi
   accessModes:
     - ReadWriteMany
+    - ReadOnlyMany
   storageClassName: {{ .Values.updateStorageClass }}
 {{ end }}
