@@ -46,10 +46,6 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "dispatcher-files" "command" "assemblyline_core.dispatching.run_files" "replicas" "3") . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
-{{with merge (dict "component" "dispatcher-submissions" "command" "assemblyline_core.dispatching.run_submissions") . }}
+{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances ) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}

@@ -1,7 +1,7 @@
 # Tags for the containers used
-coreVersion: '4.0.0.stable2'
-sapiVersion: '4.0.0.stable1'
-uiVersion: '4.0.0.stable1'
+coreVersion: '4.0.stable'
+sapiVersion: '4.0.stable'
+uiVersion: '4.0.stable'
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
@@ -644,3 +644,6 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
+
+
+dispatcherInstances: 2
