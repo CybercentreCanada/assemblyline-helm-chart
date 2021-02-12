@@ -6,10 +6,6 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "watcher" "command" "assemblyline_core.watcher.run_watcher") . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
 {{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
