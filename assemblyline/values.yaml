@@ -17,6 +17,7 @@ redisImage: redis
 # Storage classes for persistent data.
 redisStorageClass:
 updateStorageClass:
+persistantStorageClass:
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
@@ -216,15 +217,20 @@ datastore:
   priorityClassName: 'al-infra'
   extraInitContainers: |
     - name: create-certs
+      env:
+      - name: SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: elastic-helper-secret
+            key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-      command: ['bash', '-c', "if [ ! -f /data/elastic-certificates.p12 ]; then mkdir /tmp/certs/ && elasticsearch-certutil ca --out /tmp/certs/elastic-stack-ca.p12 --pass '' && elasticsearch-certutil cert --name security-master --dns security-master --ca /tmp/certs/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /tmp/certs/elastic-certificates.p12 && mv -n /tmp/certs/* /data/; fi"]
+      command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
   extraVolumes: |
     - name: elastic-certificates
-      persistentVolumeClaim:
-        claimName: datastore-certificates
+      emptyDir: {}
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
@@ -605,11 +611,11 @@ log-storage:
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
-      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
-      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+      xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.http.ssl.enabled: false
-      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
-      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/logging-certificates.p12
+      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
   resources:
     requests:
       cpu: 1
@@ -626,18 +632,24 @@ log-storage:
   priorityClassName: 'al-infra'
   extraInitContainers: |
     - name: create-certs
+      env:
+      - name: SECRET_KEY
+        valueFrom:
+          secretKeyRef:
+            name: elastic-helper-secret
+            key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
-      command: ['bash', '-c', "if [ ! -f /data/logging-certificates.p12 ]; then mkdir /tmp/certs/ && elasticsearch-certutil cert --name security-master --dns security-master --ca /data/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /tmp/certs/logging-certificates.p12 && mv -n /tmp/certs/* /data/; fi"]
+      command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
   extraVolumes: |
     - name: elastic-certificates
-      persistentVolumeClaim:
-        claimName: datastore-certificates
+      emptyDir: {}
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
+
 
 filestore:
   podLabels:

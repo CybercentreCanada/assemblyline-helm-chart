@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elastic-helper
+spec:
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: elastic-helper
+  serviceName: elastic-helper
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: elastic-helper
+    spec:
+      terminationGracePeriodSeconds: 10
+      priorityClassName: al-infra
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: elastic-helper
+        image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+        command: ["python",  "/mount/share_certificate.py"]
+        ports:
+        - containerPort: 8000
+        env:
+          - name: SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: elastic-helper-secret
+                key: password
+        volumeMounts:
+        - name: certificate-data
+          mountPath: /data/
+        - name: script-volume
+          mountPath: /mount
+      initContainers:
+      - name: create-certs
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+        command: [ 'bash', '-c', "if [ ! -f /data/elastic-certificates.p12 ]; then mkdir /tmp/certs/ && elasticsearch-certutil ca --out /tmp/certs/elastic-stack-ca.p12 --pass '' && elasticsearch-certutil cert --name security-master --dns security-master --ca /tmp/certs/elastic-stack-ca.p12 --pass '' --ca-pass '' --out /tmp/certs/elastic-certificates.p12 && mv -n /tmp/certs/* /data/; ls -la /data/; fi" ]
+        volumeMounts:
+          - name: certificate-data
+            mountPath: /data/
+          - name: script-volume
+            mountPath: /mount/
+      volumes:
+        - name: script-volume
+          configMap:
+            name: {{ .Release.Name }}-bootstrap-script
+            items:
+              - key: share_certificate.py
+                path: share_certificate.py
+  volumeClaimTemplates:
+  - metadata:
+      name: certificate-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistantStorageClass }}
+      resources:
+        requests:
+          storage: 1Gi
