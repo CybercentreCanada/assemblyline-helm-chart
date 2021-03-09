@@ -31,11 +31,15 @@ spec:
     - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn }} {{end}}
       http:
         paths:
+          - path: /
+            backend:
+              serviceName: frontend
+              servicePort: 3000
           - path: /socket.io/
             backend:
               serviceName: socketio
               servicePort: 5002
-          - path: /
+          - path: /api/
             backend:
               serviceName: ui
               servicePort: 5000

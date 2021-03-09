@@ -2,10 +2,12 @@
 coreVersion: '4.0.stable'
 sapiVersion: '4.0.stable'
 uiVersion: '4.0.stable'
+uiFrontendVersion: '4.0.stable'
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
 assemblylineUIImage: cccs/assemblyline-ui
+assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
