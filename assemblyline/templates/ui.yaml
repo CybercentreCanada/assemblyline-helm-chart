@@ -184,3 +184,58 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: assemblyline
+    section: core
+    component: frontend
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: frontend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: assemblyline
+    section: core
+    component: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: frontend
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+        - name: frontend
+          image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.uiFrontendVersion }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              memory: 128Mi
+              cpu: 0.5
+            limits:
+              memory: 1Gi
