@@ -124,6 +124,7 @@ logstashMounts:
 
 serviceServerCount: 3
 dispatcherInstances: 2
+ingesterInstances: 2
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.

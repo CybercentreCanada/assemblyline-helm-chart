@@ -10,18 +10,6 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester-ingest" "command" "assemblyline_core.ingester.run_ingest") . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
-{{with merge (dict "component" "ingester-internal" "command" "assemblyline_core.ingester.run_internal") . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
-{{with merge (dict "component" "ingester-submit" "command" "assemblyline_core.ingester.run_submit") . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
 {{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator") . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
@@ -43,5 +31,9 @@
 {{end}}
 ---
 {{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances ) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---
+{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
