@@ -15,7 +15,7 @@ data:
   tls.key: {{ b64enc $server.Key }}
 {{ end }}
 ---
-apiVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
@@ -42,16 +42,12 @@ spec:
               servicePort: 5002
           - path: /api/
             backend:
-              service:
-                name: ui
-                port:
-                  number: 5000
+              serviceName: ui
+              servicePort: 5000
           {{ if .Values.internalLogging }}
           - path: /kibana/
             pathType: Prefix
             backend:
-              service:
-                name: kibana
-                port:
-                  number: 5601
+              serviceName: kibana
+              servicePort: 5601
           {{ end }}
