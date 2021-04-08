@@ -44,6 +44,10 @@ spec:
             backend:
               serviceName: ui
               servicePort: 5000
+          - path: /api/v4/ingest/
+            backend:
+              serviceName: ui-ingest
+              servicePort: 5000
           {{ if .Values.internalLogging }}
           - path: /kibana/
             pathType: Prefix

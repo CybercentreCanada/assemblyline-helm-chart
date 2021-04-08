@@ -239,3 +239,59 @@ spec:
               cpu: 0.5
             limits:
               memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-ingest
+  labels:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  sessionAffinity: ClientIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-ingest
+  labels:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: ui-ingest
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: ui-ingest
+    spec:
+      priorityClassName: al-core-priority
+      containers:
+        - name: ui-ingest
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          imagePullPolicy: Always
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          ports:
+            - containerPort: 5000
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
