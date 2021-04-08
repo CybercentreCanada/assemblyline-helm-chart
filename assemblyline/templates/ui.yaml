@@ -56,7 +56,6 @@ spec:
       containers:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
-          imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
@@ -116,7 +115,6 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: AL_UNSECURED_UI
               value: "true"
-          imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
             - name: ssl-certs
@@ -175,7 +173,6 @@ spec:
       containers:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
-          imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
@@ -230,7 +227,6 @@ spec:
       containers:
         - name: frontend
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.uiFrontendVersion }}
-          imagePullPolicy: Always
           ports:
             - containerPort: 3000
           resources:
@@ -286,7 +282,6 @@ spec:
       containers:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
-          imagePullPolicy: Always
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
