@@ -45,7 +45,7 @@ spec:
 #        matchLabels:
 #          k8s-app: kube-dns
 ---
-# Allow all ingress traffic to Frontend/UI/socket-io/service-api
+# Allow all ingress traffic to Frontend/UI/UI-ingest/socket-io/service-api
 kind: NetworkPolicy
 apiVersion: networking.k8s.io/v1
 metadata:
@@ -58,7 +58,7 @@ spec:
     matchExpressions:
     - key: component
       operator: In
-      values: [frontend, ui, socketio, service-server]
+      values: [frontend, ui, ui-ingest, socketio, service-server]
   # Allow ingress from all sources, regardless of origin
   ingress:
   - from: []
