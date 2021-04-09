@@ -58,7 +58,7 @@ spec:
     matchExpressions:
     - key: component
       operator: In
-      values: [frontend, ui, ui-ingest, socketio, service-server]
+      values: {{ if .Values.separateIngestAPI }} [frontend, ui, ui-ingest, socketio, service-server] {{else}} [frontend, ui, socketio, service-server] {{end}}
   # Allow ingress from all sources, regardless of origin
   ingress:
   - from: []
