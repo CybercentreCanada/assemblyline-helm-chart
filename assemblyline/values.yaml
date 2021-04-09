@@ -37,6 +37,11 @@ internalNFS: true
 # for your storage system to the `configuration.filestore.*` fields.
 internalFilestore: true
 
+# When ingesting files at a very high rate it can saturate the API container
+# making it hard for users to use the UI. Turning on this flag creates separate
+# containers for the ingest API which make the other APIs more responsive.
+separateIngestAPI: false
+
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
 # TODO The assemblyline config entry for apm address is statically set to this
@@ -125,6 +130,8 @@ logstashMounts:
 serviceServerCount: 3
 dispatcherInstances: 2
 ingesterInstances: 2
+APIInstances: 1
+ingestAPIInstances: 1
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
