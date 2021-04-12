@@ -104,7 +104,7 @@ metadata:
     section: core
     component: internal-ui
 spec:
-  replicas: 1
+  replicas: {{ .Values.internalAPIInstances }}
   selector:
     matchLabels:
       app: assemblyline

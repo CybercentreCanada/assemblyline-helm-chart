@@ -3,8 +3,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: ui-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: {{ .Values.APIInstancesMax }}
+  minReplicas: {{ .Values.APIInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -18,8 +18,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: internal-ui-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: {{ .Values.internalAPIInstancesMax }}
+  minReplicas: {{ .Values.internalAPIInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -33,8 +33,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: ui-ingest-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 1
+  maxReplicas: {{ .Values.ingestAPIInstancesMax }}
+  minReplicas: {{ .Values.ingestAPIInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -48,8 +48,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: ingester-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: {{ .Values.ingesterInstancesMax }}
+  minReplicas: {{ .Values.ingesterInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -63,8 +63,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: dispatcher-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: {{ .Values.dispatcherInstancesMax }}
+  minReplicas: {{ .Values.dispatcherInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
@@ -78,8 +78,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: service-server-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 3
+  maxReplicas: {{ .Values.serviceServerCountMax }}
+  minReplicas: {{ .Values.serviceServerCount }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
