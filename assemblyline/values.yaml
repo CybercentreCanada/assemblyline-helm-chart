@@ -139,7 +139,7 @@ internalAPIInstances: 1
 serviceServerCountMax: 20
 dispatcherInstancesMax: 10
 ingesterInstancesMax: 10
-APIInstancesMax: 10
+APIInstancesMax: 20
 ingestAPIInstancesMax: 20
 internalAPIInstancesMax: 2
 
