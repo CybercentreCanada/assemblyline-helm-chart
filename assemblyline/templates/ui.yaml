@@ -63,9 +63,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: 2
+              value: '2'
             - name: THREADS
-              value: 4
+              value: '4'
           resources:
             limits:
               cpu: 1
@@ -124,9 +124,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: 2
+              value: '2'
             - name: THREADS
-              value: 4
+              value: '4'
             - name: AL_UNSECURED_UI
               value: "true"
           volumeMounts:
@@ -310,9 +310,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: 2
+              value: '2'
             - name: THREADS
-              value: 4
+              value: '4'
           resources:
             limits:
               cpu: 1

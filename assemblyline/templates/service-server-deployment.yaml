@@ -32,9 +32,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: 2
+              value: '2'
             - name: THREADS
-              value: 4
+              value: '4'
           resources:
             limits:
               cpu: 1
