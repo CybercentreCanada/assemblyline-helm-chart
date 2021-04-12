@@ -62,6 +62,16 @@ spec:
             - containerPort: 5000
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: 2
+            - name: THREADS
+              value: 4
+          resources:
+            limits:
+              cpu: 1
+            requests:
+              cpu: 0.5
+              memory: 2048Mi
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
@@ -113,6 +123,10 @@ spec:
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: 2
+            - name: THREADS
+              value: 4
             - name: AL_UNSECURED_UI
               value: "true"
           volumeMounts:
@@ -122,6 +136,12 @@ spec:
               readOnly: true
           ports:
             - containerPort: 5000
+          resources:
+            limits:
+              cpu: 1
+            requests:
+              cpu: 0.5
+              memory: 2048Mi
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: ssl-certs
@@ -289,6 +309,16 @@ spec:
             - containerPort: 5000
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: 2
+            - name: THREADS
+              value: 4
+          resources:
+            limits:
+              cpu: 1
+            requests:
+              cpu: 0.5
+              memory: 2048Mi
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{end}}

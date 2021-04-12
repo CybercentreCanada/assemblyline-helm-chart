@@ -31,5 +31,15 @@ spec:
             - containerPort: 5003
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: 2
+            - name: THREADS
+              value: 4
+          resources:
+            limits:
+              cpu: 1
+            requests:
+              cpu: 0.5
+              memory: 2048Mi
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
