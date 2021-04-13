@@ -60,7 +60,7 @@ spec:
 
 ---
 
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: dispatcher-hpa
@@ -71,7 +71,20 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: dispatcher
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        target:
+          type: "Utilization"
+          averageUtilization: 80 # target CPU utilization
+  behavior:
+    scaleUp:
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 600
+      stabilizationWindowSeconds: 600
 
 ---
 
