@@ -86,4 +86,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: service-server
-  targetCPUUtilizationPercentage: 100 # target CPU utilization
+  targetCPUUtilizationPercentage: 100
