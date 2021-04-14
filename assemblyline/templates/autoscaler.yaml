@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui
-  targetCPUUtilizationPercentage: 95 # target CPU utilization
+  targetCPUUtilizationPercentage: 100
 
 ---
 
@@ -24,7 +24,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: internal-ui
-  targetCPUUtilizationPercentage: 95 # target CPU utilization
+  targetCPUUtilizationPercentage: 100
 
 {{ if .Values.separateIngestAPI }} 
 ---
@@ -40,12 +40,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui-ingest
-  targetCPUUtilizationPercentage: 95 # target CPU utilization
+  targetCPUUtilizationPercentage: 100
 
 {{end}}
 ---
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: ingester-hpa
@@ -56,24 +56,11 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ingester
-  metrics:
-    - type: "Resource"
-      resource:
-        name: "cpu"
-        target:
-          type: "Utilization"
-          averageUtilization: 95 # target CPU utilization
-  behavior:
-    scaleUp:
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 300
-      stabilizationWindowSeconds: 300
+  targetCPUUtilizationPercentage: 100
 
 ---
 
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: dispatcher-hpa
@@ -84,20 +71,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: dispatcher
-  metrics:
-    - type: "Resource"
-      resource:
-        name: "cpu"
-        target:
-          type: "Utilization"
-          averageUtilization: 95 # target CPU utilization
-  behavior:
-    scaleUp:
-      policies:
-        - type: Percent
-          value: 100
-          periodSeconds: 600
-      stabilizationWindowSeconds: 600
+  targetCPUUtilizationPercentage: 100
 
 ---
 
@@ -112,4 +86,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: service-server
-  targetCPUUtilizationPercentage: 95 # target CPU utilization
+  targetCPUUtilizationPercentage: 100 # target CPU utilization
