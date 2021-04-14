@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui
-  targetCPUUtilizationPercentage: 85 # target CPU utilization
+  targetCPUUtilizationPercentage: 95 # target CPU utilization
 
 ---
 
@@ -24,7 +24,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: internal-ui
-  targetCPUUtilizationPercentage: 85 # target CPU utilization
+  targetCPUUtilizationPercentage: 95 # target CPU utilization
 
 {{ if .Values.separateIngestAPI }} 
 ---
@@ -40,12 +40,12 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui-ingest
-  targetCPUUtilizationPercentage: 85 # target CPU utilization
+  targetCPUUtilizationPercentage: 95 # target CPU utilization
 
 {{end}}
 ---
 
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2beta2
 kind: HorizontalPodAutoscaler
 metadata:
   name: ingester-hpa
@@ -56,7 +56,20 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ingester
-  targetCPUUtilizationPercentage: 85 # target CPU utilization
+  metrics:
+    - type: "Resource"
+      resource:
+        name: "cpu"
+        target:
+          type: "Utilization"
+          averageUtilization: 95 # target CPU utilization
+  behavior:
+    scaleUp:
+      policies:
+        - type: Percent
+          value: 100
+          periodSeconds: 300
+      stabilizationWindowSeconds: 300
 
 ---
 
@@ -77,7 +90,7 @@ spec:
         name: "cpu"
         target:
           type: "Utilization"
-          averageUtilization: 80 # target CPU utilization
+          averageUtilization: 95 # target CPU utilization
   behavior:
     scaleUp:
       policies:
@@ -99,4 +112,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: service-server
-  targetCPUUtilizationPercentage: 85 # target CPU utilization
+  targetCPUUtilizationPercentage: 95 # target CPU utilization
