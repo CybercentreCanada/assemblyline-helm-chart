@@ -80,8 +80,8 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: service-server-hpa
 spec:
-  maxReplicas: {{ .Values.serviceServerCountMax }}
-  minReplicas: {{ .Values.serviceServerCount }}
+  maxReplicas: {{ .Values.serviceServerInstancesMax }}
+  minReplicas: {{ .Values.serviceServerInstances }}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment

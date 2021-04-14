@@ -128,7 +128,7 @@ logstashVolumes:
 logstashMounts:
 
 # Starting Number of pods of each core component types
-serviceServerCount: 1
+serviceServerInstances: 1
 dispatcherInstances: 1
 ingesterInstances: 1
 APIInstances: 1
@@ -136,11 +136,11 @@ ingestAPIInstances: 1
 internalAPIInstances: 1
 
 # Maximum Number of pods of each core component types
-serviceServerCountMax: 20
+serviceServerInstancesMax: 30
 dispatcherInstancesMax: 10
 ingesterInstancesMax: 10
-APIInstancesMax: 20
-ingestAPIInstancesMax: 20
+APIInstancesMax: 15
+ingestAPIInstancesMax: 15
 internalAPIInstancesMax: 2
 
 # Internal configuration for assemblyline components. See the assemblyline
