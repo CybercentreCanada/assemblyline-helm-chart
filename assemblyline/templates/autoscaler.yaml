@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 85 # target CPU utilization
 
 ---
 
@@ -24,7 +24,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: internal-ui
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 85 # target CPU utilization
 
 {{ if .Values.separateIngestAPI }} 
 ---
@@ -40,7 +40,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui-ingest
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 85 # target CPU utilization
 
 {{end}}
 ---
@@ -56,7 +56,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ingester
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 85 # target CPU utilization
 
 ---
 
@@ -99,4 +99,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: service-server
-  targetCPUUtilizationPercentage: 50 # target CPU utilization
+  targetCPUUtilizationPercentage: 85 # target CPU utilization
