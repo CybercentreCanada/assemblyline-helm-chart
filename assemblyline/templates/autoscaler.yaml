@@ -1,0 +1,89 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ui-hpa
+spec:
+  maxReplicas: {{ .Values.APIInstancesMax }}
+  minReplicas: {{ .Values.APIInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ui
+  targetCPUUtilizationPercentage: 100
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: internal-ui-hpa
+spec:
+  maxReplicas: {{ .Values.internalAPIInstancesMax }}
+  minReplicas: {{ .Values.internalAPIInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: internal-ui
+  targetCPUUtilizationPercentage: 100
+
+{{ if .Values.separateIngestAPI }} 
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ui-ingest-hpa
+spec:
+  maxReplicas: {{ .Values.ingestAPIInstancesMax }}
+  minReplicas: {{ .Values.ingestAPIInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ui-ingest
+  targetCPUUtilizationPercentage: 100
+
+{{end}}
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: ingester-hpa
+spec:
+  maxReplicas: {{ .Values.ingesterInstancesMax }}
+  minReplicas: {{ .Values.ingesterInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ingester
+  targetCPUUtilizationPercentage: 100
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: dispatcher-hpa
+spec:
+  maxReplicas: {{ .Values.dispatcherInstancesMax }}
+  minReplicas: {{ .Values.dispatcherInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: dispatcher
+  targetCPUUtilizationPercentage: 100
+
+---
+
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: service-server-hpa
+spec:
+  maxReplicas: {{ .Values.serviceServerInstancesMax }}
+  minReplicas: {{ .Values.serviceServerInstances }}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: service-server
+  targetCPUUtilizationPercentage: 100

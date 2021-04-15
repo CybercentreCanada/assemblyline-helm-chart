@@ -94,7 +94,7 @@ spec:
           resources:
             requests:
               memory: 128Mi
-              cpu: 0.05
+              cpu: {{ .requestedCPU | default "50m" }}
             limits:
               memory: 1Gi
               cpu: 1

@@ -30,10 +30,10 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances ) . }}
+{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances "requestedCPU" "500m" ) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances) . }}
+{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances "requestedCPU" "500m") . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
