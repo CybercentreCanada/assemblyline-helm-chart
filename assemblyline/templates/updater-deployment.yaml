@@ -52,6 +52,11 @@ spec:
               command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]
             initialDelaySeconds: 30
             periodSeconds: 30
+          resources:
+            limits:
+              cpu: "0.5"
+            requests:
+              cpu: "0.1"
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: update-directory
