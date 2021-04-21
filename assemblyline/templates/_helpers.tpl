@@ -19,6 +19,8 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: datastore-password
+- name: DISPATCHER_RESULT_THREADS
+  value: "{{ .Values.dispatcherResultThreads }}"
 {{ if .Values.internalFilestore }}
 - name: INTERNAL_FILESTORE_ACCESS
   valueFrom:

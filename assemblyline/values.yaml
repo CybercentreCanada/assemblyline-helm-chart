@@ -130,6 +130,7 @@ logstashMounts:
 # Starting Number of pods of each core component types
 serviceServerInstances: 1
 dispatcherInstances: 1
+dispatcherResultThreads: 8
 ingesterInstances: 1
 APIInstances: 1
 ingestAPIInstances: 1
