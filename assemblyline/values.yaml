@@ -130,7 +130,6 @@ logstashMounts:
 # Starting Number of pods of each core component types
 serviceServerInstances: 1
 dispatcherInstances: 1
-dispatcherResultThreads: 4
 ingesterInstances: 1
 APIInstances: 1
 ingestAPIInstances: 1
@@ -143,6 +142,9 @@ ingesterInstancesMax: 10
 APIInstancesMax: 15
 ingestAPIInstancesMax: 15
 internalAPIInstancesMax: 2
+
+# Number of dispatcher result processing threads
+dispatcherResultThreads: 6
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
