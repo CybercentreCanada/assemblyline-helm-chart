@@ -28,6 +28,11 @@ spec:
 #          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200
+          resources:
+            limits:
+              cpu: "1"
+            requests:
+              cpu: "0.25"
           env:
             - name: LOGGING_PASSWORD
               valueFrom:
