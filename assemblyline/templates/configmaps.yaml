@@ -4,6 +4,17 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: elasticsearch-indexes
+data:
+  elastic-default-replicas: {{ .Values.elasticDefaultReplicas }}
+  elastic-default-shards: {{ .Values.elasticDefaultShards }}
+  elastic-file-shards: {{ .Values.elasticFileShards }}
+  elastic-result-shards: {{ .Values.elasticResultShards }}
+  elastic-submission-shards: {{ .Values.elasticSubmissionShards }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: system-settings
 data:
   logging-host: {{ if .Values.internalLogging }}log-storage-master:9200{{ else }}{{ .Values.loggingHost }}{{ end }}
