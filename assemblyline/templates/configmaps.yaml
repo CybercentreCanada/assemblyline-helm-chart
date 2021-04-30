@@ -6,11 +6,11 @@ kind: ConfigMap
 metadata:
   name: elasticsearch-indexes
 data:
-  elastic-default-replicas: {{ .Values.elasticDefaultReplicas }}
-  elastic-default-shards: {{ .Values.elasticDefaultShards }}
-  elastic-file-shards: {{ .Values.elasticFileShards }}
-  elastic-result-shards: {{ .Values.elasticResultShards }}
-  elastic-submission-shards: {{ .Values.elasticSubmissionShards }}
+  elastic-default-replicas: "{{ .Values.elasticDefaultReplicas }}"
+  elastic-default-shards: "{{ .Values.elasticDefaultShards }}"
+  elastic-file-shards: "{{ .Values.elasticFileShards }}"
+  elastic-result-shards: "{{ .Values.elasticResultShards }}"
+  elastic-submission-shards: "{{ .Values.elasticSubmissionShards }}"
 ---
 apiVersion: v1
 kind: ConfigMap
