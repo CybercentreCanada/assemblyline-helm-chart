@@ -146,6 +146,13 @@ internalAPIInstancesMax: 2
 # Number of dispatcher result processing threads
 dispatcherResultThreads: 6
 
+# Setup Elastic's default replicas and shards
+elasticDefaultReplicas: 1
+elasticDefaultShards: 1
+elasticFileShards: 2
+elasticResultShards: 9
+elasticSubmissionShards: 3
+
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/

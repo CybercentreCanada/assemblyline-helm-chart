@@ -1,4 +1,29 @@
 {{ define "assemblyline.coreEnv" }}
+- name: ELASTIC_DEFAULT_REPLICAS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-default-replicas
+- name: ELASTIC_DEFAULT_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-default-shards
+- name: ELASTIC_FILE_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-file-shards
+- name: ELASTIC_RESULT_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-result-shards
+- name: ELASTIC_SUBMISSION_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-submission-shards
 - name: LOGGING_PASSWORD
   valueFrom:
     secretKeyRef:
