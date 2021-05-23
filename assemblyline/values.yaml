@@ -687,6 +687,7 @@ log-storage:
 
 
 filestore:
+  fullnameOverride: "filestore"
   podLabels:
     section: core
     component: filestore
