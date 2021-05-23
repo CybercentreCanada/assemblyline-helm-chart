@@ -8,7 +8,11 @@ metadata:
 spec:
   resources:
     requests:
+      {{ if .Values.liteDeployment}}
+      storage: 20Gi
+      {{ else }}
       storage: 200Gi
+      {{ end }}
   accessModes:
     - ReadWriteOnce
   storageClassName: {{ .Values.updateStorageClass }}
@@ -21,7 +25,11 @@ metadata:
     fixed-volume-for: update-directory
 spec:
   capacity:
+    {{ if .Values.liteDeployment}}
+    storage: 20Gi
+    {{ else }}
     storage: 200Gi
+    {{ end }}
   accessModes:
     - ReadWriteMany
   nfs:
@@ -35,7 +43,11 @@ metadata:
 spec:
   resources:
     requests:
+      {{ if .Values.liteDeployment}}
+      storage: 20Gi
+      {{ else }}
       storage: 200Gi
+      {{ end }}
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -54,7 +66,11 @@ metadata:
 spec:
   resources:
     requests:
+      {{ if .Values.liteDeployment}}
+      storage: 20Gi
+      {{ else }}
       storage: 200Gi
+      {{ end }}
   accessModes:
     - ReadWriteMany
   storageClassName: {{ .Values.updateStorageClass }}

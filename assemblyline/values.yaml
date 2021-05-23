@@ -21,6 +21,10 @@ redisStorageClass:
 updateStorageClass:
 persistantStorageClass:
 
+# Deploys with resources that meet that bare minimum requirements.
+# Intended use is for testing purposes, not to be used on production deployments.
+liteDeployment: false
+
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
