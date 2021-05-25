@@ -21,7 +21,7 @@ redisStorageClass:
 updateStorageClass:
 persistantStorageClass:
 
-# Deploys with resources that meet that bare minimum requirements.
+# Deploys with resources that meet the bare minimum requirements.
 # Intended use is for testing purposes, not to be used on production deployments.
 liteDeployment: false
 
