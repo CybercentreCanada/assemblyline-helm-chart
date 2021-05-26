@@ -26,7 +26,7 @@ ln -s /snap/bin/helm /var/snap/microk8s/current/bin/helm
 ```
 
 ## (Optional) Add more nodes!!!
-**Note: This can be done while the system is live.**
+**Note: This can be done before or after the system is live.**
 
 From the master node, run:
 ```microk8s add-node```
