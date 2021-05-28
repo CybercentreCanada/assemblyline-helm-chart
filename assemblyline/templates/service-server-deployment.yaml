@@ -39,5 +39,13 @@ spec:
             requests:
               cpu: 0.5
               memory: 2048Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 5003
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5003
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
