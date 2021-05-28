@@ -47,5 +47,10 @@ spec:
             httpGet:
               path: /healthz/ready
               port: 5003
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5003
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
