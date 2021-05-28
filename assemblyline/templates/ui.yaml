@@ -68,7 +68,7 @@ spec:
             limits:
               cpu: 1
             requests:
-              cpu: 0.5
+              cpu: {{ .Values.uiReqCPU }}
               memory: 2048Mi
           livenessProbe:
             httpGet:
@@ -149,7 +149,7 @@ spec:
             limits:
               cpu: 1
             requests:
-              cpu: 0.5
+              cpu: {{ .Values.internalUIReqCPU }}
               memory: 2048Mi
           livenessProbe:
             httpGet:
@@ -222,6 +222,12 @@ spec:
             - containerPort: 5002
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+          resources:
+            limits:
+              cpu: 1
+            requests:
+              cpu: {{ .Values.socketIOReqCPU }}
+              memory: 256Mi
           livenessProbe:
             httpGet:
               path: /healthz/live
@@ -288,7 +294,7 @@ spec:
           resources:
             requests:
               memory: 128Mi
-              cpu: 0.5
+              cpu: {{ .Values.frontendReqCPU }}
             limits:
               memory: 1Gi
 {{ if .Values.separateIngestAPI }}
@@ -351,7 +357,7 @@ spec:
             limits:
               cpu: 1
             requests:
-              cpu: 0.5
+              cpu: {{ .Values.ingestUIReqCPU }}
               memory: 2048Mi
           livenessProbe:
             httpGet:

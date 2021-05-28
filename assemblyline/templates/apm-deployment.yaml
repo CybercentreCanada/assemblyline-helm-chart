@@ -32,7 +32,7 @@ spec:
             limits:
               cpu: "1"
             requests:
-              cpu: "0.25"
+              cpu: {{ .Values.apmReqCPU }}
           env:
             - name: LOGGING_PASSWORD
               valueFrom:
