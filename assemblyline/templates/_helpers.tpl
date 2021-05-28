@@ -121,7 +121,7 @@ spec:
           resources:
             requests:
               memory: 128Mi
-              cpu: {{ .requestedCPU | default "50m" }}
+              cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
               cpu: 1
@@ -170,7 +170,7 @@ spec:
           resources:
             requests:
               memory: 128Mi
-              cpu: 0.05
+              cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
               cpu: 1

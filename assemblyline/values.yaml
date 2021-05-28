@@ -153,6 +153,19 @@ elasticFileShards: 2
 elasticResultShards: 9
 elasticSubmissionShards: 3
 
+# CPU Revervation 
+defaultReqCPU: "50m"
+alerterReqCPU: "50m"
+dispatcherReqCPU: "500m"
+esMetricsReqCPU: "50m"
+expiryReqCPU: "50m"
+heartbeatReqCPU: "200m"
+ingesterReqCPU: "500m"
+metricsReqCPU: "200m"
+plumberReqCPU: "50m"
+statisticsReqCPU: "50m"
+workflowReqCPU: "50m"
+
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/

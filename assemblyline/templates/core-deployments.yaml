@@ -1,39 +1,39 @@
-{{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter") . }}
+{{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter" "requestedCPU" .Values.alerterReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow") . }}
+{{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow" "requestedCPU" .Values.workflowReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry") . }}
+{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator") . }}
+{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
 ---
-{{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator") . }}
+{{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator" "requestedCPU" .Values.statisticsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
 ---
-{{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics") . }}
+{{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics" "requestedCPU" .Values.esMetricsReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager") . }}
+{{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager" "requestedCPU" .Values.heartbeatReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber") . }}
+{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber" "requestedCPU" .Values.plumberReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances "requestedCPU" "500m" ) . }}
+{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances "requestedCPU" "500m") . }}
+{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
