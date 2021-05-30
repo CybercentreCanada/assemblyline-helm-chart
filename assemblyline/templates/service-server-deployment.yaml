@@ -38,7 +38,20 @@ spec:
               cpu: 1
               memory: 2Gi
             requests:
-              cpu: 0.5
-              memory: 1Gi
+              cpu: {{ .Values.serviceServerReqCPU }}
+              memory: 2048Mi
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 5003
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5003
+            initialDelaySeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5003
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}

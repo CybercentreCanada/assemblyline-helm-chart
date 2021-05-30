@@ -4,7 +4,6 @@ metadata:
   namespace: {{ .Release.Name  }}
   name: al-service-priority
 value: 0
-preemptionPolicy: Never
 globalDefault: false
 description: "AL analysis services should be low priority and non-preempting."
 ---

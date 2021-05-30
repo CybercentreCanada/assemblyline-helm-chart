@@ -42,9 +42,9 @@ spec:
           mountPath: /mount
         resources:
           limits:
-            cpu: "0.25"
+            cpu: "250m"
           requests:
-            cpu: "0.1"
+            cpu: {{ .Values.elasticHelperReqCPU }}
       initContainers:
       - name: create-certs
         image: {{ .Values.datastore.image }}:7.8.0

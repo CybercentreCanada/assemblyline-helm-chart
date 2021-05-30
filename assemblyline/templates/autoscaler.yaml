@@ -9,7 +9,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.APITargetUsage }}
 
 ---
 
@@ -24,7 +24,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: internal-ui
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.internalAPITargetUsage }}
 
 {{ if .Values.separateIngestAPI }} 
 ---
@@ -40,7 +40,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ui-ingest
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.ingestAPITargetUsage }}
 
 {{end}}
 ---
@@ -56,7 +56,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: ingester
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.ingesterTargetUsage }}
 
 ---
 
@@ -71,7 +71,7 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: dispatcher
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.dispatcherTargetUsage }}
 
 ---
 
@@ -86,4 +86,4 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: service-server
-  targetCPUUtilizationPercentage: 100
+  targetCPUUtilizationPercentage: {{ .Values.serviceServerTargetUsage }}

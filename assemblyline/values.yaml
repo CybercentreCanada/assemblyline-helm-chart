@@ -156,6 +156,40 @@ elasticFileShards: 2
 elasticResultShards: 9
 elasticSubmissionShards: 3
 
+# CPU Revervation 
+defaultReqCPU: "50m"
+alerterReqCPU: "50m"
+apmReqCPU: "250m"
+dispatcherReqCPU: "500m"
+elasticHelperReqCPU: "25m"
+esMetricsReqCPU: "50m"
+expiryReqCPU: "50m"
+frontendReqCPU: "50m"
+heartbeatReqCPU: "50m"
+internalUIReqCPU: "100m"
+ingestUIReqCPU: "500m"
+ingesterReqCPU: "500m"
+logstashReqCPU: "100m"
+metricsReqCPU: "50m"
+plumberReqCPU: "50m"
+redisVolatileReqCPU: "750m"
+redisPersistentReqCPU: "500m"
+scalerReqCPU: "500m"
+serviceServerReqCPU: "500m"
+socketIOReqCPU: "100m"
+statisticsReqCPU: "50m"
+uiReqCPU: "500m"
+updaterReqCPU: "100m"
+workflowReqCPU: "50m"
+
+# HPA Target Usage
+APITargetUsage: 100
+internalAPITargetUsage: 100
+ingestAPITargetUsage: 100
+ingesterTargetUsage: 50
+dispatcherTargetUsage: 80
+serviceServerTargetUsage: 100
+
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/

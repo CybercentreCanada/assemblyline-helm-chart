@@ -30,7 +30,7 @@ spec:
             - containerPort: 6379
           resources:
             requests:
-              cpu: "0.75"
+              cpu: {{ .Values.redisVolatileReqCPU }}
 ---
 apiVersion: v1
 kind: Service
@@ -106,7 +106,7 @@ spec:
           limits:
             cpu: "1"
           requests:
-            cpu: "0.25"
+            cpu: {{ .Values.redisPersistentReqCPU }}
   volumeClaimTemplates:
   - metadata:
       name: redis-data
