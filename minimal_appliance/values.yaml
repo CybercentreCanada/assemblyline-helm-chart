@@ -6,6 +6,32 @@ persistantStorageClass:
 # Overwrites storage size for update-directory volume. (default: 200Gi)
 updateStorageSize: 20Gi
 
+# CPU Revervation 
+defaultReqCPU: "0m"
+alerterReqCPU: "0m"
+apmReqCPU: "0m"
+dispatcherReqCPU: "0m"
+elasticHelperReqCPU: "0m"
+esMetricsReqCPU: "0m"
+expiryReqCPU: "0m"
+frontendReqCPU: "0m"
+heartbeatReqCPU: "0m"
+internalUIReqCPU: "0m"
+ingestUIReqCPU: "0m"
+ingesterReqCPU: "0m"
+logstashReqCPU: "0m"
+metricsReqCPU: "0m"
+plumberReqCPU: "0m"
+redisVolatileReqCPU: "0m"
+redisPersistentReqCPU: "0m"
+scalerReqCPU: "0m"
+serviceServerReqCPU: "0m"
+socketIOReqCPU: "0m"
+statisticsReqCPU: "0m"
+uiReqCPU: "0m"
+updaterReqCPU: "0m"
+workflowReqCPU: "0m"
+
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: true
