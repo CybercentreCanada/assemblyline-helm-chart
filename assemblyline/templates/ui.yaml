@@ -74,15 +74,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
@@ -155,15 +161,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
 
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
@@ -232,15 +244,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5002
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5002
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5002
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
@@ -363,15 +381,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{end}}

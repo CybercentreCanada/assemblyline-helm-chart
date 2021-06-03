@@ -43,14 +43,20 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5003
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5003
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5003
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
