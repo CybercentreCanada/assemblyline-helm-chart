@@ -217,8 +217,8 @@ configuration:
       service_defaults:
         backlog: 10
         min_instances: 1
-        growth: 60
-        shrink: 20
+        growth: 30
+        shrink: 10
         environment:
           - name: 'SERVICE_API_HOST'
             value: 'http://service-server:5003'
@@ -231,6 +231,8 @@ configuration:
     log_to_console: true
     log_to_file: false
     log_to_syslog: false
+  services:
+    cpu_reservation: 0.60
   ui:
     fqdn: "localhost"
 
