@@ -136,7 +136,7 @@ ingestAPIInstances: 1
 internalAPIInstances: 1
 
 # Maximum Number of pods of each core component types
-serviceServerInstancesMax: 30
+serviceServerInstancesMax: 50
 dispatcherInstancesMax: 10
 ingesterInstancesMax: 10
 APIInstancesMax: 15
@@ -160,14 +160,14 @@ apmReqCPU: "250m"
 dispatcherReqCPU: "500m"
 elasticHelperReqCPU: "25m"
 esMetricsReqCPU: "50m"
-expiryReqCPU: "50m"
+expiryReqCPU: "150m"
 frontendReqCPU: "50m"
-heartbeatReqCPU: "50m"
+heartbeatReqCPU: "500m"
 internalUIReqCPU: "100m"
 ingestUIReqCPU: "500m"
 ingesterReqCPU: "500m"
 logstashReqCPU: "100m"
-metricsReqCPU: "50m"
+metricsReqCPU: "500m"
 plumberReqCPU: "50m"
 redisVolatileReqCPU: "750m"
 redisPersistentReqCPU: "500m"
@@ -182,7 +182,7 @@ workflowReqCPU: "50m"
 # HPA Target Usage
 APITargetUsage: 100
 internalAPITargetUsage: 100
-ingestAPITargetUsage: 100
+ingestAPITargetUsage: 50
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 80
 serviceServerTargetUsage: 100
