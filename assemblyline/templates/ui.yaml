@@ -40,6 +40,7 @@ metadata:
     component: ui
 spec:
   replicas: {{ .Values.APIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -122,6 +123,7 @@ metadata:
     component: internal-ui
 spec:
   replicas: {{ .Values.internalAPIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -212,6 +214,7 @@ metadata:
     component: socketio
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -291,6 +294,7 @@ metadata:
     component: frontend
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -347,6 +351,7 @@ metadata:
     component: ui-ingest
 spec:
   replicas: {{ .Values.ingestAPIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline

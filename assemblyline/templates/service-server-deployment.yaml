@@ -8,6 +8,7 @@ metadata:
     component: service-server
 spec:
   replicas: {{ .Values.serviceServerInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline

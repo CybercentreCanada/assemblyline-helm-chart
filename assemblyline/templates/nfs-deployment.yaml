@@ -9,6 +9,7 @@ metadata:
     component: nfs-update-directory
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
