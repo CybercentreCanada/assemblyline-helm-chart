@@ -98,6 +98,7 @@ metadata:
     component: {{ .component }}
 spec:
   replicas: {{ .replicas | default 1 }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -147,6 +148,7 @@ metadata:
     component: {{ .component }}
 spec:
   replicas: {{ .replicas | default 1 }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline

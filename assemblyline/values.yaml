@@ -24,6 +24,9 @@ persistantStorageClass:
 # Overwrites storage size for update-directory volume. (default: 200Gi)
 updateStorageSize:
 
+# Number of revisions for each deployments
+revisionCount: 2
+
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
@@ -139,7 +142,7 @@ ingestAPIInstances: 1
 internalAPIInstances: 1
 
 # Maximum Number of pods of each core component types
-serviceServerInstancesMax: 30
+serviceServerInstancesMax: 50
 dispatcherInstancesMax: 10
 ingesterInstancesMax: 10
 APIInstancesMax: 15
@@ -163,14 +166,14 @@ apmReqCPU: "250m"
 dispatcherReqCPU: "500m"
 elasticHelperReqCPU: "25m"
 esMetricsReqCPU: "50m"
-expiryReqCPU: "50m"
+expiryReqCPU: "150m"
 frontendReqCPU: "50m"
-heartbeatReqCPU: "50m"
+heartbeatReqCPU: "500m"
 internalUIReqCPU: "100m"
 ingestUIReqCPU: "500m"
 ingesterReqCPU: "500m"
 logstashReqCPU: "100m"
-metricsReqCPU: "50m"
+metricsReqCPU: "500m"
 plumberReqCPU: "50m"
 redisVolatileReqCPU: "750m"
 redisPersistentReqCPU: "500m"
@@ -185,7 +188,7 @@ workflowReqCPU: "50m"
 # HPA Target Usage
 APITargetUsage: 100
 internalAPITargetUsage: 100
-ingestAPITargetUsage: 100
+ingestAPITargetUsage: 50
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 80
 serviceServerTargetUsage: 100
@@ -220,8 +223,8 @@ configuration:
       service_defaults:
         backlog: 10
         min_instances: 1
-        growth: 60
-        shrink: 20
+        growth: 30
+        shrink: 10
         environment:
           - name: 'SERVICE_API_HOST'
             value: 'http://service-server:5003'
@@ -234,6 +237,8 @@ configuration:
     log_to_console: true
     log_to_file: false
     log_to_syslog: false
+  services:
+    cpu_reservation: 0.60
   ui:
     fqdn: "localhost"
 

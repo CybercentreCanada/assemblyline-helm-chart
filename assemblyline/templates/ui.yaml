@@ -40,6 +40,7 @@ metadata:
     component: ui
 spec:
   replicas: {{ .Values.APIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -75,15 +76,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
@@ -117,6 +124,7 @@ metadata:
     component: internal-ui
 spec:
   replicas: {{ .Values.internalAPIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -157,15 +165,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: ssl-certs
@@ -201,6 +215,7 @@ metadata:
     component: socketio
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -233,15 +248,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5002
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5002
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5002
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 ---
@@ -274,6 +295,7 @@ metadata:
     component: frontend
 spec:
   replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -330,6 +352,7 @@ metadata:
     component: ui-ingest
 spec:
   replicas: {{ .Values.ingestAPIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
@@ -365,15 +388,21 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
             initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+            timeoutSeconds: 5
+            periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{end}}
