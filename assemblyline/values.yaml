@@ -21,6 +21,9 @@ redisStorageClass:
 updateStorageClass:
 persistantStorageClass:
 
+# Overwrites storage size for update-directory volume. (default: 200Gi)
+updateStorageSize:
+
 # Number of revisions for each deployments
 revisionCount: 2
 
@@ -722,6 +725,7 @@ log-storage:
 
 
 filestore:
+  fullnameOverride: "filestore"
   podLabels:
     section: core
     component: filestore

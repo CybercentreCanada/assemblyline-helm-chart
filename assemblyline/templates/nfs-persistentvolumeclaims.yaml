@@ -8,7 +8,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 200Gi
+      storage: {{ .Values.updateStorageSize | default "200Gi" |}}
   accessModes:
     - ReadWriteOnce
   storageClassName: {{ .Values.updateStorageClass }}
@@ -21,7 +21,7 @@ metadata:
     fixed-volume-for: update-directory
 spec:
   capacity:
-    storage: 200Gi
+    storage: {{ .Values.updateStorageSize | default "200Gi" }}
   accessModes:
     - ReadWriteMany
   nfs:
@@ -35,7 +35,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 200Gi
+      storage: {{ .Values.updateStorageSize | default "200Gi" }}
   accessModes:
     - ReadWriteMany
   storageClassName: ""
@@ -54,7 +54,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 200Gi
+      storage: {{ .Values.updateStorageSize | default "200Gi" }}
   accessModes:
     - ReadWriteMany
   storageClassName: {{ .Values.updateStorageClass }}
