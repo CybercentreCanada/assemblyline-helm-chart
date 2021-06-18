@@ -28,7 +28,7 @@ spec:
                 section: core
             topologyKey: kubernetes.io/hostname
       containers:
-      - image: {{ .Values.elasticLogstashImage }}:7.8.0
+      - image: {{ .Values.elasticLogstashImage }}:{{ .Values.elasticLogstashTag }}
         env:
         {{ include "assemblyline.coreEnv" . | indent 8 }}
         - name: LS_JAVA_OPTS

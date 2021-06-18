@@ -13,6 +13,7 @@ assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
+elasticLogstashTag: "7.8.0"
 NFSImage: apnar/nfs-ganesha
 redisImage: redis
 
