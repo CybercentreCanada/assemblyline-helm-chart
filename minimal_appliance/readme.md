@@ -17,13 +17,9 @@ snap install microk8s --classic
 ```
 3. Install microk8s addons:  
 ```
-sudo microk8s enable dns ha-cluster ingress storage
+sudo microk8s enable dns ha-cluster ingress storage helm3
 ```
-4. Install helm:    
-```
-snap install helm --classic
-```
-5. Install git: 
+4. Install git: 
 ```
 sudo apt install git
 ```
@@ -87,9 +83,7 @@ sudo microk8s kubectl apply -f ~/git/assemblyline-helm-chart/minimal_appliance/s
 For the purpose of this documentation we will use ```assemblyline``` as the deployment name.
 
 ```
-helm install assemblyline ~/git/assemblyline-helm-chart/assemblyline \
--f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml \
--n al
+sudo microk8s helm3 install assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
 ```
 
 ## Alternative Installations:
