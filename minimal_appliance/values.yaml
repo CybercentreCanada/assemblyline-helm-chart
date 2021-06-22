@@ -35,6 +35,7 @@ workflowReqCPU: "0m"
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
+loggingHost: "log-storage-master:9200"
 
 # Many kubernetes environments don't provide multiple read multiple write volumes.
 # We want to use them, but they don't have to be high performance. If this flag
