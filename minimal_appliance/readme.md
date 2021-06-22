@@ -9,11 +9,11 @@ smaller scale deployments such as on Minikube and MicroK8S.
 
 1. Install docker: 
 ```
-snap install docker
+sudo snap install docker
 ```
 2. Install microk8s: 
 ```
-snap install microk8s --classic
+sudo snap install microk8s --classic
 ```
 3. Install microk8s addons:  
 ```
