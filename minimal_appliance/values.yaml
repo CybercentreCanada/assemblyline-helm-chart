@@ -1,7 +1,7 @@
 # Storage classes for persistent data.
-redisStorageClass:
-updateStorageClass:
-persistantStorageClass:
+redisStorageClass: microk8s-hostpath
+updateStorageClass: microk8s-hostpath
+persistantStorageClass: microk8s-hostpath
 
 # Overwrites storage size for update-directory volume. (default: 200Gi)
 updateStorageSize: 20Gi
@@ -34,7 +34,7 @@ workflowReqCPU: "0m"
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
-internalLogging: true
+internalLogging: false
 
 # Many kubernetes environments don't provide multiple read multiple write volumes.
 # We want to use them, but they don't have to be high performance. If this flag
@@ -69,7 +69,7 @@ datastore:
     limits:
       memory: 4Gi
   volumeClaimTemplate:
-    storageClassName:
+    storageClassName: microk8s-hostpath
     resources:
       requests:
         storage: 20Gi
@@ -85,7 +85,7 @@ log-storage:
       cpu: 4
       memory: 4Gi
   volumeClaimTemplate:
-    storageClassName:
+    storageClassName: microk8s-hostpath
     resources:
       requests:
         storage: 20Gi
@@ -93,7 +93,7 @@ log-storage:
 filestore:
   persistence:
     size: 20Gi
-    StorageClass:
+    StorageClass: microk8s-hostpath
   resources:
     requests:
       memory: 2Gi
