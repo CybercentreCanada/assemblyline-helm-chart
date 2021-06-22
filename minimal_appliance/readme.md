@@ -104,6 +104,28 @@ cd ~/git/assemblyline-helm-chart && git pull
 sudo microk8s helm upgrade assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
 ```
 
+## Quality of life improvements
+
+### Lens IDE
+If the computer on which your microk8s deployment is install has a desktop interface, I strongly suggest that you use K8s Lens IDE to manage the system
+
+#### Install Lens
+```
+sudo snap install kontena-lens --classic
+```
+#### Configure Lens
+After you run Lens for the first time, click the "Add cluster" menu/button, select the paste as text tab and paste the output of the following command:
+```
+sudo microk8s kubectl config view --raw
+```
+
+### Alias to kubectl 
+
+Since all is running inside microk8s you can create an alias to the kubectl addon in your bashrc to make your life easier
+```
+alias kubectl='sudo microk8s kubectl --namespace=al'
+```
+
 ## Alternative Installations:
 
 ### Minikube setup
