@@ -89,7 +89,19 @@ sudo microk8s kubectl apply -f ~/git/assemblyline-helm-chart/minimal_appliance/s
 For the purpose of this documentation we will use ```assemblyline``` as the deployment name.
 
 ```
-sudo microk8s helm3 install assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
+sudo microk8s helm install assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
+```
+## Updating the current deployment
+
+### Pull the latest chart
+```
+cd ~/git/assemblyline-helm-chart && git pull
+```
+
+### Update the deployment
+
+```
+sudo microk8s helm upgrade assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
 ```
 
 ## Alternative Installations:
