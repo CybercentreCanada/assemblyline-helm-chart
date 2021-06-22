@@ -17,9 +17,15 @@ snap install microk8s --classic
 ```
 3. Install microk8s addons:  
 ```
-sudo microk8s enable dns ha-cluster ingress storage helm3
+sudo microk8s enable dns ha-cluster ingress storage
 ```
-4. Install git: 
+4. Install Helm and set it up to use with microk8s:
+```
+sudo snap install helm --classic
+sudo mkdir /var/snap/microk8s/current/bin
+sudo ln -s /snap/bin/helm /var/snap/microk8s/current/bin/helm
+```
+5. Install git: 
 ```
 sudo apt install git
 ```
