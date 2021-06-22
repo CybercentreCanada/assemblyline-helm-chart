@@ -53,7 +53,7 @@ data:
             user_data = User({
                 "agrees_with_tos": "NOW",
                 "classification": "RESTRICTED",
-                "name": "Admin user",
+                "name": "Administrator",
                 "password": get_password_hash(INITIAL_ADMIN_PASSWORD),
                 "uname": ADMIN_USER,
                 "type": [ADMIN_USER, "user", "signature_importer"]})

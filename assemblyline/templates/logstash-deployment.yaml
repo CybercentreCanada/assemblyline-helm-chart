@@ -1,3 +1,4 @@
+{{ if .Values.loggingAndMetrics }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -98,3 +99,4 @@ spec:
           name: logstash-pipeline
         name: logstashpipeline
 {{ if  .Values.logstashVolumes }}{{ .Values.logstashVolumes | toYaml | indent 6 }}{{ end }}
+{{ end }}

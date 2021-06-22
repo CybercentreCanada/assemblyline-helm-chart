@@ -32,11 +32,6 @@ uiReqCPU: "0m"
 updaterReqCPU: "0m"
 workflowReqCPU: "0m"
 
-# When true an elk stack is launched inside assemblyline to collect logs and metrics
-# Otherwise, logstash is run, but no kibana or elasticsearch for logs
-internalLogging: false
-loggingHost: "log-storage-master:9200"
-
 # Many kubernetes environments don't provide multiple read multiple write volumes.
 # We want to use them, but they don't have to be high performance. If this flag
 # is true, assemblyline will launch NFS servers internally to get RWX volumes.
@@ -75,6 +70,28 @@ datastore:
       requests:
         storage: 20Gi
 
+# Configuration for the file storage
+# Values an administrator is likely to want to change to scale their deployment are:
+#     persistence
+filestore:
+  persistence:
+    size: 20Gi
+    StorageClass: microk8s-hostpath
+  resources:
+    requests:
+      memory: 2Gi
+    limits:
+      memory: 4Gi
+
+# When true, logging and metrics pods are launched to gather information about the 
+# k8s cluster and its pods
+loggingAndMetrics: false
+
+# When true an elk stack is launched inside assemblyline to collect logs and metrics
+# Otherwise, logstash is run, but no kibana or elasticsearch for logs
+internalLogging: false
+loggingHost: "log-storage-master:9200"
+
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
 log-storage:
@@ -91,14 +108,5 @@ log-storage:
       requests:
         storage: 20Gi
 
-filestore:
-  persistence:
-    size: 20Gi
-    StorageClass: microk8s-hostpath
-  resources:
-    requests:
-      memory: 2Gi
-    limits:
-      memory: 4Gi
 
 
