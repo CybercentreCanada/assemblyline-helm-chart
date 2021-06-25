@@ -241,6 +241,7 @@ spec:
           resources:
             limits:
               cpu: 1
+              memory: "2Gi"
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
               memory: 256Mi
@@ -320,6 +321,7 @@ spec:
               cpu: {{ .Values.frontendReqCPU }}
             limits:
               memory: 1Gi
+              cpu: 2
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1
