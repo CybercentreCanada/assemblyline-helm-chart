@@ -643,6 +643,7 @@ metricbeat:
 
 kibana:
   fullnameOverride: kibana
+  elasticsearchHosts: http://log-storage-master:9200
   healthCheckPath: /kibana/app/kibana
   labels:
     section: core
@@ -650,11 +651,6 @@ kibana:
     labels:
       section: core
   extraEnvs:
-    - name: ELASTICSEARCH_HOSTS
-      valueFrom:
-        configMapKeyRef:
-          name: system-settings
-          key: logging-host
     - name: SERVER_NAME
       value: localhost
     - name: ELASTICSEARCH_USERNAME
