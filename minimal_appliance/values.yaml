@@ -93,3 +93,4 @@ internalLogging: false
 
 # Make sure we use the same datastore for logging if we turn it on
 seperateInternalLogging: false
+loggingHost: datastore-master:9200
