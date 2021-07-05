@@ -91,6 +91,6 @@ loggingAndMetrics: false
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
 
-# Make sure we use the same datastore for logging if we turn it on
+# Make sure we use the same datastore for logging when someone turn on internal logging
 seperateInternalLogging: false
 loggingHost: datastore-master:9200
