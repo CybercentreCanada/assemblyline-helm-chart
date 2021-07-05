@@ -90,23 +90,6 @@ loggingAndMetrics: false
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 # Otherwise, logstash is run, but no kibana or elasticsearch for logs
 internalLogging: false
-loggingHost: "log-storage-master:9200"
 
-# Configuration for the internal logging elasticsearch instance, only used
-# if the internal logging flag is set
-log-storage:
-  esJavaOpts: '-Xms2g -Xmx2g'
-  resources:
-    requests:
-      memory: 2Gi
-    limits:
-      cpu: 4
-      memory: 4Gi
-  volumeClaimTemplate:
-    storageClassName: microk8s-hostpath
-    resources:
-      requests:
-        storage: 20Gi
-
-
-
+# Make sure we use the same datastore for logging if we turn it on
+seperateInternalLogging: false
