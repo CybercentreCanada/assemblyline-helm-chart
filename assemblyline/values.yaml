@@ -310,13 +310,19 @@ datastore:
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
+      resources:
+        requests:
+          cpu: "10m"
+          memory: "32Mi"
+        limits:
+          cpu: "100m"
+          memory: "256Mi"
   extraVolumes: |
     - name: elastic-certificates
       emptyDir: {}
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
-
 
 filebeat:
   labels:
@@ -415,6 +421,13 @@ metricbeat:
     section: core
     component: metricbeat
   deployment:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
     extraVolumeMounts:
     - name: dockersock
       mountPath: /var/run/docker.sock
@@ -453,6 +466,13 @@ metricbeat:
           fieldRef:
             fieldPath: spec.nodeName
   daemonset:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+      limits:
+        cpu: "1"
+        memory: "512Mi"
     extraEnvs:
       - name: ELASTICSEARCH_HOSTS
         valueFrom:

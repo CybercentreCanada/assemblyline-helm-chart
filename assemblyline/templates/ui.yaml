@@ -241,6 +241,7 @@ spec:
           resources:
             limits:
               cpu: 1
+              memory: "2Gi"
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
               memory: 256Mi
@@ -316,9 +317,10 @@ spec:
             - containerPort: 3000
           resources:
             requests:
-              memory: 128Mi
               cpu: {{ .Values.frontendReqCPU }}
+              memory: 128Mi
             limits:
+              cpu: 1
               memory: 1Gi
 {{ if .Values.separateIngestAPI }}
 ---

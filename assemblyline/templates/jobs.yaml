@@ -89,6 +89,10 @@ spec:
             value: http://service-server:5003
           - name: REGISTER_ONLY
             value: 'True'
+        resources:
+          limits:
+            cpu: "100m"
+            memory: 1Gi
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300
