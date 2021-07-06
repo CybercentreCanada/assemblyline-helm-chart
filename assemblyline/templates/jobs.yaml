@@ -82,12 +82,11 @@ spec:
     spec:
       containers:
       - name: install-alsvc-{{- . }}
-        image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:latest
+        image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:stable
         imagePullPolicy: Always
         env:
           - name: SERVICE_API_HOST
             value: http://service-server:5003
-#        SERVICE_API_KEY: ${SERVICE_API_KEY}
           - name: REGISTER_ONLY
             value: 'True'
       restartPolicy: Never
