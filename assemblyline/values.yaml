@@ -59,9 +59,6 @@ separateIngestAPI: false
 
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
-# TODO The assemblyline config entry for apm address is statically set to this
-#      whether it is created or not. Some way to switch it off when this is false
-#      would be nice
 enableAPM: false
 
 # If internal logging is not used, this specifies where to write metrics and logs.

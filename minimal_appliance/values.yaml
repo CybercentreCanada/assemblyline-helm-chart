@@ -1,12 +1,35 @@
-# Storage classes for persistent data.
+# Set the default storage classes for microk8s 
 redisStorageClass: microk8s-hostpath
 updateStorageClass: microk8s-hostpath
 persistantStorageClass: microk8s-hostpath
 
-# Overwrites storage size for update-directory volume. (default: 200Gi)
+# Turn off replication since there is only one elastic node
+elasticDefaultReplicas: 0
+
+# Turn off metrics and logs gathering to saved on processing power
+#    NOTE: this could be turned back on if the appliance node is powerful enough
+loggingAndMetrics: false
+
+# Turn off Application performance metrics to save processing power
+#    NOTE: this could be turned back on if you need insight on the performance of
+#          the core components
+enableAPM: false
+
+# Turn off self contained ELK stack for logging and metrics
+internalLogging: false
+
+# Make sure we use the same elasticsearch DB for logging and data when 
+# internal logging is turned on
+seperateInternalLogging: false
+loggingHost: datastore-master:9200
+
+kibana:
+  elasticsearchHosts: http://datastore-master:9200
+
+# Overwrites storage size for update-directory to save on space
 updateStorageSize: 20Gi
 
-# CPU Revervation 
+# Stop reseving CPU for component
 defaultReqCPU: "0m"
 alerterReqCPU: "0m"
 apmReqCPU: "0m"
@@ -32,10 +55,7 @@ uiReqCPU: "0m"
 updaterReqCPU: "0m"
 workflowReqCPU: "0m"
 
-# Many kubernetes environments don't provide multiple read multiple write volumes.
-# We want to use them, but they don't have to be high performance. If this flag
-# is true, assemblyline will launch NFS servers internally to get RWX volumes.
-# Otherwise, the storage class for updateStorageClass needs to support RWX
+# No need to provide internal NFS since all pods will write to the same server
 internalNFS: false
 
 # Internal configuration for assemblyline components. See the assemblyline
@@ -82,18 +102,3 @@ filestore:
       memory: 2Gi
     limits:
       memory: 4Gi
-
-# When true, logging and metrics pods are launched to gather information about the 
-# k8s cluster and its pods
-loggingAndMetrics: false
-
-# When true an elk stack is launched inside assemblyline to collect logs and metrics
-# Otherwise, logstash is run, but no kibana or elasticsearch for logs
-internalLogging: false
-
-# Make sure we use the same datastore for logging when someone turn on internal logging
-seperateInternalLogging: false
-loggingHost: datastore-master:9200
-
-kibana:
-  elasticsearchHosts: http://datastore-master:9200
