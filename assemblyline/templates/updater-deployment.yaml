@@ -56,7 +56,9 @@ spec:
           resources:
             limits:
               cpu: "0.5"
+              {{ if .Values.namespaceResourceLimited }}
               memory: "1Gi"
+              {{ end }}
             requests:
               cpu: {{ .Values.updaterReqCPU }}
       volumes:

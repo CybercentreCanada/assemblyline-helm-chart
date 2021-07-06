@@ -43,7 +43,9 @@ spec:
         resources:
           limits:
             cpu: "250m"
+            {{ if .Values.namespaceResourceLimited }}
             memory: "256Mi"
+            {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
             memory: "32Mi"
@@ -54,7 +56,9 @@ spec:
         resources:
           limits:
             cpu: "250m"
+            {{ if .Values.namespaceResourceLimited }}
             memory: "256Mi"
+            {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
             memory: "32Mi"

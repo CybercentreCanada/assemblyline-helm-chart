@@ -43,6 +43,12 @@ spec:
             mountPath: /mount
           - name: al-config
             mountPath: /etc/assemblyline/
+        resources:
+          limits:
+            cpu: "100m"
+            {{ if .Values.namespaceResourceLimited }}
+            memory: 1Gi
+            {{ end }}
       volumes:
         - name: al-config
           configMap:
@@ -92,7 +98,9 @@ spec:
         resources:
           limits:
             cpu: "100m"
+            {{ if .Values.namespaceResourceLimited }}
             memory: 1Gi
+            {{ end }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300

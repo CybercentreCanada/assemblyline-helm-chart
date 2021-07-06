@@ -202,6 +202,9 @@ ingesterTargetUsage: 50
 dispatcherTargetUsage: 80
 serviceServerTargetUsage: 100
 
+# Is the namespace of your cluster resource limitted
+namespaceResourceLimited: false
+
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/
@@ -289,7 +292,6 @@ datastore:
       memory: 5Gi
     limits:
       cpu: 4
-      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
@@ -310,13 +312,6 @@ datastore:
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
-      resources:
-        requests:
-          cpu: "10m"
-          memory: "32Mi"
-        limits:
-          cpu: "100m"
-          memory: "256Mi"
   extraVolumes: |
     - name: elastic-certificates
       emptyDir: {}
@@ -421,13 +416,6 @@ metricbeat:
     section: core
     component: metricbeat
   deployment:
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "128Mi"
-      limits:
-        cpu: "1"
-        memory: "512Mi"
     extraVolumeMounts:
     - name: dockersock
       mountPath: /var/run/docker.sock
@@ -466,13 +454,6 @@ metricbeat:
           fieldRef:
             fieldPath: spec.nodeName
   daemonset:
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "128Mi"
-      limits:
-        cpu: "1"
-        memory: "512Mi"
     extraEnvs:
       - name: ELASTICSEARCH_HOSTS
         valueFrom:
@@ -724,7 +705,6 @@ log-storage:
       memory: 5Gi
     limits:
       cpu: 6
-      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
