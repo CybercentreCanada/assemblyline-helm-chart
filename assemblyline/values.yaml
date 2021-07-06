@@ -99,8 +99,8 @@ autoInstallServices:
   - emlparser
   - espresso
   - extract
-  - frankenstrings
   - floss
+  - frankenstrings
   - iparse
   - metadefender
   - metapeek
@@ -109,10 +109,13 @@ autoInstallServices:
   - peepdf
   - pefile
   - pixaxe
+  - safelist
+  - sigma
   - suricata
   - swiffer
   - tagcheck
   - torrentslicer
+  - unpacme
   - unpacker
   - vipermonkey
   - virustotal-dynamic
