@@ -251,9 +251,6 @@ configuration:
   ui:
     fqdn: "localhost"
 
-# Sync elastic certificates using elastic-helper (required if more then one elasticsearch replicas)
-useElasticHelper: true
-
 # Configuration for the elasticsearch instance used for system data.
 # Values an administrator is likely to want to change to scale their deployment are:
 #     replicas
