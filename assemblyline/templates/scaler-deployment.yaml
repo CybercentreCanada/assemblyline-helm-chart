@@ -46,7 +46,7 @@ spec:
               value: /mount/update_root/
           resources:
             limits:
-              cpu: "1"
+              cpu: "2"
               {{ if .Values.namespaceResourceLimited }}
               memory: 4Gi
               {{ end }}
