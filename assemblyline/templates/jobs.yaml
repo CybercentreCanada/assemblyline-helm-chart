@@ -98,7 +98,7 @@ spec:
         resources:
           limits:
             cpu: "100m"
-            {{ if .Values.namespaceResourceLimited }}
+            {{ if $.Values.namespaceResourceLimited }}
             memory: 1Gi
             {{ end }}
       restartPolicy: Never
