@@ -32,7 +32,9 @@ kibana:
 # Overwrites storage size for update-directory to save on space
 updateStorageSize: 20Gi
 
-# Stop reseving CPU for component
+# Stop reserving CPU for component
+#    NOTE: This prevent HPAs to scale core components, only use on very small 
+#          systems.
 defaultReqCPU: "0m"
 alerterReqCPU: "0m"
 apmReqCPU: "0m"
