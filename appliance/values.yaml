@@ -4,28 +4,37 @@ updateStorageClass: microk8s-hostpath
 persistantStorageClass: microk8s-hostpath
 
 # Turn off replication since there is only one elastic node
+#   NOTE: If you decide to add more datastore node this should be set 
+#         to 1 once there are more then 3 datastore nodes
 elasticDefaultReplicas: 0
 
-# Turn off logs gathering to saved on processing power
-#    NOTE: this could be turned back on if the appliance node is powerful enough
+# Turn off logs gathering to saved on processing power, you can still have access
+# to logs via kubectl or Lens
+#   NOTE: This could be turned back on if the appliance node is powerful enough
+#         If you turn it on, make sure you set internalELKStack to true as well
 enableLogging: false
 
 # Turn off metrics gathering to saved on processing power (This uses a lot of CPU/Memory)
-#    NOTE: this could be turned back on if the appliance node is powerful enough
+#   NOTE: This could be turned back on if the appliance node is powerful enough
+#         If you turn it on, make sure you set internalELKStack to true as well
 enableMetrics: false
 
 # Turn off Application performance metrics to save processing power
-#    NOTE: this could be turned back on if you need insight on the performance of
-#          the core components
+#   NOTE: This could be turned back on if you need insight on the performance of the core components
+#         If you turn it on, make sure you set internalELKStack to true as well
+#         ** You will only need this if you are doing development on core components
 enableAPM: false
 
 # Turn off self contained ELK stack for logging and metrics
+#   NOTE: Do no forget to turn this on if you enable either logging, metrics or APM
 internalELKStack: false
 
 # Make sure we use the same elasticsearch DB for logging and data when 
-# internal logging is turned on
+# internal logging is turned on. 
+#   NOTE: This should never be set to true for an appliance
 seperateInternalELKStack: false
 
+# Set kibana to use the internal ELK Stack if logging is turned on
 kibana:
   elasticsearchHosts: http://datastore-master:9200
 
@@ -34,7 +43,10 @@ updateStorageSize: 20Gi
 
 # Stop reserving CPU for component
 #    NOTE: This prevent HPAs to scale core components, only use on very small 
-#          systems.
+#          systems. If your appliance is bigger, you should consider commenting
+#          those values because they will increase the throughput of your system 
+#          under heavy load. (Default reservation values for all core component is 
+#          around 8 cores.) 
 defaultReqCPU: "0m"
 alerterReqCPU: "0m"
 apmReqCPU: "0m"
@@ -74,15 +86,16 @@ configuration:
   logging:
     log_level: WARNING
   services:
+    # CPU reservation as been lowered so we could squeeze more services into smaller appliance
+    #   If you are having issues with services timing out a lot under heavy load, bring it back
+    #   to its default 0.6 value.
     cpu_reservation: 0.4
   ui:
     fqdn: "localhost"
 
 # Configuration for the elasticsearch instance used for system data.
-# Values an administrator is likely to want to change to scale their deployment are:
-#     replicas
-#     resources
-#     volumeClaimTemplate
+#   NOTE: Make sure you adjust the maximum storage size to a value appropriate
+#         to your system as the default value is quite small.
 datastore:
   replicas: 1
   esJavaOpts: '-Xms2g -Xmx2g'
@@ -96,8 +109,8 @@ datastore:
         storage: 20Gi
 
 # Configuration for the file storage
-# Values an administrator is likely to want to change to scale their deployment are:
-#     persistence
+#   NOTE: Make sure you adjust the max amount of storage files can take
+#         on your system to a proper value as the default is quite small
 filestore:
   persistence:
     size: 20Gi
