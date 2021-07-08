@@ -1,4 +1,4 @@
-{{ if .Values.loggingAndMetrics }}
+{{ if .Values.logging }}
 apiVersion: v1
 kind: ConfigMap
 metadata:

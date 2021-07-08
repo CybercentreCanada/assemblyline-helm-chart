@@ -1,4 +1,4 @@
-{{ if .Values.loggingAndMetrics }}
+{{ if .Values.logging }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

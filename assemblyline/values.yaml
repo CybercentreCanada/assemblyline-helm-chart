@@ -28,17 +28,19 @@ updateStorageSize:
 # Number of revisions for each deployments
 revisionCount: 2
 
-# When true, logging and metrics pods are launched to gather information about the 
-# k8s cluster and its pods
-loggingAndMetrics: true
+# When true, new pods are launched to aggregate all logs into a central ELK stack
+logging: true
+
+# When true, new pods are launch to gather hosts, containers, pods, elastic and 
+# Assemblyline processing metrics into a central ELK stack
+metrics: true
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
-# Otherwise, logstash is run, but no kibana or elasticsearch for logs
-internalLogging: false
+internalELKStack: false
 
 # When true a second elastic DB is launched for the sole purpose of collecting logs 
 # and metrics
-seperateInternalLogging: false
+seperateInternalELKStack: false
 
 # Many kubernetes environments don't provide multiple read multiple write volumes.
 # We want to use them, but they don't have to be high performance. If this flag

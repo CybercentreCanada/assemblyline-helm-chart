@@ -6,9 +6,13 @@ persistantStorageClass: microk8s-hostpath
 # Turn off replication since there is only one elastic node
 elasticDefaultReplicas: 0
 
-# Turn off metrics and logs gathering to saved on processing power
+# Turn logs gathering to saved on processing power
 #    NOTE: this could be turned back on if the appliance node is powerful enough
-loggingAndMetrics: false
+logging: false
+
+# Turn off metrics gathering to saved on processing power
+#    NOTE: this could be turned back on if the appliance node is powerful enough
+metrics: false
 
 # Turn off Application performance metrics to save processing power
 #    NOTE: this could be turned back on if you need insight on the performance of
@@ -16,11 +20,11 @@ loggingAndMetrics: false
 enableAPM: false
 
 # Turn off self contained ELK stack for logging and metrics
-internalLogging: false
+internalELKStack: false
 
 # Make sure we use the same elasticsearch DB for logging and data when 
 # internal logging is turned on
-seperateInternalLogging: false
+seperateInternalELKStack: false
 
 kibana:
   elasticsearchHosts: http://datastore-master:9200
