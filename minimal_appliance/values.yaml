@@ -69,6 +69,8 @@ configuration:
     scaler:
       service_defaults:
         min_instances: 0
+  logging:
+    log_level: WARNING
   services:
     cpu_reservation: 0
   ui:
