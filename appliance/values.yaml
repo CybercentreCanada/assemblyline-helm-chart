@@ -74,7 +74,7 @@ configuration:
   logging:
     log_level: WARNING
   services:
-    cpu_reservation: 0
+    cpu_reservation: 0.4
   ui:
     fqdn: "localhost"
 
