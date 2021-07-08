@@ -6,13 +6,13 @@ persistantStorageClass: microk8s-hostpath
 # Turn off replication since there is only one elastic node
 elasticDefaultReplicas: 0
 
-# Turn logs gathering to saved on processing power
+# Turn off logs gathering to saved on processing power
 #    NOTE: this could be turned back on if the appliance node is powerful enough
-logging: false
+enableLogging: false
 
-# Turn off metrics gathering to saved on processing power
+# Turn off metrics gathering to saved on processing power (This uses a lot of CPU/Memory)
 #    NOTE: this could be turned back on if the appliance node is powerful enough
-metrics: false
+enableMetrics: false
 
 # Turn off Application performance metrics to save processing power
 #    NOTE: this could be turned back on if you need insight on the performance of
