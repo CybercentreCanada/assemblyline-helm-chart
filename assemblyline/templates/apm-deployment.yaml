@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: apm
   labels:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
 spec:
