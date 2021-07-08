@@ -37,10 +37,12 @@ spec:
           resources:
             limits:
               cpu: 1
+              {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
+              {{ end }}
             requests:
               cpu: {{ .Values.serviceServerReqCPU }}
-              memory: 2048Mi
+              memory: 1Gi
           livenessProbe:
             httpGet:
               path: /healthz/live
