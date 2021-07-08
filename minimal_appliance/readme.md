@@ -57,12 +57,18 @@ mkdir ~/git && cd ~/git
 git clone https://github.com/CybercentreCanada/assemblyline-helm-chart.git
 ```
 
+### Create you personal deployment
+
+```
+mkdir ~/git/deployment
+cp ~/git/assemblyline-helm-chart/minimal_appliance/*.yaml ~/git/deployment
+```
+
 ### Setup the charts and secrets
 
-The values.yml file is already pre-configured for use with microk8s on a basic one node appliance, 
-you should still have a look at the base helm instructions in the [main chart directory](../assemblyline).
+The ```values.yml``` file in your deployment directory ```~/git/deployment``` is already pre-configured for use with microk8s on a basic and small one node appliance. Make sure you still go through it to make sure it is configured the way you want it. 
 
-The secret.yml is preconfigured with default password, you should definitely change them.
+The ```secret.yml``` file in your deployment directory is preconfigured with default passwords, you should definitely change them. (NOTE: the secrets are used to setup during bootstrap so make sure you change them before deploy the al chart.)
 
 ## Deploy Assemblyline via Helm:
 
@@ -77,7 +83,13 @@ sudo microk8s kubectl create namespace al
 ### Deploy de secret to the namespace
 
 ```
-sudo microk8s kubectl apply -f ~/git/assemblyline-helm-chart/minimal_appliance/secrets.yaml --namespace=al
+sudo microk8s kubectl apply -f ~/git/deployment/secrets.yaml --namespace=al
+```
+
+From this point on, you don't need the secrets.yaml file anymore. You should delete it so there is no file on disk containing your passwords.
+
+```
+rm ~/git/deployment/secrets.yaml
 ```
 
 ### Finally, let's deploy Assemblyline's chart:
@@ -85,19 +97,20 @@ sudo microk8s kubectl apply -f ~/git/assemblyline-helm-chart/minimal_appliance/s
 For the purpose of this documentation we will use ```assemblyline``` as the deployment name.
 
 ```
-sudo microk8s helm install assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
+sudo microk8s helm install assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/deployment/values.yaml -n al
 ```
 ## Updating the current deployment
 
-### Pull the latest chart
+### To get the latest chart changes (optional)
+If you want to get the latest changes that we did to the chart, just pull the changes. (This could conflict with the changes you've made so be careful while doing this.)
 ```
 cd ~/git/assemblyline-helm-chart && git pull
 ```
 
 ### Update the deployment
-
+Once you have you're Assemblyline chart deployed throught helm, you can change any values in the ```values.yaml``` file and upgrade your deployment with the following command:
 ```
-sudo microk8s helm upgrade assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/assemblyline-helm-chart/minimal_appliance/values.yaml -n al
+sudo microk8s helm upgrade assemblyline ~/git/assemblyline-helm-chart/assemblyline -f ~/git/deployment/values.yaml -n al
 ```
 
 ## Quality of life improvements
@@ -124,25 +137,4 @@ alias kubectl='sudo microk8s kubectl --namespace=al'
 
 ## Alternative Installations:
 
-### Minikube setup
-Note: Minikube doesn't support multi-node
-
-**Requires Docker driver to be installed.**
-
-1. Startup minikube:  
-```
-minikube start 
---cpus <cpu_limit> \
---memory <memory_limit> \
---disk-size <disk_limit> \
---driver=docker
-```
-
-2. Enable ingress: ```minikube addons enable ingress```
-
-3. Create a DNS entry in /etc/hosts that will resolve to ```$(minikube ip)```. 
-Set this host under ```configuration.ui.fqdn``` in values.yaml
-
-#### Setup the chart
-
-Since the provided chart is setup for microk8s, you will have to change the storage classes in the values.yml to work with minikube
+We will officially only support microk8s installations for appliances but you can technically install it on any local kubernetes frameworks (k3s, minikube. kind...). That said there will be no documentation for theses setups and you will have to modify the ```values.yaml``` storage classes to fit with your desired framework.
