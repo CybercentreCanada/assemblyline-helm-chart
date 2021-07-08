@@ -1,8 +1,10 @@
 # Assemblyline Appliance Setup
 
-This is a appliance of the Assemblyline platform suited for smaller scale deployments such as on Minikube and MicroK8S.
+This is the documentation for an appliance instance of the Assemblyline platform suited for smaller scale deployments. Since we've used microk8s as the backend for this, the appliance setup can later be scaled to multiple nodes.
 
 ## Setup requirements
+
+Note: The documentation provided here assumes that you are installing your appliance on a Ubuntu based system and was only tested on Ubuntu 20.04. You might have to change the commands a bit if you use other linux distributions.
 
 ### Install pre-requisites:
 
