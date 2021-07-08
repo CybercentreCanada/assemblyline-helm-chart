@@ -1,7 +1,6 @@
-# Minimal Appliance
+# Assemblyline Appliance Setup
 
-This is a minimal appliance of the Assemblyline platform suited for 
-smaller scale deployments such as on Minikube and MicroK8S.
+This is a appliance of the Assemblyline platform suited for smaller scale deployments such as on Minikube and MicroK8S.
 
 ## Setup requirements
 
@@ -57,18 +56,18 @@ mkdir ~/git && cd ~/git
 git clone https://github.com/CybercentreCanada/assemblyline-helm-chart.git
 ```
 
-### Create you personal deployment
+### Create your personal deployment
 
 ```
 mkdir ~/git/deployment
-cp ~/git/assemblyline-helm-chart/minimal_appliance/*.yaml ~/git/deployment
+cp ~/git/assemblyline-helm-chart/appliance/*.yaml ~/git/deployment
 ```
 
 ### Setup the charts and secrets
 
-The ```values.yml``` file in your deployment directory ```~/git/deployment``` is already pre-configured for use with microk8s on a basic and small one node appliance. Make sure you still go through it to make sure it is configured the way you want it. 
+The ```values.yaml``` file in your deployment directory ```~/git/deployment``` is already pre-configured for use with microk8s as a basic one node minimal appliance. Make sure you go through the file to adjust disk sizes and to turn on/off features to your liking.
 
-The ```secret.yml``` file in your deployment directory is preconfigured with default passwords, you should definitely change them. (NOTE: the secrets are used to setup during bootstrap so make sure you change them before deploy the al chart.)
+The ```secret.yaml``` file in your deployment directory is preconfigured with default passwords, you should definitely change them. (NOTE: the secrets are used to setup during bootstrap so make sure you change them before deploy the al chart.)
 
 ## Deploy Assemblyline via Helm:
 
@@ -80,7 +79,7 @@ For the purpose of this documentation we will use ```al``` as the namespace.
 sudo microk8s kubectl create namespace al
 ```
 
-### Deploy de secret to the namespace
+### Deploy the secret to the namespace
 
 ```
 sudo microk8s kubectl apply -f ~/git/deployment/secrets.yaml --namespace=al
