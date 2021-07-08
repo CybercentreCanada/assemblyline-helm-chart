@@ -134,6 +134,9 @@ coreEnv: []
 coreMounts: []
 coreVolumes: []
 
+# Should we use logstash to aggregate logs or let file write to elastic directly
+useLogstash: false
+
 # A logstash pipeline is set by default that will write to the internal elasticsearch
 # instance or to the given 'loggingHost' value. A pipeline passed as a string here
 # can be used for deeper customization
@@ -385,8 +388,10 @@ filebeat:
                 equals:
                   kubernetes.labels.app: assemblyline
 
-      output.logstash:
-        hosts: ["logstash:5044"]
+      output.elasticsearch:
+        hosts: ["datastore-master:9200"]
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
 
       setup.template.settings:
         index.number_of_shards: 1

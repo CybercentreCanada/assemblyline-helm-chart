@@ -1,4 +1,4 @@
-{{ if .Values.enableLogging }}
+{{ if .Values.useLogstash }}
 apiVersion: v1
 kind: Service
 metadata:
