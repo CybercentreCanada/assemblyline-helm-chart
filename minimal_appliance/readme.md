@@ -7,25 +7,21 @@ smaller scale deployments such as on Minikube and MicroK8S.
 
 ### Install pre-requisites:
 
-1. Install docker: 
-```
-sudo snap install docker
-```
-2. Install microk8s: 
+1. Install microk8s: 
 ```
 sudo snap install microk8s --classic
 ```
-3. Install microk8s addons:  
+2. Install microk8s addons:  
 ```
-sudo microk8s enable dns ha-cluster ingress storage
+sudo microk8s enable dns ha-cluster ingress storage metrics-server
 ```
-4. Install Helm and set it up to use with microk8s:
+3. Install Helm and set it up to use with microk8s:
 ```
 sudo snap install helm --classic
 sudo mkdir /var/snap/microk8s/current/bin
 sudo ln -s /snap/bin/helm /var/snap/microk8s/current/bin/helm
 ```
-5. Install git: 
+4. Install git: 
 ```
 sudo apt install git
 ```
