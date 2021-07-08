@@ -29,11 +29,11 @@ updateStorageSize:
 revisionCount: 2
 
 # When true, new pods are launched to aggregate all logs into a central ELK stack
-logging: true
+enableLogging: true
 
 # When true, new pods are launch to gather hosts, containers, pods, elastic and 
 # Assemblyline processing metrics into a central ELK stack
-metrics: true
+enableMetrics: true
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 internalELKStack: false
