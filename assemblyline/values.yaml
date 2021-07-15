@@ -297,6 +297,7 @@ datastore:
       memory: 5Gi
     limits:
       cpu: 4
+      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
@@ -733,6 +734,7 @@ log-storage:
       memory: 5Gi
     limits:
       cpu: 6
+      memory: 6Gi
   volumeClaimTemplate:
     accessModes: [ "ReadWriteOnce" ]
     storageClassName: default
