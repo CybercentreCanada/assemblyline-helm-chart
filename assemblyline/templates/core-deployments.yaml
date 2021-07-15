@@ -9,17 +9,21 @@
 {{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
+{{ if .Values.enableMetrics }}
 ---
 {{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
+{{end}}
 {{end}}
 ---
 {{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator" "requestedCPU" .Values.statisticsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
+{{ if .Values.enableMetrics }}
 ---
 {{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics" "requestedCPU" .Values.esMetricsReqCPU) . }}
   {{template "assemblyline.coreService" .}}
+{{end}}
 {{end}}
 ---
 {{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager" "requestedCPU" .Values.heartbeatReqCPU) . }}

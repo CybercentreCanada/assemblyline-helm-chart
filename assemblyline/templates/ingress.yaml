@@ -50,7 +50,7 @@ spec:
               serviceName: ui-ingest
               servicePort: 5000
           {{end}}
-          {{ if .Values.internalLogging }}
+          {{ if .Values.internalELKStack}}
           - path: /kibana/
             pathType: Prefix
             backend:

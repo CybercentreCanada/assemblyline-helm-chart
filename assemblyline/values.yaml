@@ -28,9 +28,19 @@ updateStorageSize:
 # Number of revisions for each deployments
 revisionCount: 2
 
+# When true, new pods are launched to aggregate all logs into a central ELK stack
+enableLogging: true
+
+# When true, new pods are launch to gather hosts, containers, pods, elastic and 
+# Assemblyline processing metrics into a central ELK stack
+enableMetrics: true
+
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
-# Otherwise, logstash is run, but no kibana or elasticsearch for logs
-internalLogging: false
+internalELKStack: true
+
+# When true a second elastic DB is launched for the sole purpose of collecting logs 
+# and metrics
+seperateInternalELKStack: true
 
 # Many kubernetes environments don't provide multiple read multiple write volumes.
 # We want to use them, but they don't have to be high performance. If this flag
@@ -51,9 +61,6 @@ separateIngestAPI: false
 
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
-# TODO The assemblyline config entry for apm address is statically set to this
-#      whether it is created or not. Some way to switch it off when this is false
-#      would be nice
 enableAPM: false
 
 # If internal logging is not used, this specifies where to write metrics and logs.
@@ -94,8 +101,8 @@ autoInstallServices:
   - emlparser
   - espresso
   - extract
-  - frankenstrings
   - floss
+  - frankenstrings
   - iparse
   - metadefender
   - metapeek
@@ -104,10 +111,13 @@ autoInstallServices:
   - peepdf
   - pefile
   - pixaxe
+  - safelist
+  - sigma
   - suricata
   - swiffer
   - tagcheck
   - torrentslicer
+  - unpacme
   - unpacker
   - vipermonkey
   - virustotal-dynamic
@@ -123,6 +133,9 @@ autoInstallServices:
 coreEnv: []
 coreMounts: []
 coreVolumes: []
+
+# Should we use logstash to aggregate logs or let file write to elastic directly
+useLogstash: false
 
 # A logstash pipeline is set by default that will write to the internal elasticsearch
 # instance or to the given 'loggingHost' value. A pipeline passed as a string here
@@ -193,6 +206,9 @@ ingestAPITargetUsage: 50
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
 serviceServerTargetUsage: 70
+
+# Is the namespace of your cluster resource limitted
+namespaceResourceLimited: false
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
@@ -302,13 +318,6 @@ datastore:
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
-      resources:
-        requests:
-          cpu: "10m"
-          memory: "32Mi"
-        limits:
-          cpu: "100m"
-          memory: "256Mi"
   extraVolumes: |
     - name: elastic-certificates
       emptyDir: {}
@@ -357,53 +366,75 @@ filebeat:
 
       filebeat.inputs:
         - type: container
-          format: docker
-          paths:
-            - '/var/lib/docker/containers/*/*.log'
           stream: "all"
+          paths:
+            - "/var/log/containers/*.log"
           json:
             keys_under_root: true
             message_key: message
             ignore_decoding_error: true
-          processors:
-            - rename:
-                fields:
-                  - from: "error"
-                    to: "error.message"
-                ignore_missing: true
-            - script:
-                lang: javascript
-                id: log_level
-                source: >
-                  function process(event) {
-                      var value = event.Get("log.level");
-                      if (value === null){
-                        value = "INFO"
-                      }
-                      else if (value.toLowerCase() == "warn"){
-                        value = "WARNING"
-                      }
-                      else if (value.toLowerCase() == "err"){
-                        value = "ERROR"
-                      }
-                      event.Put("log.level", value.toUpperCase());
-                  }
-
+          
       processors:
         - add_cloud_metadata: ~
         - add_host_metadata: ~
         - add_docker_metadata: ~
-        - add_kubernetes_metadata: ~
+        - add_kubernetes_metadata:             
+            host: ${NODE_NAME}
+            matchers:
+            - logs_path:
+                logs_path: "/var/log/containers/"
         - drop_event:
             when:
-              or:
-                - regexp:
-                    container.labels.io_kubernetes_container_name: "(nginx-ingress-controller)|(tunnel-front)"
-                - equals:
-                    kubernetes.namespace: kube-system
+              not:
+                equals:
+                  kubernetes.labels.app: assemblyline
 
-      output.logstash:
-        hosts: ["logstash:5044"]
+      output.elasticsearch:
+        hosts: ["datastore-master:9200"]
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+
+      setup.template.settings:
+        index.number_of_shards: 1
+        index.number_of_replicas: 0
+
+      setup.ilm:
+        enabled: true
+        policy_file: /usr/share/filebeat/filebeat_policy.json
+
+    filebeat_policy.json: |-
+      {
+        "policy": {
+          "phases": {
+            "hot": {
+              "min_age": "0ms",
+              "actions": {
+                "rollover": {
+                  "max_age": "1d",
+                  "max_size": "20gb"
+                },
+                "set_priority": {
+                  "priority": 100
+                }
+              }
+            },
+            "warm": {
+              "actions": {
+                "readonly": {},
+                "set_priority": {
+                  "priority": 50
+                }
+              }
+            },
+            "delete": {
+              "min_age": "3d",
+              "actions": {
+                "delete": {}
+              }
+            }
+          }
+        }
+      }
 
 
 metricbeatIndexPrefix: "metricbeat"
@@ -413,13 +444,6 @@ metricbeat:
     section: core
     component: metricbeat
   deployment:
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "128Mi"
-      limits:
-        cpu: "1"
-        memory: "512Mi"
     extraVolumeMounts:
     - name: dockersock
       mountPath: /var/run/docker.sock
@@ -458,13 +482,6 @@ metricbeat:
           fieldRef:
             fieldPath: spec.nodeName
   daemonset:
-    resources:
-      requests:
-        cpu: "100m"
-        memory: "128Mi"
-      limits:
-        cpu: "1"
-        memory: "512Mi"
     extraEnvs:
       - name: ELASTICSEARCH_HOSTS
         valueFrom:
@@ -543,6 +560,7 @@ metricbeat:
           processors:
             - add_docker_metadata: ~
         - module: kubernetes
+          add_metadata: true
           metricsets:
             - node
             - system

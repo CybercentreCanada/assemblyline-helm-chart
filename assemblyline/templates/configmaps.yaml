@@ -17,8 +17,8 @@ kind: ConfigMap
 metadata:
   name: system-settings
 data:
-  logging-host: {{ if .Values.internalLogging }}log-storage-master:9200{{ else }}{{ .Values.loggingHost }}{{ end }}
-  logging-username: {{ if .Values.internalLogging }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
+  logging-host: {{ if .Values.seperateInternalELKStack}}log-storage-master:9200{{ else if .Values.internalELKStack }}datastore-master:9200{{ else }}{{ .Values.loggingHost | default "localhost:9200" }}{{ end }}
+  logging-username: {{ if .Values.internalELKStack }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
   logging-tls-verify: {{ .Values.loggingTLSVerify }}
   metricbeat-index-prefix: {{ .Values.metricbeatIndexPrefix }}
 
@@ -53,7 +53,7 @@ data:
             user_data = User({
                 "agrees_with_tos": "NOW",
                 "classification": "RESTRICTED",
-                "name": "Admin user",
+                "name": "Administrator",
                 "password": get_password_hash(INITIAL_ADMIN_PASSWORD),
                 "uname": ADMIN_USER,
                 "type": [ADMIN_USER, "user", "signature_importer"]})

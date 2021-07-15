@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: apm
   labels:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
 spec:
@@ -12,13 +12,13 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
-      app: assemblyline
+      app: assemblyline-apm
       section: core
       component: apm
   template:
     metadata:
       labels:
-        app: assemblyline
+        app: assemblyline-apm
         section: core
         component: apm
     spec:
@@ -32,6 +32,9 @@ spec:
           resources:
             limits:
               cpu: "1"
+              {{ if .Values.namespaceResourceLimited }}
+              memory: 2Gi
+              {{ end }}
             requests:
               cpu: {{ .Values.apmReqCPU }}
           env:

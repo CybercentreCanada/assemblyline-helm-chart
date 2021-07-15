@@ -1,18 +1,20 @@
+{{ if .Values.enableAPM }}
 apiVersion: v1
 kind: Service
 metadata:
   name: apm
   labels:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
 spec:
   clusterIP: None
   selector:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
   ports:
   - protocol: TCP
     port: 8200
     targetPort: 8200
+{{ end }}

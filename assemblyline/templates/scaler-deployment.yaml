@@ -47,9 +47,12 @@ spec:
           resources:
             limits:
               cpu: "2"
-              memory: "4Gi"
+              {{ if .Values.namespaceResourceLimited }}
+              memory: 4Gi
+              {{ end }}
             requests:
               cpu: {{ .Values.scalerReqCPU }}
+              memory: 512Mi
 #          livenessProbe:
 #            exec:
 #              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]

@@ -43,6 +43,12 @@ spec:
             mountPath: /mount
           - name: al-config
             mountPath: /etc/assemblyline/
+        resources:
+          limits:
+            cpu: "100m"
+            {{ if .Values.namespaceResourceLimited }}
+            memory: 1Gi
+            {{ end }}
       volumes:
         - name: al-config
           configMap:
@@ -87,13 +93,14 @@ spec:
         env:
           - name: SERVICE_API_HOST
             value: http://service-server:5003
-#        SERVICE_API_KEY: ${SERVICE_API_KEY}
           - name: REGISTER_ONLY
             value: 'True'
         resources:
           limits:
             cpu: "100m"
+            {{ if $.Values.namespaceResourceLimited }}
             memory: 1Gi
+            {{ end }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300

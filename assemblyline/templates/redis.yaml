@@ -34,7 +34,9 @@ spec:
               cpu: {{ .Values.redisVolatileReqCPU }}
             limits:
               cpu: 1
-              memory: 16Gi
+              {{ if .Values.namespaceResourceLimited }}
+              memory: 8Gi
+              {{ end }}
 ---
 apiVersion: v1
 kind: Service
@@ -109,7 +111,9 @@ spec:
         resources:
           limits:
             cpu: "1"
-            memory: 16Gi
+            {{ if .Values.namespaceResourceLimited }}
+            memory: 8Gi
+            {{ end }}
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}
   volumeClaimTemplates:

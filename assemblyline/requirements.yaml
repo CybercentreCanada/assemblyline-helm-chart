@@ -10,10 +10,12 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.8.0
     alias: filebeat
+    condition: enableLogging
   - name: metricbeat
     repository: https://helm.elastic.co/
     version: 7.8.0
     alias: metricbeat
+    condition: enableMetrics
 #  - name: logstash
 #    repository: https://helm.elastic.co/
 #    version: 7.8.0
@@ -22,12 +24,12 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.8.0
     alias: log-storage
-    condition: internalLogging
+    condition: seperateInternalELKStack
   - name: kibana
     repository: https://helm.elastic.co/
     version: 7.8.0
     alias: kibana
-    condition: internalLogging
+    condition: internalELKStack
   - name: minio
     repository: https://helm.min.io/
     version: 5.0
