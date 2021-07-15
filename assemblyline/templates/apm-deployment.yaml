@@ -12,13 +12,13 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionCount }}
   selector:
     matchLabels:
-      app: assemblyline
+      app: assemblyline-apm
       section: core
       component: apm
   template:
     metadata:
       labels:
-        app: assemblyline
+        app: assemblyline-apm
         section: core
         component: apm
     spec:
