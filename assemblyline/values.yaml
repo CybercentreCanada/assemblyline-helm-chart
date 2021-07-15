@@ -156,8 +156,8 @@ ingestAPIInstances: 1
 internalAPIInstances: 1
 
 # Maximum Number of pods of each core component types
-serviceServerInstancesMax: 50
-dispatcherInstancesMax: 10
+serviceServerInstancesMax: 100
+dispatcherInstancesMax: 15
 ingesterInstancesMax: 10
 APIInstancesMax: 15
 ingestAPIInstancesMax: 15
@@ -200,12 +200,12 @@ updaterReqCPU: "100m"
 workflowReqCPU: "50m"
 
 # HPA Target Usage
-APITargetUsage: 100
-internalAPITargetUsage: 100
+APITargetUsage: 70
+internalAPITargetUsage: 70
 ingestAPITargetUsage: 50
 ingesterTargetUsage: 50
-dispatcherTargetUsage: 80
-serviceServerTargetUsage: 100
+dispatcherTargetUsage: 70
+serviceServerTargetUsage: 70
 
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false
