@@ -4,13 +4,13 @@ kind: Service
 metadata:
   name: apm
   labels:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
 spec:
   clusterIP: None
   selector:
-    app: assemblyline
+    app: assemblyline-apm
     section: core
     component: apm
   ports:
