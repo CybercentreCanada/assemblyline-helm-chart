@@ -25,6 +25,9 @@ persistantStorageClass:
 # Overwrites storage size for update-directory volume. (default: 200Gi)
 updateStorageSize:
 
+# Overwrites storage size for redis persistent volume. (default: 20Gi)
+redisStorageSize:
+
 # Number of revisions for each deployments
 revisionCount: 2
 
