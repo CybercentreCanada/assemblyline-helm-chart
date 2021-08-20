@@ -15,7 +15,7 @@ data:
   tls.key: {{ b64enc $server.Key }}
 {{ end }}
 ---
-apiVersion: networking.k8s.io/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: {{ .Release.Name }}-ingress
@@ -32,28 +32,41 @@ spec:
       http:
         paths:
           - path: /
+            pathType: Prefix
             backend:
-              serviceName: frontend
-              servicePort: 3000
+              service:
+                name: frontend
+                port:
+                  number: 3000
           - path: /socket.io/
             pathType: Prefix
             backend:
-              serviceName: socketio
-              servicePort: 5002
+              service:
+                name: socketio
+                port:
+                  number: 5002
           - path: /api/
+            pathType: Prefix
             backend:
-              serviceName: ui
-              servicePort: 5000
+              service:
+                name: ui
+                port:
+                  number: 5000
           {{ if .Values.separateIngestAPI }}
           - path: /api/v4/ingest/
+            pathType: Prefix
             backend:
-              serviceName: ui-ingest
-              servicePort: 5000
+              service:
+                name: ui-ingest
+                port:
+                  number: 5000
           {{end}}
           {{ if .Values.internalELKStack}}
           - path: /kibana/
             pathType: Prefix
             backend:
-              serviceName: kibana
-              servicePort: 5601
+              service:
+                name: kibana
+                port:
+                  number: 5601
           {{ end }}
