@@ -27,7 +27,7 @@ spec:
         - name: scaler
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
-          {{ if .Values.enableDebugging}}
+          {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.scaler.run_scaler']
           {{ else }}
           command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
