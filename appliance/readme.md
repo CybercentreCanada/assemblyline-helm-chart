@@ -8,13 +8,13 @@ Note: The documentation provided here assumes that you are installing your appli
 
 ### Install pre-requisites:
 
-1. Install microk8s: 
+1. Install microk8s:
 ```
 sudo snap install microk8s --classic
 ```
-2. Install microk8s addons:  
+2. Install microk8s addons:
 ```
-sudo microk8s enable dns ha-cluster ingress storage metrics-server
+sudo microk8s enable dns ha-cluster storage metrics-server
 ```
 3. Install Helm and set it up to use with microk8s:
 ```
@@ -22,9 +22,17 @@ sudo snap install helm --classic
 sudo mkdir /var/snap/microk8s/current/bin
 sudo ln -s /snap/bin/helm /var/snap/microk8s/current/bin/helm
 ```
-4. Install git: 
+4. Install git:
 ```
 sudo apt install git
+```
+
+5. Install ingress controller:
+```
+sudo microk8s kubectl create ns ingress
+sudo microk8s helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+sudo microk8s helm repo update
+sudo microk8s helm install ingress-nginx ingress-nginx/ingress-nginx --set controller.hostPort.enabled=true -n ingress
 ```
 
 ### (Optional) Add more nodes!!!
@@ -40,7 +48,7 @@ This will generate a command with a token to be executed on a standby node.
 On your standby node, ensure the microk8s ```ha-cluster``` addon is enabled before
 running the command from the master to join the cluster.
 
-To verify the nodes are connected, run (on any node): 
+To verify the nodes are connected, run (on any node):
 ```
 sudo microk8s kubectl get nodes
 ```
@@ -129,7 +137,7 @@ After you run Lens for the first time, click the "Add cluster" menu/button, sele
 sudo microk8s kubectl config view --raw
 ```
 
-### Alias to kubectl 
+### Alias to kubectl
 
 Since all is running inside microk8s you can create an alias to the kubectl addon in your bashrc to make your life easier
 ```

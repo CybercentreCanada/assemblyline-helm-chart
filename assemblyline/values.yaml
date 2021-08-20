@@ -36,7 +36,7 @@ enableLogging: true
 
 # When true, enable the ability to attach a debugger to core components
 # Only intended to be used in development for live debugging
-enableDebugging: false
+enableCoreDebugging: false
 
 # When true, new pods are launch to gather hosts, containers, pods, elastic and
 # Assemblyline processing metrics into a central ELK stack

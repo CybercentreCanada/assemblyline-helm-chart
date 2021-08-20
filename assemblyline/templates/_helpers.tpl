@@ -116,7 +116,7 @@ spec:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
-          {{ if .Values.enableDebugging}}
+          {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
           {{ else }}
           command: ['python', '-m', '{{ .command }}']
