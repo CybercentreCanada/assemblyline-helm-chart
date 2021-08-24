@@ -57,6 +57,9 @@ spec:
       containers:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "assemblyline_ui.patched:app", "--config=python:assemblyline_ui.gunicorn_config", "--worker-class", "gevent"]
+          {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
@@ -143,6 +146,9 @@ spec:
       containers:
         - name: internal-ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "assemblyline_ui.patched:app", "--config=python:assemblyline_ui.gunicorn_config", "--worker-class", "gevent"]
+          {{ end }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
@@ -236,6 +242,9 @@ spec:
       containers:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "-b", ":5002", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "assemblyline_ui.socketsrv:app"]
+          {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
@@ -379,6 +388,9 @@ spec:
       containers:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "-b", ":5002", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "assemblyline_ui.socketsrv:app"]
+          {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
