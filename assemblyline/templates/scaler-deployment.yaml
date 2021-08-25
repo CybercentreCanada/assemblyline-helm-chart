@@ -44,6 +44,10 @@ spec:
               value: update-directory
             - name: FILE_UPDATE_DIRECTORY
               value: /mount/update_root/
+            - name: UI_SERVER
+              value: http://internal-ui:5000
+            - name: SERVICE_API_HOST
+              value: http://service-server:5003              
             - name: CONFIGURATION_CONFIGMAP
               value: {{ .Release.Name }}-global-config
           resources:
