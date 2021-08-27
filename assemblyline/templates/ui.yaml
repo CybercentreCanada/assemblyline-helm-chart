@@ -58,7 +58,7 @@ spec:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "assemblyline_ui.patched:app", "--config=python:assemblyline_ui.gunicorn_config", "--worker-class", "gevent"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -147,7 +147,7 @@ spec:
         - name: internal-ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "assemblyline_ui.patched:app", "--config=python:assemblyline_ui.gunicorn_config", "--worker-class", "gevent"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
@@ -243,7 +243,7 @@ spec:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "-b", ":5002", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "assemblyline_ui.socketsrv:app"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -389,7 +389,7 @@ spec:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "gunicorn", "-b", ":5002", "-w", "1", "-k", "geventwebsocket.gunicorn.workers.GeventWebSocketWorker", "assemblyline_ui.socketsrv:app"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
