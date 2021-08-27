@@ -243,7 +243,7 @@ spec:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -389,7 +389,7 @@ spec:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
           {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
