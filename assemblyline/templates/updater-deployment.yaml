@@ -27,7 +27,11 @@ spec:
         - name: updater
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
+          {{ if .Values.enableCoreDebugging}}
+          command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.updater.run_updater']
+          {{ else }}
           command: ['python', '-m', 'assemblyline_core.updater.run_updater']
+          {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
             - name: update-directory
@@ -66,4 +70,3 @@ spec:
         - name: update-directory
           persistentVolumeClaim:
             claimName: update-directory
-

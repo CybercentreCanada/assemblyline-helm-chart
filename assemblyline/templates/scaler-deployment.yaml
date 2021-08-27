@@ -27,7 +27,11 @@ spec:
         - name: scaler
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
+          {{ if .Values.enableCoreDebugging}}
+          command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.scaler.run_scaler']
+          {{ else }}
           command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
+          {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
             - name: update-directory

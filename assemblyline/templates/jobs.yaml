@@ -39,10 +39,9 @@ spec:
                 name: assemblyline-system-passwords
                 key: filestore-password
         volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 10 }}
           - name: script-volume
             mountPath: /mount
-          - name: al-config
-            mountPath: /etc/assemblyline/
         resources:
           limits:
             cpu: "100m"
@@ -50,12 +49,7 @@ spec:
             memory: 1Gi
             {{ end }}
       volumes:
-        - name: al-config
-          configMap:
-            name: {{ .Release.Name }}-global-config
-            items:
-              - key: config
-                path: config.yml
+       {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: script-volume
           configMap:
             name: {{ .Release.Name }}-bootstrap-script

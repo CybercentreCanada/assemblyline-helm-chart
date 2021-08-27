@@ -116,7 +116,12 @@ spec:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
           imagePullPolicy: Always
+          {{ if .Values.enableCoreDebugging}}
+          command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
+          {{ else }}
           command: ['python', '-m', '{{ .command }}']
+          {{ end}}
+
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
@@ -181,4 +186,3 @@ spec:
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{ end }}
-

@@ -34,14 +34,18 @@ revisionCount: 2
 # When true, new pods are launched to aggregate all logs into a central ELK stack
 enableLogging: true
 
-# When true, new pods are launch to gather hosts, containers, pods, elastic and 
+# When true, enable the ability to attach a debugger to core components
+# Only intended to be used in development for live debugging
+enableCoreDebugging: false
+
+# When true, new pods are launch to gather hosts, containers, pods, elastic and
 # Assemblyline processing metrics into a central ELK stack
 enableMetrics: true
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 internalELKStack: true
 
-# When true a second elastic DB is launched for the sole purpose of collecting logs 
+# When true a second elastic DB is launched for the sole purpose of collecting logs
 # and metrics
 seperateInternalELKStack: true
 
@@ -176,7 +180,7 @@ elasticFileShards: 2
 elasticResultShards: 9
 elasticSubmissionShards: 3
 
-# CPU Revervation 
+# CPU Revervation
 defaultReqCPU: "50m"
 alerterReqCPU: "50m"
 apmReqCPU: "250m"
@@ -376,12 +380,12 @@ filebeat:
             keys_under_root: true
             message_key: message
             ignore_decoding_error: true
-          
+
       processors:
         - add_cloud_metadata: ~
         - add_host_metadata: ~
         - add_docker_metadata: ~
-        - add_kubernetes_metadata:             
+        - add_kubernetes_metadata:
             host: ${NODE_NAME}
             matchers:
             - logs_path:
@@ -772,5 +776,3 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
-
-

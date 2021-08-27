@@ -26,6 +26,9 @@ spec:
         - name: service-server
           image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.sapiVersion }}
           imagePullPolicy: Always
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_service_server.app"]
+          {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
