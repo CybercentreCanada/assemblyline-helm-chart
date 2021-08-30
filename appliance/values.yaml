@@ -41,36 +41,37 @@ kibana:
 # Overwrites storage size for update-directory to save on space
 updateStorageSize: 20Gi
 
+# Maximum upload file size (larger than 100MB is not recommanded)
+ingressAnnotations:
+  kubernetes.io/ingress.class: "nginx"
+  nginx.ingress.kubernetes.io/proxy-body-size: 100m
+
 # Stop reserving CPU for component
-#    NOTE: This prevent HPAs to scale core components, only use on very small 
-#          systems. If your appliance is bigger, you should consider commenting
-#          those values because they will increase the throughput of your system 
-#          under heavy load. (Default reservation values for all core component is 
-#          around 8 cores.) 
-defaultReqCPU: "0m"
-alerterReqCPU: "0m"
-apmReqCPU: "0m"
-dispatcherReqCPU: "0m"
-elasticHelperReqCPU: "0m"
-esMetricsReqCPU: "0m"
-expiryReqCPU: "0m"
-frontendReqCPU: "0m"
-heartbeatReqCPU: "0m"
-internalUIReqCPU: "0m"
-ingestUIReqCPU: "0m"
-ingesterReqCPU: "0m"
-logstashReqCPU: "0m"
-metricsReqCPU: "0m"
-plumberReqCPU: "0m"
-redisVolatileReqCPU: "0m"
-redisPersistentReqCPU: "0m"
-scalerReqCPU: "0m"
-serviceServerReqCPU: "0m"
-socketIOReqCPU: "0m"
-statisticsReqCPU: "0m"
-uiReqCPU: "0m"
-updaterReqCPU: "0m"
-workflowReqCPU: "0m"
+#    NOTE: Enable theses if you are running on a very small system (4 cores and less)
+#defaultReqCPU: "0m"
+#alerterReqCPU: "0m"
+#apmReqCPU: "0m"
+#dispatcherReqCPU: "0m"
+#elasticHelperReqCPU: "0m"
+#esMetricsReqCPU: "0m"
+#expiryReqCPU: "0m"
+#frontendReqCPU: "0m"
+#heartbeatReqCPU: "0m"
+#internalUIReqCPU: "0m"
+#ingestUIReqCPU: "0m"
+#ingesterReqCPU: "0m"
+#logstashReqCPU: "0m"
+#metricsReqCPU: "0m"
+#plumberReqCPU: "0m"
+#redisVolatileReqCPU: "0m"
+#redisPersistentReqCPU: "0m"
+#scalerReqCPU: "0m"
+#serviceServerReqCPU: "0m"
+#socketIOReqCPU: "0m"
+#statisticsReqCPU: "0m"
+#uiReqCPU: "0m"
+#updaterReqCPU: "0m"
+#workflowReqCPU: "0m"
 
 # No need to provide internal NFS since all pods will write to the same server
 internalNFS: false
@@ -82,7 +83,8 @@ configuration:
   core:
     scaler:
       service_defaults:
-        min_instances: 0
+        # Increase this value for production (# to keep services warm for increase throughput)    
+        min_instances: 0    
   logging:
     log_level: WARNING
   services:
@@ -91,7 +93,15 @@ configuration:
     #   to its default 0.6 value.
     cpu_reservation: 0.4
   ui:
+    # MUST CHANGE
+    # replace localhost with your domain, you CANNOT connect by IP
+    # so you must register a dns entry on your network or modify the hosts file on your computer to connect
     fqdn: "localhost"
+    
+  # Max submission size in bytes (Leave as is). Significant tweaking required to go beyond this.  
+  submission:
+    max_file_size: 104857600
+
 
 # Configuration for the elasticsearch instance used for system data.
 #   NOTE: Make sure you adjust the maximum storage size to a value appropriate
