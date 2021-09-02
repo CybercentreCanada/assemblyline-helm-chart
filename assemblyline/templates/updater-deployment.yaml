@@ -34,8 +34,6 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
-            - name: update-directory
-              mountPath: /mount/update_root/
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
@@ -67,6 +65,3 @@ spec:
               cpu: {{ .Values.updaterReqCPU }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
-        - name: update-directory
-          persistentVolumeClaim:
-            claimName: update-directory

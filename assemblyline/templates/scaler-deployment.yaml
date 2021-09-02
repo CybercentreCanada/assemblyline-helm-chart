@@ -34,8 +34,6 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
-            - name: update-directory
-              mountPath: /mount/update_root/
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
@@ -51,7 +49,7 @@ spec:
             - name: UI_SERVER
               value: http://internal-ui:5000
             - name: SERVICE_API_HOST
-              value: http://service-server:5003              
+              value: http://service-server:5003
             - name: CONFIGURATION_CONFIGMAP
               value: {{ .Release.Name }}-global-config
           resources:
@@ -70,6 +68,3 @@ spec:
 #            periodSeconds: 30
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
-        - name: update-directory
-          persistentVolumeClaim:
-            claimName: update-directory
