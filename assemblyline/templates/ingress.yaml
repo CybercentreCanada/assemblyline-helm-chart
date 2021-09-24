@@ -24,6 +24,9 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
 spec:
+{{ if .Values.ingressClassName }}
+  ingressClassName: {{.Values.ingressClassName }}
+{{end}}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
       secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
