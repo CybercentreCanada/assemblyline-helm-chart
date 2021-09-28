@@ -56,7 +56,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: ui
-          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
@@ -145,7 +145,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: internal-ui
-          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
@@ -241,7 +241,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: socketio
-          image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.release }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
@@ -327,7 +327,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: frontend
-          image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.uiFrontendVersion }}
+          image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
           ports:
             - containerPort: 3000
           resources:
@@ -387,7 +387,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: ui-ingest
-          image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}

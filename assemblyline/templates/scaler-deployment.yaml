@@ -25,7 +25,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: scaler
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.scaler.run_scaler']
@@ -51,7 +51,7 @@ spec:
             - name: UI_SERVER
               value: http://internal-ui:5000
             - name: SERVICE_API_HOST
-              value: http://service-server:5003              
+              value: http://service-server:5003
             - name: CONFIGURATION_CONFIGMAP
               value: {{ .Release.Name }}-global-config
           resources:

@@ -114,7 +114,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: {{ .component }}
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
@@ -169,7 +169,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: {{ .component }}
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:
