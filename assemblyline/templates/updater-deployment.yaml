@@ -25,7 +25,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: updater
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.updater.run_updater']

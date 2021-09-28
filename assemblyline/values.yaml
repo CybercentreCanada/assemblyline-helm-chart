@@ -1,8 +1,5 @@
 # Tags for the containers used
-coreVersion: '4.0.stable'
-sapiVersion: '4.0.stable'
-uiVersion: '4.0.stable'
-uiFrontendVersion: '4.0.stable'
+release: '4.1.stable'
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core

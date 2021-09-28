@@ -25,7 +25,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: elastic-helper
-        image: {{ .Values.assemblylineUIImage }}:{{ .Values.uiVersion }}
+        image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
         command: ["python",  "/mount/share_certificate.py"]
         ports:
         - containerPort: 8000

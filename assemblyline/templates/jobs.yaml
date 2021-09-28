@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: pi
-        image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+        image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
         command: ["python",  "/mount/bootstrap.py"]
         env:
           - name: INITIAL_ADMIN_PASSWORD
