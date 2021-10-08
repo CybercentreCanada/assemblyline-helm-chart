@@ -1,10 +1,10 @@
-# Set the default storage classes for microk8s 
+# Set the default storage classes for microk8s
 redisStorageClass: microk8s-hostpath
 updateStorageClass: microk8s-hostpath
 persistantStorageClass: microk8s-hostpath
 
 # Turn off replication since there is only one elastic node
-#   NOTE: If you decide to add more datastore node this should be set 
+#   NOTE: If you decide to add more datastore node this should be set
 #         to 1 once there are more then 3 datastore nodes
 elasticDefaultReplicas: 0
 
@@ -29,17 +29,14 @@ enableAPM: false
 #   NOTE: Do no forget to turn this on if you enable either logging, metrics or APM
 internalELKStack: false
 
-# Make sure we use the same elasticsearch DB for logging and data when 
-# internal logging is turned on. 
+# Make sure we use the same elasticsearch DB for logging and data when
+# internal logging is turned on.
 #   NOTE: This should never be set to true for an appliance
 seperateInternalELKStack: false
 
 # Set kibana to use the internal ELK Stack if logging is turned on
 kibana:
   elasticsearchHosts: http://datastore-master:9200
-
-# Overwrites storage size for update-directory to save on space
-updateStorageSize: 20Gi
 
 # Maximum upload file size (larger than 100MB is not recommanded)
 ingressAnnotations:
@@ -73,9 +70,6 @@ ingressAnnotations:
 #updaterReqCPU: "0m"
 #workflowReqCPU: "0m"
 
-# No need to provide internal NFS since all pods will write to the same server
-internalNFS: false
-
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
 # https://cybercentrecanada.github.io/assemblyline4_docs/
@@ -83,8 +77,8 @@ configuration:
   core:
     scaler:
       service_defaults:
-        # Increase this value for production (# to keep services warm for increase throughput)    
-        min_instances: 0    
+        # Increase this value for production (# to keep services warm for increase throughput)
+        min_instances: 0
   logging:
     log_level: WARNING
   services:
@@ -97,18 +91,17 @@ configuration:
     # replace localhost with your domain, you CANNOT connect by IP
     # so you must register a dns entry on your network or modify the hosts file on your computer to connect
     fqdn: "localhost"
-    
-  # Max submission size in bytes (Leave as is). Significant tweaking required to go beyond this.  
+
+  # Max submission size in bytes (Leave as is). Significant tweaking required to go beyond this.
   submission:
     max_file_size: 104857600
-
 
 # Configuration for the elasticsearch instance used for system data.
 #   NOTE: Make sure you adjust the maximum storage size to a value appropriate
 #         to your system as the default value is quite small.
 datastore:
   replicas: 1
-  esJavaOpts: '-Xms2g -Xmx2g'
+  esJavaOpts: "-Xms2g -Xmx2g"
   resources:
     requests:
       memory: 2Gi
