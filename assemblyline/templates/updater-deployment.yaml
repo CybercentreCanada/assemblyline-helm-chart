@@ -25,7 +25,7 @@ spec:
       priorityClassName: al-core-priority
       containers:
         - name: updater
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.coreVersion }}
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.updater.run_updater']
@@ -34,8 +34,6 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
-            - name: update-directory
-              mountPath: /mount/update_root/
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
@@ -44,10 +42,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: FILE_UPDATE_VOLUME
-              value: update-directory
-            - name: FILE_UPDATE_DIRECTORY
-              value: /mount/update_root/
             - name: UI_SERVER
               value: http://internal-ui:5000
             - name: SERVICE_API_HOST
@@ -67,6 +61,3 @@ spec:
               cpu: {{ .Values.updaterReqCPU }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
-        - name: update-directory
-          persistentVolumeClaim:
-            claimName: update-directory

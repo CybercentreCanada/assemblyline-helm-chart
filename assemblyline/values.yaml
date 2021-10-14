@@ -1,8 +1,5 @@
 # Tags for the containers used
-coreVersion: '4.0.stable'
-sapiVersion: '4.0.stable'
-uiVersion: '4.0.stable'
-uiFrontendVersion: '4.0.stable'
+release: "4.1.stable"
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
@@ -49,12 +46,6 @@ internalELKStack: true
 # and metrics
 seperateInternalELKStack: true
 
-# Many kubernetes environments don't provide multiple read multiple write volumes.
-# We want to use them, but they don't have to be high performance. If this flag
-# is true, assemblyline will launch NFS servers internally to get RWX volumes.
-# Otherwise, the storage class for updateStorageClass needs to support RWX
-internalNFS: true
-
 # If you have an ftp server, s3 bucket, azure blob storage account or other
 # supported blob storage where you would like assemblyline to store the files
 # that are submitted set `internalFilestore` to false, and set the url
@@ -95,7 +86,7 @@ tlsSecretName:
 #     'never' (or any other value) will not run the setup container
 # The password for this admin account will be drawn from the initial-admin-password
 # key of the assemblyline-system-passwords secret
-createAdminAccount: 'on-install'
+createAdminAccount: "on-install"
 
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
@@ -232,7 +223,8 @@ configuration:
       apm_server:
         server_url: "http://apm:8200"
       elasticsearch:
-        hosts: ["http://${LOGGING_USERNAME}:${LOGGING_PASSWORD}@${LOGGING_HOST}"]
+        hosts:
+          ["http://${LOGGING_USERNAME}:${LOGGING_PASSWORD}@${LOGGING_HOST}"]
       redis:
         host: redis-volatile
         port: 6379
@@ -250,13 +242,19 @@ configuration:
         growth: 30
         shrink: 10
         environment:
-          - name: 'SERVICE_API_HOST'
-            value: 'http://service-server:5003'
+          - name: "SERVICE_API_HOST"
+            value: "http://service-server:5003"
   datastore:
     hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
   filestore:
-    cache: ["s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-cache&use_ssl=False"]
-    storage: ["s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-storage&use_ssl=False"]
+    cache:
+      [
+        "s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-cache&use_ssl=False",
+      ]
+    storage:
+      [
+        "s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-storage&use_ssl=False",
+      ]
   logging:
     log_to_console: true
     log_to_file: false
@@ -286,7 +284,7 @@ datastore:
     section: core
     component: datastore
   protocol: http
-  esJavaOpts: '-Xms4g -Xmx4g'
+  esJavaOpts: "-Xms4g -Xmx4g"
   esConfig:
     elasticsearch.yml: |
       logger.level: WARN
@@ -306,12 +304,12 @@ datastore:
       cpu: 4
       memory: 6Gi
   volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
+    accessModes: ["ReadWriteOnce"]
     storageClassName: default
     resources:
       requests:
         storage: 500Gi
-  priorityClassName: 'al-infra'
+  priorityClassName: "al-infra"
   extraInitContainers: |
     - name: create-certs
       env:
@@ -443,7 +441,6 @@ filebeat:
         }
       }
 
-
 metricbeatIndexPrefix: "metricbeat"
 
 metricbeat:
@@ -452,12 +449,12 @@ metricbeat:
     component: metricbeat
   deployment:
     extraVolumeMounts:
-    - name: dockersock
-      mountPath: /var/run/docker.sock
+      - name: dockersock
+        mountPath: /var/run/docker.sock
     extraVolumes:
-    - name: dockersock
-      hostPath:
-        path: /var/run/docker.sock
+      - name: dockersock
+        hostPath:
+          path: /var/run/docker.sock
     extraEnvs:
       - name: ELASTICSEARCH_HOSTS
         valueFrom:
@@ -644,39 +641,38 @@ metricbeat:
         policy_file: /usr/share/metricbeat/metricbeat_policy.json
 
     metricbeat_policy.json: |-
-       {
-         "policy": {
-           "phases": {
-             "hot": {
-               "min_age": "0ms",
-               "actions": {
-                 "rollover": {
-                   "max_age": "1d",
-                   "max_size": "5gb"
-                 },
-                 "set_priority": {
-                   "priority": 100
-                 }
-               }
-             },
-             "warm": {
-               "actions": {
-                 "readonly": {},
-                 "set_priority": {
-                   "priority": 50
-                 }
-               }
-             },
-             "delete": {
-               "min_age": "4d",
-               "actions": {
-                 "delete": {}
-               }
-             }
-           }
-         }
-       }
-
+      {
+        "policy": {
+          "phases": {
+            "hot": {
+              "min_age": "0ms",
+              "actions": {
+                "rollover": {
+                  "max_age": "1d",
+                  "max_size": "5gb"
+                },
+                "set_priority": {
+                  "priority": 100
+                }
+              }
+            },
+            "warm": {
+              "actions": {
+                "readonly": {},
+                "set_priority": {
+                  "priority": 50
+                }
+              }
+            },
+            "delete": {
+              "min_age": "4d",
+              "actions": {
+                "delete": {}
+              }
+            }
+          }
+        }
+      }
 
 kibana:
   fullnameOverride: kibana
@@ -705,24 +701,23 @@ kibana:
       value: "true"
   priorityClassName: al-core-priority
 
-
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
 log-storage:
   clusterName: "log-storage"
   replicas: 1
   extraEnvs:
-  - name: ELASTIC_USERNAME
-    value: elastic
-  - name: ELASTIC_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: assemblyline-system-passwords
-        key: logging-password
+    - name: ELASTIC_USERNAME
+      value: elastic
+    - name: ELASTIC_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: assemblyline-system-passwords
+          key: logging-password
   labels:
     section: core
     component: log-storage
-  esJavaOpts: '-Xms4g -Xmx4g'
+  esJavaOpts: "-Xms4g -Xmx4g"
   protocol: http
   esConfig:
     elasticsearch.yml: |
@@ -743,12 +738,12 @@ log-storage:
       cpu: 6
       memory: 6Gi
   volumeClaimTemplate:
-    accessModes: [ "ReadWriteOnce" ]
+    accessModes: ["ReadWriteOnce"]
     storageClassName: default
     resources:
       requests:
         storage: 500Gi
-  priorityClassName: 'al-infra'
+  priorityClassName: "al-infra"
   extraInitContainers: |
     - name: create-certs
       env:
@@ -768,7 +763,6 @@ log-storage:
   extraVolumeMounts: |
     - name: elastic-certificates
       mountPath: /usr/share/elasticsearch/config/certs
-
 
 filestore:
   fullnameOverride: "filestore"
