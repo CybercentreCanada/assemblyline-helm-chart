@@ -44,31 +44,33 @@ ingressAnnotations:
   nginx.ingress.kubernetes.io/proxy-body-size: 100m
 
 # Stop reserving CPU for component
-#    NOTE: Enable theses if you are running on a very small system (4 cores and less)
-#defaultReqCPU: "0m"
-#alerterReqCPU: "0m"
-#apmReqCPU: "0m"
-#dispatcherReqCPU: "0m"
-#elasticHelperReqCPU: "0m"
-#esMetricsReqCPU: "0m"
-#expiryReqCPU: "0m"
-#frontendReqCPU: "0m"
-#heartbeatReqCPU: "0m"
-#internalUIReqCPU: "0m"
-#ingestUIReqCPU: "0m"
-#ingesterReqCPU: "0m"
-#logstashReqCPU: "0m"
-#metricsReqCPU: "0m"
-#plumberReqCPU: "0m"
-#redisVolatileReqCPU: "0m"
-#redisPersistentReqCPU: "0m"
-#scalerReqCPU: "0m"
-#serviceServerReqCPU: "0m"
-#socketIOReqCPU: "0m"
-#statisticsReqCPU: "0m"
-#uiReqCPU: "0m"
-#updaterReqCPU: "0m"
-#workflowReqCPU: "0m"
+#    NOTE: Comment those lines if you use more then 1 nodes for your appliance 
+#          and that the total # cores for all your nodes is greater or equal then 16 cores
+defaultReqCPU: "0m"
+alerterReqCPU: "0m"
+apmReqCPU: "0m"
+dispatcherReqCPU: "0m"
+elasticHelperReqCPU: "0m"
+esMetricsReqCPU: "0m"
+expiryReqCPU: "0m"
+frontendReqCPU: "0m"
+heartbeatReqCPU: "0m"
+internalUIReqCPU: "0m"
+ingestUIReqCPU: "0m"
+ingesterReqCPU: "0m"
+logstashReqCPU: "0m"
+metricsReqCPU: "0m"
+plumberReqCPU: "0m"
+redisVolatileReqCPU: "0m"
+redisPersistentReqCPU: "0m"
+scalerReqCPU: "0m"
+serviceAutoInstallReqCPU: "0m"
+serviceServerReqCPU: "0m"
+socketIOReqCPU: "0m"
+statisticsReqCPU: "0m"
+uiReqCPU: "0m"
+updaterReqCPU: "0m"
+workflowReqCPU: "0m"
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
@@ -85,7 +87,7 @@ configuration:
     # CPU reservation as been lowered so we could squeeze more services into smaller appliance
     #   If you are having issues with services timing out a lot under heavy load, bring it back
     #   to its default 0.6 value.
-    cpu_reservation: 0.4
+    cpu_reservation: 0.2
   ui:
     # MUST CHANGE
     # replace localhost with your domain, you CANNOT connect by IP
