@@ -132,4 +132,4 @@ filestore:
     StorageClass: microk8s-hostpath
   resources:
     requests:
-      memory: 512mMi
+      memory: 512Mi
