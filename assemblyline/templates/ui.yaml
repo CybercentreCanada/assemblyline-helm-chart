@@ -76,7 +76,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.uiReqCPU }}
-              memory: 1Gi
+              memory: {{ .Values.uiReqRam }}
           livenessProbe:
             httpGet:
               path: /healthz/live
@@ -170,7 +170,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.internalUIReqCPU }}
-              memory: 1Gi
+              memory: {{ .Values.internalUIReqCPU }}
           livenessProbe:
             httpGet:
               path: /healthz/live
@@ -259,7 +259,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
-              memory: 256Mi
+              memory: {{ .Values.socketIOReqRam }}
           livenessProbe:
             httpGet:
               path: /healthz/live
@@ -333,7 +333,7 @@ spec:
           resources:
             requests:
               cpu: {{ .Values.frontendReqCPU }}
-              memory: 128Mi
+              memory: {{ .Values.frontendReqRam }}
             limits:
               cpu: 1
               {{ if .Values.namespaceResourceLimited }}
@@ -407,7 +407,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.ingestUIReqCPU }}
-              memory: 1Gi
+              memory: {{ .Values.ingestUIReqRam }}
           livenessProbe:
             httpGet:
               path: /healthz/live

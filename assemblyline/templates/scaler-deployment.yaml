@@ -56,7 +56,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.scalerReqCPU }}
-              memory: 512Mi
+              memory: {{ .Values.scalerReqRam }}
 #          livenessProbe:
 #            exec:
 #              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]

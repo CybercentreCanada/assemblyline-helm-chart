@@ -44,7 +44,7 @@ spec:
             mountPath: /mount
         resources:
           limits:
-            cpu: {{ .Values.serviceAutoInstallReqCPU }}
+            cpu: 1
             {{ if .Values.namespaceResourceLimited }}
             memory: 1Gi
             {{ end }}
@@ -91,7 +91,7 @@ spec:
             value: 'True'
         resources:
           limits:
-            cpu: {{ .Values.serviceAutoInstallReqCPU }}
+            cpu: 1
             {{ if $.Values.namespaceResourceLimited }}
             memory: 1Gi
             {{ end }}

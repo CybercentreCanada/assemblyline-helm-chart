@@ -68,7 +68,7 @@ spec:
             memory: 1536Mi
           requests:
             cpu: {{ .Values.logstashReqCPU }}
-            memory: 1536Mi
+            memory: {{ .Values.logstashReqRam }}
         securityContext:
           capabilities:
             drop:

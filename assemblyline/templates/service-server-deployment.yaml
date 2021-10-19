@@ -45,7 +45,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.serviceServerReqCPU }}
-              memory: 1Gi
+              memory: {{ .Values.serviceServerReqRam }}
           livenessProbe:
             httpGet:
               path: /healthz/live

@@ -126,7 +126,7 @@ spec:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
             requests:
-              memory: 128Mi
+              memory: {{ .requestedRam | default .Values.defaultReqRam }}
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
@@ -176,7 +176,7 @@ spec:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
             requests:
-              memory: 128Mi
+              memory: {{ .requestedRam | default .Values.defaultReqRam }}
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
