@@ -180,19 +180,31 @@ heartbeatReqCPU: "500m"
 internalUIReqCPU: "100m"
 ingestUIReqCPU: "500m"
 ingesterReqCPU: "500m"
+installJobReqCPU: "100m"
 logstashReqCPU: "100m"
 metricsReqCPU: "500m"
 plumberReqCPU: "50m"
 redisVolatileReqCPU: "750m"
 redisPersistentReqCPU: "500m"
 scalerReqCPU: "500m"
-serviceAutoInstallReqCPU: "100m"
 serviceServerReqCPU: "500m"
 socketIOReqCPU: "100m"
 statisticsReqCPU: "50m"
 uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
+
+# Memory reservation
+defaultReqRam: 128Mi
+elasticHelperReqRam: 32Mi
+frontendReqRam: 128Mi
+ingestUIReqRam: 1Gi
+internalUIReqRam: 1Gi
+logstashReqRam: 1536Mi
+scalerReqRam: 512Mi
+serviceServerReqRam: 1Gi
+socketIOReqRam: 256Mi
+uiReqRam: 1Gi
 
 # HPA Target Usage
 APITargetUsage: 70

@@ -48,7 +48,7 @@ spec:
             {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
-            memory: "32Mi"
+            memory: {{ .Values.elasticHelperReqRam }}
       initContainers:
       - name: create-certs
         image: {{ .Values.datastore.image }}:7.8.0
@@ -61,7 +61,7 @@ spec:
             {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
-            memory: "32Mi"
+            memory: {{ .Values.elasticHelperReqRam }}
         volumeMounts:
           - name: certificate-data
             mountPath: /data/

@@ -55,6 +55,7 @@ esMetricsReqCPU: "0m"
 expiryReqCPU: "0m"
 frontendReqCPU: "0m"
 heartbeatReqCPU: "0m"
+installJobReqCPU: "0m"
 internalUIReqCPU: "0m"
 ingestUIReqCPU: "0m"
 ingesterReqCPU: "0m"
@@ -64,13 +65,22 @@ plumberReqCPU: "0m"
 redisVolatileReqCPU: "0m"
 redisPersistentReqCPU: "0m"
 scalerReqCPU: "0m"
-serviceAutoInstallReqCPU: "0m"
 serviceServerReqCPU: "0m"
 socketIOReqCPU: "0m"
 statisticsReqCPU: "0m"
 uiReqCPU: "0m"
 updaterReqCPU: "0m"
 workflowReqCPU: "0m"
+
+# Memory reservation
+defaultReqRam: 64Mi
+frontendReqRam: 32Mi
+ingestUIReqRam: 256Mi
+internalUIReqRam: 256Mi
+scalerReqRam: 256Mi
+serviceServerReqRam: 256Mi
+socketIOReqRam: 64Mi
+uiReqRam: 256Mi
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
@@ -106,6 +116,7 @@ datastore:
   esJavaOpts: "-Xms2g -Xmx2g"
   resources:
     requests:
+      cpu: 250m
       memory: 2Gi
   volumeClaimTemplate:
     storageClassName: microk8s-hostpath
@@ -122,4 +133,4 @@ filestore:
     StorageClass: microk8s-hostpath
   resources:
     requests:
-      memory: 2Gi
+      memory: 512Mi

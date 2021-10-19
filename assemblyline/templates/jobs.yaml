@@ -43,8 +43,10 @@ spec:
           - name: script-volume
             mountPath: /mount
         resources:
+          requests:
+            cpu: {{ .Values.installJobReqCPU }}
           limits:
-            cpu: {{ .Values.serviceAutoInstallReqCPU }}
+            cpu: 1
             {{ if .Values.namespaceResourceLimited }}
             memory: 1Gi
             {{ end }}
@@ -90,8 +92,10 @@ spec:
           - name: REGISTER_ONLY
             value: 'True'
         resources:
+          requests:
+            cpu: {{ .Values.installJobReqCPU }}
           limits:
-            cpu: {{ .Values.serviceAutoInstallReqCPU }}
+            cpu: 1
             {{ if $.Values.namespaceResourceLimited }}
             memory: 1Gi
             {{ end }}
