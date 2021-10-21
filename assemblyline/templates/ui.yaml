@@ -170,7 +170,7 @@ spec:
               {{ end }}
             requests:
               cpu: {{ .Values.internalUIReqCPU }}
-              memory: {{ .Values.internalUIReqRAM }}
+              memory: {{ .Values.internalUIReqRam }}
           livenessProbe:
             httpGet:
               path: /healthz/live
