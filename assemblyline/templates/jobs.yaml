@@ -93,7 +93,7 @@ spec:
             value: 'True'
         resources:
           requests:
-            cpu: {{ .Values.installJobReqCPU }}
+            cpu: {{ $.Values.installJobReqCPU }}
           limits:
             cpu: 1
             {{ if $.Values.namespaceResourceLimited }}
