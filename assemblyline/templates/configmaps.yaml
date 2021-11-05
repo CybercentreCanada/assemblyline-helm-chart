@@ -6,8 +6,10 @@ kind: ConfigMap
 metadata:
   name: elasticsearch-indexes
 data:
+  elastic-alert-shards: "{{ .Values.elasticAlertShards }}"
   elastic-default-replicas: "{{ .Values.elasticDefaultReplicas }}"
   elastic-default-shards: "{{ .Values.elasticDefaultShards }}"
+  elastic-emptyresult-shards: "{{ .Values.elasticEmptyResultShards }}"
   elastic-file-shards: "{{ .Values.elasticFileShards }}"
   elastic-result-shards: "{{ .Values.elasticResultShards }}"
   elastic-submission-shards: "{{ .Values.elasticSubmissionShards }}"

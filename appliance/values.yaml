@@ -8,6 +8,14 @@ persistantStorageClass: microk8s-hostpath
 #         to 1 once there are more then 3 datastore nodes
 elasticDefaultReplicas: 0
 
+# Use a smaller amount of shard since there is only one node
+elasticDefaultShards: 1
+elasticAlertShards: 1
+elasticEmptyResultShards: 2
+elasticFileShards: 2
+elasticResultShards: 9
+elasticSubmissionShards: 3
+
 # Turn off logs gathering to saved on processing power, you can still have access
 # to logs via kubectl or Lens
 #   NOTE: This could be turned back on if the appliance node is powerful enough
