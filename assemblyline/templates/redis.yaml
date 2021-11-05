@@ -116,6 +116,7 @@ spec:
             {{ end }}
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}
+            memory: {{ .Values.redisPersistentReqRam }}
   volumeClaimTemplates:
   - metadata:
       name: redis-data

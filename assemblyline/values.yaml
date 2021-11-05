@@ -204,6 +204,7 @@ frontendReqRam: 128Mi
 ingestUIReqRam: 1Gi
 internalUIReqRam: 1Gi
 logstashReqRam: 1536Mi
+redisPersistentReqRam: 1Gi
 scalerReqRam: 512Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
