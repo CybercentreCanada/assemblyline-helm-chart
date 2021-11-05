@@ -1,4 +1,9 @@
 {{ define "assemblyline.coreEnv" }}
+- name: ELASTIC_ALERT_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-alert-shards
 - name: ELASTIC_DEFAULT_REPLICAS
   valueFrom:
     configMapKeyRef:
@@ -9,6 +14,11 @@
     configMapKeyRef:
       name: elasticsearch-indexes
       key: elastic-default-shards
+- name: ELASTIC_EMPTYRESULT_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-emptyresult-shards
 - name: ELASTIC_FILE_SHARDS
   valueFrom:
     configMapKeyRef:
@@ -19,6 +29,11 @@
     configMapKeyRef:
       name: elasticsearch-indexes
       key: elastic-result-shards
+- name: ELASTIC_SAFELIST_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-safelist-shards
 - name: ELASTIC_SUBMISSION_SHARDS
   valueFrom:
     configMapKeyRef:

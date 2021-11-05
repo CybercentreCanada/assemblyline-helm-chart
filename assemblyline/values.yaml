@@ -163,9 +163,12 @@ dispatcherResultThreads: 6
 # Setup Elastic's default replicas and shards
 elasticDefaultReplicas: 1
 elasticDefaultShards: 1
-elasticFileShards: 2
-elasticResultShards: 9
-elasticSubmissionShards: 3
+elasticAlertShards: 2
+elasticEmptyResultShards: 4
+elasticFileShards: 4
+elasticResultShards: 18
+elasticSafelistShards: 4
+elasticSubmissionShards: 6
 
 # CPU Revervation
 defaultReqCPU: "50m"
