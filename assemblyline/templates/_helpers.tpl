@@ -29,6 +29,11 @@
     configMapKeyRef:
       name: elasticsearch-indexes
       key: elastic-result-shards
+- name: ELASTIC_SAFELIST_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-safelist-shards
 - name: ELASTIC_SUBMISSION_SHARDS
   valueFrom:
     configMapKeyRef:
