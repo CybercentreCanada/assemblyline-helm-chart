@@ -24,6 +24,11 @@
     configMapKeyRef:
       name: elasticsearch-indexes
       key: elastic-file-shards
+- name: ELASTIC_FILESCORE_SHARDS
+  valueFrom:
+    configMapKeyRef:
+      name: elasticsearch-indexes
+      key: elastic-filescore-shards
 - name: ELASTIC_RESULT_SHARDS
   valueFrom:
     configMapKeyRef:

@@ -13,6 +13,7 @@ elasticDefaultShards: 1
 elasticAlertShards: 1
 elasticEmptyResultShards: 2
 elasticFileShards: 2
+elasticFileScoreShards: 2
 elasticResultShards: 9
 elasticSafelistShards: 2
 elasticSubmissionShards: 3

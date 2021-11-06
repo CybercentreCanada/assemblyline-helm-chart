@@ -11,6 +11,7 @@ data:
   elastic-default-shards: "{{ .Values.elasticDefaultShards }}"
   elastic-emptyresult-shards: "{{ .Values.elasticEmptyResultShards }}"
   elastic-file-shards: "{{ .Values.elasticFileShards }}"
+  elastic-filescore-shards: "{{ .Values.elasticFileScoreShards }}"
   elastic-result-shards: "{{ .Values.elasticResultShards }}"
   elastic-safelist-shards: "{{ .Values.elasticSafelistShards }}"
   elastic-submission-shards: "{{ .Values.elasticSubmissionShards }}"
