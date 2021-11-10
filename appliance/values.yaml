@@ -28,6 +28,7 @@ enableLogging: false
 #   NOTE: This could be turned back on if the appliance node is powerful enough
 #         If you turn it on, make sure you set internalELKStack to true as well
 enableMetrics: false
+enableMetricbeat: false
 
 # Turn off Application performance metrics to save processing power
 #   NOTE: This could be turned back on if you need insight on the performance of the core components

@@ -31,9 +31,13 @@ enableLogging: true
 # Only intended to be used in development for live debugging
 enableCoreDebugging: false
 
-# When true, new pods are launch to gather hosts, containers, pods, elastic and
+# When true, new pods are launch to gather elastic and
 # Assemblyline processing metrics into a central ELK stack
 enableMetrics: true
+
+# When true, new pods are launch to gather hosts, containers, pods metrics into a 
+# central ELK stack
+enableMetricbeat: true
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 internalELKStack: true

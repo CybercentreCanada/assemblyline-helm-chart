@@ -15,7 +15,7 @@ dependencies:
     repository: https://helm.elastic.co/
     version: 7.15.0
     alias: metricbeat
-    condition: enableMetrics
+    condition: enableMetricbeat
   - name: elasticsearch
     repository: https://helm.elastic.co/
     version: 7.15.0
