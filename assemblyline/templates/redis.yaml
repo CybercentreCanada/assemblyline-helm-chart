@@ -26,6 +26,8 @@ spec:
       containers:
         - name: redis
           image: {{ .Values.redisImage }}
+          command: ['redis-server']
+          args: ['--appendonly', 'no', '--save', '""']
           imagePullPolicy: Always
           ports:
             - containerPort: 6379

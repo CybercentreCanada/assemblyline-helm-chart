@@ -10,7 +10,7 @@ assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
-elasticLogstashTag: "7.8.0"
+elasticLogstashTag: "7.15.0"
 NFSImage: apnar/nfs-ganesha
 redisImage: redis
 
@@ -31,9 +31,13 @@ enableLogging: true
 # Only intended to be used in development for live debugging
 enableCoreDebugging: false
 
-# When true, new pods are launch to gather hosts, containers, pods, elastic and
+# When true, new pods are launch to gather elastic and
 # Assemblyline processing metrics into a central ELK stack
 enableMetrics: true
+
+# When true, new pods are launch to gather hosts, containers, pods metrics into a 
+# central ELK stack
+enableMetricbeat: true
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 internalELKStack: true
@@ -332,7 +336,7 @@ datastore:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
@@ -709,6 +713,8 @@ kibana:
           key: logging-password
     - name: SERVER_BASEPATH
       value: /kibana
+    - name: SERVER_PUBLICBASEURL
+      value: https://localhost/kibana
     - name: SERVER_REWRITEBASEPATH
       value: "true"
     - name: LOGGING_QUIET
@@ -766,7 +772,7 @@ log-storage:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.15.0
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
