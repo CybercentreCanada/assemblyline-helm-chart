@@ -709,6 +709,8 @@ kibana:
           key: logging-password
     - name: SERVER_BASEPATH
       value: /kibana
+    - name: SERVER_PUBLICBASEURL
+      value: https://localhost/kibana
     - name: SERVER_REWRITEBASEPATH
       value: "true"
     - name: LOGGING_QUIET
