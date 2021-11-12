@@ -17,5 +17,11 @@ dependencies:
 - name: minio
   repository: https://helm.min.io/
   version: 5.0.32
-digest: sha256:23af49e8ee334fdee7a44786353e9a90619d0578df02cb47f7b3747f31a80b02
-generated: "2021-11-10T09:34:51.3018127-05:00"
+- name: redis-cluster
+  repository: https://charts.bitnami.com/bitnami/
+  version: 7.0.10
+- name: redis-cluster
+  repository: https://charts.bitnami.com/bitnami/
+  version: 7.0.10
+digest: sha256:b4aa8c9ba9433416d38fcab2331c15011d4e31f9a72b9e60266759c1acdf8ab0
+generated: "2021-11-10T12:54:13.4840569-05:00"

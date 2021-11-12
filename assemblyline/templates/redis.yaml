@@ -1,3 +1,65 @@
+{{ if .Values.useClusteredRedis }}
+# Create a POD/Service for non-persisted redis
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-pubsub
+  labels:
+    app: assemblyline
+    section: core
+    component: redis-pubsub
+spec:
+  replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: redis-pubsub
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: redis-pubsub
+    spec:
+      priorityClassName: al-infra
+      containers:
+        - name: redis
+          image: {{ .Values.redisImage }}
+          command: ['redis-server']
+          args: ['--appendonly', 'no', '--save', '""']
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+          resources:
+            requests:
+              cpu: {{ .Values.redisVolatileReqCPU }}
+            limits:
+              cpu: 1
+              {{ if .Values.namespaceResourceLimited }}
+              memory: 8Gi
+              {{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-pubsub
+  labels:
+    app: assemblyline
+    section: core
+    component: redis-pubsub
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: redis-pubsub
+  ports:
+  - protocol: TCP
+    port: 6379
+---
+{{ else }}
 # Create a POD/Service for non-persisted redis
 apiVersion: apps/v1
 kind: Deployment
@@ -128,3 +190,4 @@ spec:
       resources:
         requests:
           storage: {{ .Values.redisStorageSize | default "20Gi" }}
+{{ end }}
