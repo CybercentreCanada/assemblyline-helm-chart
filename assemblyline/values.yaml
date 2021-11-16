@@ -253,6 +253,9 @@ configuration:
       persistent:
         host: redis-persistent
         port: 6379
+      pubsub:
+        host: redis-volatile
+        port: 6379
     scaler:
       service_defaults:
         backlog: 10
