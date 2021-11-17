@@ -1,89 +1,26 @@
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: ui-hpa
-spec:
-  maxReplicas: {{ .Values.APIInstancesMax }}
-  minReplicas: {{ .Values.APIInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: ui
-  targetCPUUtilizationPercentage: {{ .Values.APITargetUsage }}
-
 ---
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: internal-ui-hpa
-spec:
-  maxReplicas: {{ .Values.internalAPIInstancesMax }}
-  minReplicas: {{ .Values.internalAPIInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: internal-ui
-  targetCPUUtilizationPercentage: {{ .Values.internalAPITargetUsage }}
-
-{{ if .Values.separateIngestAPI }} 
----
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: ui-ingest-hpa
-spec:
-  maxReplicas: {{ .Values.ingestAPIInstancesMax }}
-  minReplicas: {{ .Values.ingestAPIInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: ui-ingest
-  targetCPUUtilizationPercentage: {{ .Values.ingestAPITargetUsage }}
-
+{{with merge (dict "name" "ui" "maxReplicas" .Values.APIInstancesMax "minReplicas" .Values.APIInstances "targetUsage" .Values.APITargetUsage "cpuLimit" .Values.uiLimCPU "cpuRequest" .Values.uiReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
 {{end}}
 ---
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: ingester-hpa
-spec:
-  maxReplicas: {{ .Values.ingesterInstancesMax }}
-  minReplicas: {{ .Values.ingesterInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: ingester
-  targetCPUUtilizationPercentage: {{ .Values.ingesterTargetUsage }}
-
+{{with merge (dict "name" "internal-ui" "maxReplicas" .Values.internalAPIInstancesMax "minReplicas" .Values.internalAPIInstances "targetUsage" .Values.internalAPITargetUsage "cpuLimit" .Values.internalUILimCPU "cpuRequest" .Values.internalUIReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+{{ if .Values.separateIngestAPI }} 
 ---
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: dispatcher-hpa
-spec:
-  maxReplicas: {{ .Values.dispatcherInstancesMax }}
-  minReplicas: {{ .Values.dispatcherInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: dispatcher
-  targetCPUUtilizationPercentage: {{ .Values.dispatcherTargetUsage }}
-
+{{with merge (dict "name" "ui-ingest" "maxReplicas" .Values.ingestAPIInstancesMax "minReplicas" .Values.ingestAPIInstances "targetUsage" .Values.ingestAPITargetUsage "cpuLimit" .Values.ingestUILimCPU "cpuRequest" .Values.ingestUIReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+{{end}}
 ---
-
-apiVersion: autoscaling/v1
-kind: HorizontalPodAutoscaler
-metadata:
-  name: service-server-hpa
-spec:
-  maxReplicas: {{ .Values.serviceServerInstancesMax }}
-  minReplicas: {{ .Values.serviceServerInstances }}
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: service-server
-  targetCPUUtilizationPercentage: {{ .Values.serviceServerTargetUsage }}
+{{with merge (dict "name" "ingester" "maxReplicas" .Values.ingesterInstancesMax "minReplicas" .Values.ingesterInstances "targetUsage" .Values.ingesterTargetUsage "cpuLimit" .Values.ingesterLimCPU "cpuRequest" .Values.ingesterReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+---
+{{with merge (dict "name" "dispatcher" "maxReplicas" .Values.dispatcherInstancesMax "minReplicas" .Values.dispatcherInstances "targetUsage" .Values.dispatcherTargetUsage "cpuLimit" .Values.dispatcherLimCPU "cpuRequest" .Values.dispatcherReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+---
+{{with merge (dict "name" "service-server" "maxReplicas" .Values.serviceServerInstancesMax "minReplicas" .Values.serviceServerInstances "targetUsage" .Values.serviceServerTargetUsage "cpuLimit" .Values.serviceServerLimCPU "cpuRequest" .Values.serviceServerReqCPU) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}

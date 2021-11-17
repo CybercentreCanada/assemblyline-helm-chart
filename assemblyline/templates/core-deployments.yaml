@@ -34,10 +34,10 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU) . }}
+{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU "limitCPU" .Values.dispatcherLimCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU) . }}
+{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU "limitCPU" .Values.ingesterLimCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
