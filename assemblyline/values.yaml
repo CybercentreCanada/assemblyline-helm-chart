@@ -35,7 +35,7 @@ enableCoreDebugging: false
 # Assemblyline processing metrics into a central ELK stack
 enableMetrics: true
 
-# When true, new pods are launch to gather hosts, containers, pods metrics into a 
+# When true, new pods are launch to gather hosts, containers, pods metrics into a
 # central ELK stack
 enableMetricbeat: true
 

@@ -213,15 +213,16 @@ spec:
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{.name}}}-hpa
+  name: {{.name}}-hpa
 spec:
-  maxReplicas: {{.maxReplicas}}}
-  minReplicas: {{.minReplicas}}}
+  maxReplicas: {{int .maxReplicas}}
+  minReplicas: {{int .minReplicas}}
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{.name}}}
-  {{ $cpuLimit := hasSuffix {{.cpuLimit|toString}} "m"}} | ternary {{trimSuffix "m" .cpuLimit | Int}} {{mul {{.cpuLimit} 1000 }}}
-  {{ $cpuRequest := hasSuffix {{.cpuRequest|toString}} "m"}} | ternary {{trimSuffix "m" .cpuRequest | Int}} {{mul {{.cpuRequest} 1000 }}}
-  targetCPUUtilizationPercentage: {{ div (mul $cpuLimit (div .targetUsage 100)) $cpuRequest }}
+    name: {{.name}}
+  {{ $cpuLimit    := ternary ( int (trimSuffix "m" (.cpuLimit|toString))) (mul .cpuLimit 1000 ) (hasSuffix "m"  (.cpuLimit|toString)) }}
+  {{ $cpuRequest  := ternary ( int (trimSuffix "m" (.cpuRequest|toString))) (mul .cpuRequest 1000 ) (hasSuffix "m"  (.cpuRequest|toString)) }}
+  {{ $targetUsage := printf "%d.%02d" (div .targetUsage 100) (mod .targetUsage 100) | float64 }}
+  targetCPUUtilizationPercentage: {{mulf (divf (mulf $cpuLimit $targetUsage) $cpuRequest) 100}}
 {{ end }}
