@@ -39,7 +39,7 @@ spec:
               value: '2'
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.serviceServerLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
               {{ end }}

@@ -202,6 +202,15 @@ uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
 
+# CPU Limits (HPA-focused)
+defaultLimCPU: 1
+dispatcherLimCPU: 1
+internalUILimCPU: 1
+ingestUILimCPU: 1
+ingesterLimCPU: 1
+serviceServerLimCPU: 1
+uiLimCPU: 1
+
 # Memory reservation
 defaultReqRam: 128Mi
 elasticHelperReqRam: 32Mi
