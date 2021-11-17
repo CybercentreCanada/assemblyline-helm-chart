@@ -827,7 +827,9 @@ redis-volatile:
       component: redis-volatile
   cluster:
     replicas: false
-
+  configmap: |
+    appendonly no
+    save ""
 
 redis-persistent:
   fullnameOverride: redis-persistent
