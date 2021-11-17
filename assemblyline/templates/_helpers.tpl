@@ -202,9 +202,26 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu: 1
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+{{ end }}
+---
+{{ define "assemblyline.HPA" }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{.name}}}-hpa
+spec:
+  maxReplicas: {{.maxReplicas}}}
+  minReplicas: {{.minReplicas}}}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{.name}}}
+  {{ $cpuLimit := hasSuffix {{.cpuLimit|toString}} "m"}} | ternary {{trimSuffix "m" .cpuLimit | Int}} {{mul {{.cpuLimit} 1000 }}}
+  {{ $cpuRequest := hasSuffix {{.cpuRequest|toString}} "m"}} | ternary {{trimSuffix "m" .cpuRequest | Int}} {{mul {{.cpuRequest} 1000 }}}
+  targetCPUUtilizationPercentage: {{ div (mul $cpuLimit (div .targetUsage 100)) $cpuRequest }}
 {{ end }}
