@@ -31,3 +31,13 @@ dependencies:
     version: 5.0
     alias: filestore
     condition: internalFilestore
+  - name: redis-cluster
+    repository: https://charts.bitnami.com/bitnami/
+    version: 7.0.10
+    alias: redis-volatile
+    condition: useClusteredRedis
+  - name: redis-cluster
+    repository: https://charts.bitnami.com/bitnami/
+    version: 7.0.10
+    alias: redis-persistent
+    condition: useClusteredRedis
