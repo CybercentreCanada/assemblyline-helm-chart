@@ -1,36 +1,36 @@
-{{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter" "requestedCPU" .Values.alerterReqCPU "limitCPU" .Values.alerterLimCPU) . }}
+{{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter" "requestedCPU" .Values.alerterReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow" "requestedCPU" .Values.workflowReqCPU "limitCPU" .Values.workflowLimCPU) . }}
+{{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow" "requestedCPU" .Values.workflowReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU "limitCPU" .Values.expiryLimCPU) . }}
+{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{ if .Values.enableMetrics }}
 ---
-{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU "limitCPU" .Values.metricsLimCPU . }}
+{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
 {{end}}
 ---
-{{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator" "requestedCPU" .Values.statisticsReqCPU "limitCPU" .Values.esMetricsLimCPU) . }}
+{{with merge (dict "component" "statistics" "command" "assemblyline_core.metrics.run_statistics_aggregator" "requestedCPU" .Values.statisticsReqCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
 {{ if .Values.enableMetrics }}
 ---
-{{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics" "requestedCPU" .Values.esMetricsReqCPU "limitCPU" .Values.esMetricsLimCPU) . }}
+{{with merge (dict "component" "es-metrics" "command" "assemblyline_core.metrics.es_metrics" "requestedCPU" .Values.esMetricsReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{end}}
 ---
-{{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager" "requestedCPU" .Values.heartbeatReqCPU "limitCPU" .Values.heartbeatLimCPU) . }}
+{{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager" "requestedCPU" .Values.heartbeatReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber" "requestedCPU" .Values.plumberReqCPU "limitCPU" .Values.plumberLimCPU) . }}
+{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber" "requestedCPU" .Values.plumberReqCPU) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---

@@ -50,7 +50,7 @@ spec:
               value: {{ .Release.Name }}-global-config
           resources:
             limits:
-              cpu: {{ .Values.scalerLimCPU }}
+              cpu: "2"
               {{ if .Values.namespaceResourceLimited }}
               memory: 4Gi
               {{ end }}
