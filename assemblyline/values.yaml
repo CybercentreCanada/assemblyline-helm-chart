@@ -221,7 +221,7 @@ metricsLimCPU: 1
 plumberLimCPU: 1
 redisVolatileLimCPU: 1
 redisPersistentLimCPU: 1
-scalerLimCPU: 2
+scalerLimCPU: 1
 serviceServerLimCPU: 1
 socketIOLimCPU: 1
 statisticsLimCPU: 1
@@ -241,6 +241,19 @@ scalerReqRam: 512Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
 uiReqRam: 1Gi
+
+# Memory Limits
+defaultLimRam: 1Gi
+elasticHelperLimRam: 256Mi
+frontendLimRam: 1Gi
+ingestUILimRam: 2Gi
+internalUILimRam: 2Gi
+logstashLimRam: 1536Mi
+redisPersistentLimRam: 1Gi
+scalerLimRam: 4Gi
+serviceServerLimRam: 1Gi
+socketIOLimRam: 2Gi
+uiLimRam: 2Gi
 
 # HPA Target Usage
 APITargetUsage: 50

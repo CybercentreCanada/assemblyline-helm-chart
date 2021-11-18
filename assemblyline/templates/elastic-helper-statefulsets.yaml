@@ -44,7 +44,7 @@ spec:
           limits:
             cpu: {{ .Values.elasticHelperLimCPU }}
             {{ if .Values.namespaceResourceLimited }}
-            memory: "256Mi"
+            memory: {{ .Values.elasticHelperLimRam }}
             {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
