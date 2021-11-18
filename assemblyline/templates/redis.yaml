@@ -37,7 +37,7 @@ spec:
             limits:
               cpu: {{ .Values.redisVolatileLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 8Gi
+              memory: {{ .Values.redisPersistentLimRam }}
               {{ end }}
 ---
 apiVersion: v1
