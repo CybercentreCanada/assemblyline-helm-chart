@@ -176,7 +176,7 @@ spec:
           limits:
             cpu: {{ .Values.redisPersistentLimCPU }}
             {{ if .Values.namespaceResourceLimited }}
-            memory: 8Gi
+            memory: {{ .Values.redisPersistentLimRam }}
             {{ end }}
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}
@@ -190,4 +190,3 @@ spec:
       resources:
         requests:
           storage: {{ .Values.redisStorageSize | default "20Gi" }}
-{{ end }}

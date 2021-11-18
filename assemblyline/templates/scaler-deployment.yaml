@@ -52,7 +52,7 @@ spec:
             limits:
               cpu: {{ .Values.scalerLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 4Gi
+              memory: {{ .Values.scalerLimRam }}
               {{ end }}
             requests:
               cpu: {{ .Values.scalerReqCPU }}

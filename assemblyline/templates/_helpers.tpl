@@ -151,7 +151,7 @@ spec:
               memory: {{ .requestedRam | default .Values.defaultReqRam }}
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
-              memory: 1Gi
+              memory: {{ .limitRam | default .Values.defaultLimRam }}
               cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
@@ -201,7 +201,7 @@ spec:
               memory: {{ .requestedRam | default .Values.defaultReqRam }}
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
-              memory: 1Gi
+              memory: {{ .limitRam | default .Values.defaultLimRam }}
               cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}

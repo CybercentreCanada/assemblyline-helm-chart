@@ -72,7 +72,7 @@ spec:
             limits:
               cpu: {{.Values.uiLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.uiLimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.uiReqCPU }}
@@ -166,7 +166,7 @@ spec:
             limits:
               cpu: {{.Values.internalUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.internalUILimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.internalUIReqCPU }}
@@ -255,7 +255,7 @@ spec:
             limits:
               cpu: {{.Values.socketIOLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.socketIOLimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
@@ -337,7 +337,7 @@ spec:
             limits:
               cpu: 1
               {{ if .Values.namespaceResourceLimited }}
-              memory: 1Gi
+              memory:  {{ .Values.frontendLimRam}}
               {{ end }}
 {{ if .Values.separateIngestAPI }}
 ---
@@ -403,7 +403,7 @@ spec:
             limits:
               cpu: {{.Values.ingestUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.ingestUILimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.ingestUIReqCPU }}
