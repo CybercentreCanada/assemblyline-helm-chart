@@ -64,7 +64,7 @@ spec:
           protocol: TCP
         resources:
           limits:
-            cpu: "1"
+            cpu: {{ .Values.logstashLimCPU }}
             memory: 1536Mi
           requests:
             cpu: {{ .Values.logstashReqCPU }}
