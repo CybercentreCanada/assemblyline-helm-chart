@@ -53,7 +53,7 @@ spec:
             periodSeconds: 30
           resources:
             limits:
-              cpu: "0.5"
+              cpu: {{ .Values.updaterLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
               memory: "1Gi"
               {{ end }}

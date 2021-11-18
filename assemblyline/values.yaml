@@ -35,7 +35,7 @@ enableCoreDebugging: false
 # Assemblyline processing metrics into a central ELK stack
 enableMetrics: true
 
-# When true, new pods are launch to gather hosts, containers, pods metrics into a 
+# When true, new pods are launch to gather hosts, containers, pods metrics into a
 # central ELK stack
 enableMetricbeat: true
 
@@ -202,6 +202,33 @@ uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
 
+# CPU Limits
+defaultLimCPU: 1
+alerterLimCPU: 1
+apmLimCPU: 1
+dispatcherLimCPU: 1
+elasticHelperLimCPU: "250m"
+esMetricsLimCPU: 1
+expiryLimCPU: 1
+frontendLimCPU: 1
+heartbeatLimCPU: 1
+internalUILimCPU: 1
+ingestUILimCPU: 1
+ingesterLimCPU: 1
+installJobLimCPU: 1
+logstashLimCPU: 1
+metricsLimCPU: 1
+plumberLimCPU: 1
+redisVolatileLimCPU: 1
+redisPersistentLimCPU: 1
+scalerLimCPU: 2
+serviceServerLimCPU: 1
+socketIOLimCPU: 1
+statisticsLimCPU: 1
+uiLimCPU: 1
+updaterLimCPU: "0.5"
+workflowLimCPU: 1
+
 # Memory reservation
 defaultReqRam: 128Mi
 elasticHelperReqRam: 32Mi
@@ -216,12 +243,12 @@ socketIOReqRam: 256Mi
 uiReqRam: 1Gi
 
 # HPA Target Usage
-APITargetUsage: 70
+APITargetUsage: 50
 internalAPITargetUsage: 70
-ingestAPITargetUsage: 50
+ingestAPITargetUsage: 30
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
-serviceServerTargetUsage: 70
+serviceServerTargetUsage: 50
 
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false

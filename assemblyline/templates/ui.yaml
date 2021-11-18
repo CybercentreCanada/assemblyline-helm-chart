@@ -70,7 +70,7 @@ spec:
               value: '2'
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.uiLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
               {{ end }}
@@ -164,7 +164,7 @@ spec:
             - containerPort: 5000
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.internalUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
               {{ end }}
@@ -253,7 +253,7 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.socketIOLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
               {{ end }}
@@ -401,7 +401,7 @@ spec:
               value: '2'
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.ingestUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
               memory: 2Gi
               {{ end }}

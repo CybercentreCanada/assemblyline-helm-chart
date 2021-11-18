@@ -152,7 +152,7 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu: 1
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
           livenessProbe:
@@ -202,9 +202,24 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu: 1
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+{{ end }}
+---
+{{ define "assemblyline.HPA" }}
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{.name}}-hpa
+spec:
+  maxReplicas: {{int .maxReplicas}}
+  minReplicas: {{int .minReplicas}}
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{.name}}
+  targetCPUUtilizationPercentage: {{.targetUsage}}
 {{ end }}
