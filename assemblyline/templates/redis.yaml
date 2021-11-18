@@ -97,7 +97,7 @@ spec:
             requests:
               cpu: {{ .Values.redisVolatileReqCPU }}
             limits:
-              cpu: {{ .Values.redisVolatileLimCPU }}
+              cpu: 1
               {{ if .Values.namespaceResourceLimited }}
               memory: 8Gi
               {{ end }}
@@ -174,7 +174,7 @@ spec:
           mountPath: /data
         resources:
           limits:
-            cpu: {{ .Values.redisPersistentLimCPU }}
+            cpu: "1"
             {{ if .Values.namespaceResourceLimited }}
             memory: 8Gi
             {{ end }}
