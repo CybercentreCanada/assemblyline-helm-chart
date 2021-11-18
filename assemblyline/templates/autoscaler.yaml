@@ -1,26 +1,26 @@
 ---
-{{with merge (dict "name" "ui" "maxReplicas" .Values.APIInstancesMax "minReplicas" .Values.APIInstances "targetUsage") . }}
+{{with merge (dict "name" "ui" "maxReplicas" .Values.APIInstancesMax "minReplicas" .Values.APIInstances "targetUsage" .Values.APITargetUsage "cpuLimit" .Values.uiLimCPU "cpuRequest" .Values.uiReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
 ---
-{{with merge (dict "name" "internal-ui" "maxReplicas" .Values.internalAPIInstancesMax "minReplicas" .Values.internalAPIInstances "targetUsage" .Values.internalAPITargetUsage) . }}
+{{with merge (dict "name" "internal-ui" "maxReplicas" .Values.internalAPIInstancesMax "minReplicas" .Values.internalAPIInstances "targetUsage" .Values.internalAPITargetUsage "cpuLimit" .Values.internalUILimCPU "cpuRequest" .Values.internalUIReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
 {{ if .Values.separateIngestAPI }} 
 ---
-{{with merge (dict "name" "ui-ingest" "maxReplicas" .Values.ingestAPIInstancesMax "minReplicas" .Values.ingestAPIInstances "targetUsage" .Values.ingestAPITargetUsage) . }}
+{{with merge (dict "name" "ui-ingest" "maxReplicas" .Values.ingestAPIInstancesMax "minReplicas" .Values.ingestAPIInstances "targetUsage" .Values.ingestAPITargetUsage "cpuLimit" .Values.ingestUILimCPU "cpuRequest" .Values.ingestUIReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
 {{end}}
 ---
-{{with merge (dict "name" "ingester" "maxReplicas" .Values.ingesterInstancesMax "minReplicas" .Values.ingesterInstances "targetUsage" .Values.ingesterTargetUsage) . }}
+{{with merge (dict "name" "ingester" "maxReplicas" .Values.ingesterInstancesMax "minReplicas" .Values.ingesterInstances "targetUsage" .Values.ingesterTargetUsage "cpuLimit" .Values.ingesterLimCPU "cpuRequest" .Values.ingesterReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
 ---
-{{with merge (dict "name" "dispatcher" "maxReplicas" .Values.dispatcherInstancesMax "minReplicas" .Values.dispatcherInstances "targetUsage" .Values.dispatcherTargetUsage) . }}
+{{with merge (dict "name" "dispatcher" "maxReplicas" .Values.dispatcherInstancesMax "minReplicas" .Values.dispatcherInstances "targetUsage" .Values.dispatcherTargetUsage "cpuLimit" .Values.dispatcherLimCPU "cpuRequest" .Values.dispatcherReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
 ---
-{{with merge (dict "name" "service-server" "maxReplicas" .Values.serviceServerInstancesMax "minReplicas" .Values.serviceServerInstances "targetUsage" .Values.serviceServerTargetUsage) . }}
+{{with merge (dict "name" "service-server" "maxReplicas" .Values.serviceServerInstancesMax "minReplicas" .Values.serviceServerInstances "targetUsage" .Values.serviceServerTargetUsage "cpuLimit" .Values.serviceServerLimCPU "cpuRequest" .Values.serviceServerReqCPU) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}

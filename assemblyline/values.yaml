@@ -202,32 +202,14 @@ uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
 
-# CPU Limits
+# CPU Limits (HPA-focused)
 defaultLimCPU: 1
-alerterLimCPU: 1
-apmLimCPU: 1
 dispatcherLimCPU: 1
-elasticHelperLimCPU: "250m"
-esMetricsLimCPU: 1
-expiryLimCPU: 1
-frontendLimCPU: 1
-heartbeatLimCPU: 1
 internalUILimCPU: 1
 ingestUILimCPU: 1
 ingesterLimCPU: 1
-installJobLimCPU: 1
-logstashLimCPU: 1
-metricsLimCPU: 1
-plumberLimCPU: 1
-redisVolatileLimCPU: 1
-redisPersistentLimCPU: 1
-scalerLimCPU: 2
 serviceServerLimCPU: 1
-socketIOLimCPU: 1
-statisticsLimCPU: 1
 uiLimCPU: 1
-updaterLimCPU: "0.5"
-workflowLimCPU: 1
 
 # Memory reservation
 defaultReqRam: 128Mi
@@ -243,12 +225,12 @@ socketIOReqRam: 256Mi
 uiReqRam: 1Gi
 
 # HPA Target Usage
-APITargetUsage: 50
+APITargetUsage: 70
 internalAPITargetUsage: 70
-ingestAPITargetUsage: 30
+ingestAPITargetUsage: 50
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
-serviceServerTargetUsage: 50
+serviceServerTargetUsage: 70
 
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false
@@ -279,6 +261,9 @@ configuration:
         port: 6379
       persistent:
         host: redis-persistent
+        port: 6379
+      pubsub:
+        host: redis-volatile
         port: 6379
     scaler:
       service_defaults:
@@ -817,3 +802,60 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
+
+
+# =============================================================================
+# Redis configation
+#
+# If redis is launched without clustering the throughput will typically not
+# be able to go over 1000 submissions a minute. For most smaller appliances
+# leaving it off works well, for larger clusters this should be set true.
+#
+# When this is switched on the redis configuration flags higher in the file will
+# be used for launching a single instance used for some non-cluster compatable
+# operations.
+useClusteredRedis: false
+
+redis-volatile:
+  fullnameOverride: redis-volatile
+  commonLabels:
+    section: core
+    group: redis
+    component: redis-volatile
+  # image.registry:
+  # image.repository:
+  # image.tag:
+  usePassword: false
+  persistence:
+    enabled: false
+  redis:
+    useAOFPersistence: "no"
+    podLabels:
+      section: core
+      group: redis
+      component: redis-volatile
+  cluster:
+    replicas: false
+  configmap: |
+    appendonly no
+    save ""
+
+redis-persistent:
+  fullnameOverride: redis-persistent
+  commonLabels:
+    section: core
+    group: redis
+    component: redis-persistent
+  redis:
+    podLabels:
+      section: core
+      group: redis
+      component: redis-persistent
+  # image.registry:
+  # image.repository:
+  # image.tag:
+  usePassword: false
+  persistence:
+    enabled: true
+  cluster:
+    replicas: false
