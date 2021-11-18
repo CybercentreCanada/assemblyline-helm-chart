@@ -36,9 +36,9 @@ spec:
             requests:
               cpu: {{ .Values.redisVolatileReqCPU }}
             limits:
-              cpu: 1
+              cpu: {{ .Values.redisVolatileLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 8Gi
+              memory: {{ .Values.redisVolatileLimRam }}
               {{ end }}
 ---
 apiVersion: v1
@@ -99,7 +99,7 @@ spec:
             limits:
               cpu: {{ .Values.redisVolatileLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 8Gi
+              memory: {{ .Values.redisVolatileLimRam }}
               {{ end }}
 ---
 apiVersion: v1
