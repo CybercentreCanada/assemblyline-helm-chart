@@ -11,7 +11,7 @@
 {{end}}
 {{ if .Values.enableMetrics }}
 ---
-{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU "limitCPU" .Values.metricsLimCPU . }}
+{{with merge (dict "component" "metrics" "command" "assemblyline_core.metrics.run_metrics_aggregator" "requestedCPU" .Values.metricsReqCPU "limitCPU" .Values.metricsLimCPU) . }}
   {{template "assemblyline.coreServiceNoCheck" .}}
 {{end}}
 {{end}}

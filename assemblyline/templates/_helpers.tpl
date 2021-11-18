@@ -202,7 +202,7 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu:{{ .limitCPU | default .Values.defaultLimCPU  }}
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
