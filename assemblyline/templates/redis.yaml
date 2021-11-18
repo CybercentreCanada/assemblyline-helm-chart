@@ -35,9 +35,9 @@ spec:
             requests:
               cpu: {{ .Values.redisVolatileReqCPU }}
             limits:
-              cpu: 1
+              cpu: {{ .Values.redisVolatileLimCPU }}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 8Gi
+              memory: {{ .Values.redisVolatileLimRam }}
               {{ end }}
 ---
 apiVersion: v1
@@ -112,9 +112,9 @@ spec:
           mountPath: /data
         resources:
           limits:
-            cpu: "1"
+            cpu: {{ .Values.redisPersistentLimCPU }}
             {{ if .Values.namespaceResourceLimited }}
-            memory: 8Gi
+            memory: {{ .Values.redisPersistentLimRam }}
             {{ end }}
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}

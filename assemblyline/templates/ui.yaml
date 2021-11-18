@@ -70,9 +70,9 @@ spec:
               value: '2'
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.uiLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.uiLimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.uiReqCPU }}
@@ -164,9 +164,9 @@ spec:
             - containerPort: 5000
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.internalUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.internalUILimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.internalUIReqCPU }}
@@ -253,9 +253,9 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.socketIOLimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.socketIOLimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
@@ -337,7 +337,7 @@ spec:
             limits:
               cpu: 1
               {{ if .Values.namespaceResourceLimited }}
-              memory: 1Gi
+              memory:  {{ .Values.frontendLimRam}}
               {{ end }}
 {{ if .Values.separateIngestAPI }}
 ---
@@ -401,9 +401,9 @@ spec:
               value: '2'
           resources:
             limits:
-              cpu: 1
+              cpu: {{.Values.ingestUILimCPU}}
               {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
+              memory: {{.Values.ingestUILimRam}}
               {{ end }}
             requests:
               cpu: {{ .Values.ingestUIReqCPU }}
