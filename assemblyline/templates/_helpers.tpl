@@ -152,7 +152,7 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu: 1
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
           livenessProbe:
@@ -202,7 +202,7 @@ spec:
               cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
             limits:
               memory: 1Gi
-              cpu: {{ .limitCPU | default .Values.defaultLimCPU }}
+              cpu:{{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
       volumes:
@@ -221,8 +221,5 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{.name}}
-  {{ $cpuLimit    := ternary ( int (trimSuffix "m" (.cpuLimit|toString))) (mul .cpuLimit 1000 ) (hasSuffix "m"  (.cpuLimit|toString)) }}
-  {{ $cpuRequest  := ternary ( int (trimSuffix "m" (.cpuRequest|toString))) (mul .cpuRequest 1000 ) (hasSuffix "m"  (.cpuRequest|toString)) }}
-  {{ $targetUsage := printf "%d.%02d" (div .targetUsage 100) (mod .targetUsage 100) | float64 }}
-  targetCPUUtilizationPercentage: {{mulf (divf (mulf $cpuLimit $targetUsage) $cpuRequest) 100}}
+  targetCPUUtilizationPercentage: {{.targetUsage}}
 {{ end }}
