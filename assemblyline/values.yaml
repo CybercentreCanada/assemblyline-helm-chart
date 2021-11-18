@@ -250,6 +250,7 @@ ingestUILimRam: 2Gi
 internalUILimRam: 2Gi
 logstashLimRam: 1536Mi
 redisPersistentLimRam: 8Gi
+redisVolatileLimRam: 8Gi
 scalerLimRam: 4Gi
 serviceServerLimRam: 1Gi
 socketIOLimRam: 2Gi
