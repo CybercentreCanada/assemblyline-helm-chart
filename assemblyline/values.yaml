@@ -21,6 +21,10 @@ persistantStorageClass:
 # Overwrites storage size for redis persistent volume. (default: 20Gi)
 redisStorageSize:
 
+# Number of IO thread redis uses
+redisPersistentIOThreads: 1
+redisVolatileIOThreads: 1
+
 # Number of revisions for each deployments
 revisionCount: 2
 

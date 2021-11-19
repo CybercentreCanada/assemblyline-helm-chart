@@ -27,7 +27,7 @@ spec:
         - name: redis
           image: {{ .Values.redisImage }}
           command: ['redis-server']
-          args: ['--appendonly', 'no', '--save', '""']
+          args: ['--appendonly', 'no', '--save', '""', '--io-threads', '{{ .Values.redisVolatileIOThreads }}']
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
@@ -102,7 +102,7 @@ spec:
       - name: redis
         image: {{ .Values.redisImage }}
         command: ['redis-server']
-        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '200']
+        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '200', '--io-threads', '{{ .Values.redisPersistentIOThreads }}']
         ports:
         - containerPort: 6379
         volumeMounts:
