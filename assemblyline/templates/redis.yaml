@@ -190,3 +190,4 @@ spec:
       resources:
         requests:
           storage: {{ .Values.redisStorageSize | default "20Gi" }}
+{{ end }}
