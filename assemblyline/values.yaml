@@ -11,7 +11,6 @@ assemblylineServiceImagePrefix: cccs/assemblyline-service-
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "7.15.0"
-NFSImage: apnar/nfs-ganesha
 redisImage: redis
 
 # Storage classes for persistent data.
