@@ -94,6 +94,8 @@ createAdminAccount: "on-install"
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
   - apkaye
+  - antivirus
+  - avclass
   - beaver
   - characterize
   - configextractor
@@ -105,9 +107,11 @@ autoInstallServices:
   - floss
   - frankenstrings
   - iparse
+  - jsjaws
   - metadefender
   - metapeek
   - oletools
+  - overpower
   - pdfid
   - peepdf
   - pefile
