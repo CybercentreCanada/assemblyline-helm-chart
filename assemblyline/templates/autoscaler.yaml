@@ -1,3 +1,4 @@
+{{ if .Values.useAutoScaler }}
 ---
 {{with merge (dict "name" "ui" "maxReplicas" .Values.APIInstancesMax "minReplicas" .Values.APIInstances "targetUsage" .Values.APITargetUsage) . }}
   {{template "assemblyline.HPA" .}}
@@ -23,4 +24,5 @@
 ---
 {{with merge (dict "name" "service-server" "maxReplicas" .Values.serviceServerInstancesMax "minReplicas" .Values.serviceServerInstances "targetUsage" .Values.serviceServerTargetUsage) . }}
   {{template "assemblyline.HPA" .}}
+{{end}}
 {{end}}

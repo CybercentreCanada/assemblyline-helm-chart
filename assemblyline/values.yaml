@@ -148,6 +148,9 @@ customLogstashPipeline: null
 logstashVolumes:
 logstashMounts:
 
+# Should we use horizontal pod auto-scaler
+useAutoScaler: true
+
 # Starting Number of pods of each core component types
 serviceServerInstances: 1
 dispatcherInstances: 1
