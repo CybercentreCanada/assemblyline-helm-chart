@@ -95,7 +95,6 @@ createAdminAccount: "on-install"
 autoInstallServices:
   - apkaye
   - antivirus
-  - avclass
   - beaver
   - characterize
   - configextractor
