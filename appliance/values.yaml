@@ -105,8 +105,8 @@ uiReqRam: 256Mi
 configuration:
   core:
     scaler:
-      # Allow the cluster to be overallocated up to 800%
-      cpu_overallocation: 8
+      # Allow the cluster to be overallocated up to 200%
+      cpu_overallocation: 2
       service_defaults:
         min_instances: 1
   logging:
