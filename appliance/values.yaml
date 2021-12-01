@@ -103,15 +103,14 @@ configuration:
   core:
     scaler:
       service_defaults:
-        # Increase this value for production (# to keep services warm for increase throughput)
-        min_instances: 0
+        min_instances: 1
   logging:
     log_level: WARNING
   services:
     # CPU reservation as been lowered so we could squeeze more services into smaller appliance
     #   If you are having issues with services timing out a lot under heavy load, bring it back
     #   to its default 0.6 value.
-    cpu_reservation: 0.2
+    cpu_reservation: 0.1
   ui:
     # MUST CHANGE
     # replace localhost with your domain, you CANNOT connect by IP
