@@ -102,6 +102,8 @@ uiReqRam: 256Mi
 configuration:
   core:
     scaler:
+      # Allow the cluster to be overallocated up to 800%
+      cpu_overallocation: 8
       service_defaults:
         min_instances: 1
   logging:
@@ -112,9 +114,9 @@ configuration:
     #   to its default 0.6 value.
     cpu_reservation: 0.1
   ui:
-    # MUST CHANGE
-    # replace localhost with your domain, you CANNOT connect by IP
-    # so you must register a dns entry on your network or modify the hosts file on your computer to connect
+    # !! MUST CHANGE !!
+    # Replace localhost with the domain at which you will reach your cluster, this cannot be an IP. 
+    # If you do not have a domain, use an nip.io address. (e.g. 192.168.0.1.nip.io points to ip 192.168.0.1)
     fqdn: "localhost"
 
   # Max submission size in bytes (Leave as is). Significant tweaking required to go beyond this.
