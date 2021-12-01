@@ -55,6 +55,9 @@ ingressAnnotations:
   nginx.ingress.kubernetes.io/proxy-body-size: 100m
 
 # No need to auto scaler on low resources system
+#    NOTE: If you want to turn it back on, make sure the "metrics-server" addon 
+#          is installed on your cluster
+#          > sudo microk8s enable metrics-server
 useAutoScaler: false
 
 # Stop reserving CPU for component
