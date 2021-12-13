@@ -352,7 +352,7 @@ datastore:
     section: core
     component: datastore
   protocol: http
-  esJavaOpts: "-Xms4g -Xmx4g"
+  esJavaOpts: "-Xms4g -Xmx4g -Dlog4j2.formatMsgNoLookups=true"
   esConfig:
     elasticsearch.yml: |
       logger.level: WARN
@@ -787,7 +787,7 @@ log-storage:
   labels:
     section: core
     component: log-storage
-  esJavaOpts: "-Xms4g -Xmx4g"
+  esJavaOpts: "-Xms4g -Xmx4g -Dlog4j2.formatMsgNoLookups=true"
   protocol: http
   esConfig:
     elasticsearch.yml: |
