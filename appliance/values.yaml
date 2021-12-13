@@ -131,7 +131,7 @@ configuration:
 #         to your system as the default value is quite small.
 datastore:
   replicas: 1
-  esJavaOpts: "-Xms2g -Xmx2g"
+  esJavaOpts: "-Xms2g -Xmx2g -Dlog4j2.formatMsgNoLookups=true"
   resources:
     requests:
       cpu: 250m
