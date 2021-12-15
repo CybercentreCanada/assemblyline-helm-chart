@@ -19,6 +19,48 @@ spec:
   egress:
   - to: []
 ---
+# Allow all privileged pods to talk to core pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-between-privileged-to-core
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      privilege: core
+  # Connections may come in from other core pods
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          section: core
+  # Connections may go out to core
+  egress:
+  - to: []
+---
+# Allow all core pods to talk to privileged pods
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-between-core-to-privileged
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+  # Connections may come in from other core pods
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          privilege: core
+  # Connections may go out to core
+  egress:
+  - to: []
+---
 # Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
