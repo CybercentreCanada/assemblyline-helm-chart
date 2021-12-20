@@ -64,6 +64,9 @@ separateIngestAPI: false
 # elasticsearch database.
 enableAPM: false
 
+# List of CIDRs privileged services are allowed to access
+privilegedSafelistedCIDRs: []
+
 # If internal logging is not used, this specifies where to write metrics and logs.
 # Ignored when internal logging is set.
 loggingHost:

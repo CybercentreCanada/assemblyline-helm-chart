@@ -18,6 +18,26 @@ spec:
   # Connections may go out to anywhere
   egress:
   - to: []
+{{ if $.Values.privilegedSafelistedCIDRs }}
+---
+# Allow access to specific IPs
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: privileged-safelisted-ipblocks
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      privilege: core
+  egress:
+  - to:
+    {{- range $.Values.privilegedSafelistedCIDRs }}
+    - ipBlock:
+        cidr: {{ . }}
+    {{- end }} 
+{{end}}
 ---
 # Allow privileged services to reach core components
 apiVersion: networking.k8s.io/v1
