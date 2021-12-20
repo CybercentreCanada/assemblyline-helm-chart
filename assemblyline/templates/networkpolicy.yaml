@@ -19,6 +19,40 @@ spec:
   egress:
   - to: []
 ---
+# Allow privileged services to reach core components
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-privileged-to-core
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      privilege: core
+  egress:
+  - to:
+    - podSelector:
+          matchLabels:
+            section: core
+---
+# Allow Core components to recieve connection from privileged services
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-core-from-privileged
+  labels:
+    app: assemblyline
+spec:
+  podSelector:
+    matchLabels:
+      section: core
+  ingress:
+  - from:
+    - podSelector:
+          matchLabels:
+            privilege: core
+---
 # Allow pods to access DNS
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
