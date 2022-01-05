@@ -67,7 +67,7 @@
 - name: DISPATCHER_RESULT_THREADS
   value: "{{ .Values.dispatcherResultThreads }}"
 - name: DEV_MODE
-  value: "{{ .Values.coreDebugging | default false | toString }}"
+  value: "{{ .Values.enableCoreDebugging | default false | toString }}"
 {{ if .Values.internalFilestore }}
 - name: INTERNAL_FILESTORE_ACCESS
   valueFrom:
