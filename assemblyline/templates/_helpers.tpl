@@ -155,6 +155,8 @@ spec:
               cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: AL_SHUTDOWN_GRACE
+              value: "{{ .terminationSeconds | default 60 }}"
           livenessProbe:
             exec:
               command: ["bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"]
@@ -206,6 +208,8 @@ spec:
               cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: AL_SHUTDOWN_GRACE
+              value: "{{ .terminationSeconds | default 60 }}"
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{ end }}
