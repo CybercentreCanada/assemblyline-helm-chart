@@ -134,6 +134,7 @@ spec:
         component: {{ .component }}
     spec:
       priorityClassName: al-core-priority
+      terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
@@ -143,7 +144,6 @@ spec:
           {{ else }}
           command: ['python', '-m', '{{ .command }}']
           {{ end}}
-
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
@@ -189,6 +189,7 @@ spec:
         component: {{ .component }}
     spec:
       priorityClassName: al-core-priority
+      terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
