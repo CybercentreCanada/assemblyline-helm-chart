@@ -34,7 +34,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "terminationSeconds" "108000" "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU "limitCPU" .Values.dispatcherLimCPU "limitRam" .Values.dispatcherLimRam) . }}
+{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "terminationSeconds" "2700" "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU "limitCPU" .Values.dispatcherLimCPU "limitRam" .Values.dispatcherLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
