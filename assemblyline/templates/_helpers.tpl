@@ -95,6 +95,7 @@
 - name: al-config
   mountPath: /etc/assemblyline/config.yml
   subPath: config
+  readOnly: true
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
