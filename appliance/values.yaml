@@ -91,6 +91,7 @@ workflowReqCPU: "0m"
 
 # Memory reservation
 defaultReqRam: 64Mi
+dispatcherReqRam: 128Mi
 frontendReqRam: 32Mi
 ingestUIReqRam: 256Mi
 internalUIReqRam: 256Mi

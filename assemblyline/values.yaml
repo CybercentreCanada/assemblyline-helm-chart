@@ -246,6 +246,7 @@ workflowLimCPU: 1
 
 # Memory reservation
 defaultReqRam: 128Mi
+dispatcherReqRam: 256Mi
 elasticHelperReqRam: 32Mi
 frontendReqRam: 128Mi
 ingestUIReqRam: 1Gi
@@ -259,6 +260,7 @@ uiReqRam: 1Gi
 
 # Memory Limits
 defaultLimRam: 1Gi
+dispatcherLimRam: 1Gi
 elasticHelperLimRam: 256Mi
 frontendLimRam: 1Gi
 ingestUILimRam: 2Gi
