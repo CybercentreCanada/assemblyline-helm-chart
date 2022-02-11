@@ -51,17 +51,17 @@ kibana:
 
 # Maximum upload file size (larger than 100MB is not recommanded)
 ingressAnnotations:
-  kubernetes.io/ingress.class: "nginx"
   nginx.ingress.kubernetes.io/proxy-body-size: 100m
+ingressClassName: "nginx"
 
 # No need to auto scaler on low resources system
-#    NOTE: If you want to turn it back on, make sure the "metrics-server" addon 
+#    NOTE: If you want to turn it back on, make sure the "metrics-server" addon
 #          is installed on your cluster
 #          > sudo microk8s enable metrics-server
 useAutoScaler: false
 
 # Stop reserving CPU for component
-#    NOTE: Comment those lines if you use more then 1 nodes for your appliance 
+#    NOTE: Comment those lines if you use more then 1 nodes for your appliance
 #          and that the total # cores for all your nodes is greater or equal then 16 cores
 defaultReqCPU: "0m"
 alerterReqCPU: "0m"
@@ -118,7 +118,7 @@ configuration:
     cpu_reservation: 0.1
   ui:
     # !! MUST CHANGE !!
-    # Replace localhost with the domain at which you will reach your cluster, this cannot be an IP. 
+    # Replace localhost with the domain at which you will reach your cluster, this cannot be an IP.
     # If you do not have a domain, use an nip.io address. (e.g. 192.168.0.1.nip.io points to ip 192.168.0.1)
     fqdn: "localhost"
 
