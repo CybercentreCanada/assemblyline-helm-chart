@@ -175,6 +175,7 @@ internalAPIInstancesMax: 2
 
 # Number of dispatcher result processing threads
 dispatcherResultThreads: 6
+dispatcherFinalizeThreads: 6
 
 # How long to let dispatchers try to clean up remaining jobs (in seconds)
 disptacherShutdownGrace: 60

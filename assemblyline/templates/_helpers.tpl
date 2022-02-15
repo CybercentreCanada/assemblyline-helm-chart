@@ -66,6 +66,8 @@
       key: datastore-password
 - name: DISPATCHER_RESULT_THREADS
   value: "{{ .Values.dispatcherResultThreads }}"
+- name: DISPATCHER_FINALIZE_THREADS
+  value: "{{ .Values.dispatcherFinalizeThreads }}"
 - name: DEV_MODE
   value: "{{ .Values.enableCoreDebugging | default false | toString }}"
 {{ if .Values.internalFilestore }}
