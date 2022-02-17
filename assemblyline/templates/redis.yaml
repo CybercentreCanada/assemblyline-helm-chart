@@ -27,7 +27,7 @@ spec:
         - name: redis
           image: {{ .Values.redisImage }}
           command: ['redis-server']
-          args: ['--appendonly', 'no', '--save', '""'{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }}]
+          args: ['--appendonly', 'no', '--maxclients', '100000', '--save', '""'{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }}]
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
@@ -102,7 +102,7 @@ spec:
       - name: redis
         image: {{ .Values.redisImage }}
         command: ['redis-server']
-        args: ['--appendonly', 'yes', '--auto-aof-rewrite-percentage', '200'{{ if ne (.Values.redisPersistentIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisPersistentIOThreads }}'{{ end }}]
+        args: ['--appendonly', 'yes', '--maxclients', '100000', '--auto-aof-rewrite-percentage', '200'{{ if ne (.Values.redisPersistentIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisPersistentIOThreads }}'{{ end }}]
         ports:
         - containerPort: 6379
         volumeMounts:
