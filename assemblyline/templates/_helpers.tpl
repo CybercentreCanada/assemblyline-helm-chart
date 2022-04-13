@@ -123,6 +123,12 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.replayVolume" }}
+{{ if and .replayContainer (eq .Values.replayMode "loader") }}
+{{- .Values.replayLoaderVolume | toYaml -}}
+{{ end}}
+{{end}}
+---
 {{ define "assemblyline.coreService" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -159,6 +165,10 @@ spec:
           command: ['python', '-m', '{{ .command }}']
           {{ end}}
           volumeMounts:
+          {{ if and .replayContainer (eq .Values.replayMode "loader") }}
+            - name: replay-data
+              mountPath: /tmp/replay/input
+          {{ end}}
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
             requests:
@@ -173,10 +183,14 @@ spec:
               value: "{{ .terminationSeconds | default 60 }}"
           livenessProbe:
             exec:
-              command: ["bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"]
+              command: 
+               - bash 
+               - "-c"
+               - {{ .livenessCommand | default "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" }}
             initialDelaySeconds: 30
             periodSeconds: 30
       volumes:
+      {{ include "assemblyline.replayVolume" . | indent 8 }}
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
 {{ end }}
 ---

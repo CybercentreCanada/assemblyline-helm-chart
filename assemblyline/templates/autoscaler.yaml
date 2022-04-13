@@ -27,8 +27,14 @@
 {{end}}
 {{ if .Values.useReplay }}
 ---
-{{with merge (dict "name" "replay-{{.Values.replayMode}}-worker" "maxReplicas" .Values.replayWorkerInstancesMax "minReplicas" .Values.replayWorkerInstances "targetUsage" .Values.replayTargetUsage) . }}
+{{ if eq .Values.replayMode "creator" }}
+{{with merge (dict "name" "replay-creator-worker" "maxReplicas" .Values.replayWorkerInstancesMax "minReplicas" .Values.replayWorkerInstances "targetUsage" .Values.replayTargetUsage) . }}
   {{template "assemblyline.HPA" .}}
+{{end}}
+{{else}}
+{{with merge (dict "name" "replay-loader-worker" "maxReplicas" .Values.replayWorkerInstancesMax "minReplicas" .Values.replayWorkerInstances "targetUsage" .Values.replayTargetUsage) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
 {{end}}
 {{end}}
 {{end}}

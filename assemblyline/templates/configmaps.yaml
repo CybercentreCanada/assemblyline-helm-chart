@@ -41,7 +41,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: replay-config
+  name: {{ .Release.Name }}-replay-config
 data:
   replay: |
 {{ .Values.replay | toYaml | indent 4 }}

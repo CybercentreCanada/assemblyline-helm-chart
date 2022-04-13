@@ -305,13 +305,13 @@ namespaceResourceLimited: false
 # between 2 Assemblyline instances
 replay: 
   creator:
-    lookback_time: "*"
+    lookback_time: "now-1d"
     output_filestore: file:///tmp/replay/output
     working_directory: /tmp/replay/work
     alert_input: 
       enabled: true
       threads: 6
-      filter_queries': ['NOT extended_scan:submitted','workflows_completed:true']
+      filter_queries: ['NOT extended_scan:submitted','workflows_completed:true']
     submission_input:
       enabled: true
       threads: 6
@@ -322,11 +322,18 @@ replay:
     failed_directory: /tmp/replay/failed
     input_threads: 6
     input_directory: /tmp/replay/input
-    min_classification': null
-    rescan': []
+    min_classification: null
+    rescan: []
     working_directory: /tmp/replay/work
     client:
       type: direct
+
+replayLivenessCommand: "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"
+replayLoaderVolume:
+  - name: replay-data
+    nfs:
+      server: localhost
+      path: /path/to/folder
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
