@@ -25,4 +25,10 @@
 {{with merge (dict "name" "service-server" "maxReplicas" .Values.serviceServerInstancesMax "minReplicas" .Values.serviceServerInstances "targetUsage" .Values.serviceServerTargetUsage) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
+{{ if .Values.useReplay }}
+---
+{{with merge (dict "name" "replay-{{.Values.replayMode}}-worker" "maxReplicas" .Values.replayWorkerInstancesMax "minReplicas" .Values.replayWorkerInstances "targetUsage" .Values.replayTargetUsage) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+{{end}}
 {{end}}

@@ -98,6 +98,12 @@
   mountPath: /etc/assemblyline/config.yml
   subPath: config
   readOnly: true
+{{ if .Values.useReplay }}
+- name: replay-config
+  mountPath: /etc/assemblyline/replay.yml
+  subPath: replay
+  readOnly: true
+{{ end }}
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
@@ -107,6 +113,11 @@
 - name: al-config
   configMap:
     name: {{ .Release.Name }}-global-config
+{{ if .Values.useReplay }}
+- name: replay-config
+  configMap:
+    name: {{ .Release.Name }}-replay-config
+{{ end }}
 {{ if .Values.coreVolumes }}
 {{- .Values.coreVolumes | toYaml -}}
 {{ end }}

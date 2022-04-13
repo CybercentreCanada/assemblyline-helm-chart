@@ -41,3 +41,13 @@
 {{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU "limitCPU" .Values.ingesterLimCPU "limitRam" .Values.ingesterLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
+{{ if .Values.useReplay }}
+---
+{{with merge (dict "component" "replay-{{.Values.replayMode}}" "command" "assemblyline_core.replay.{{.Values.replayMode}}.run" "requestedCPU" .Values.replayReqCPU "limitCPU" .Values.replayLimCPU "requestedRam" .Values.replayReqRam "limitRam" .Values.replayLimRam) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---
+{{with merge (dict "component" "replay-{{.Values.replayMode}}-worker" "command" "assemblyline_core.replay.{{.Values.replayMode}}.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{end}}

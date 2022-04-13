@@ -35,6 +35,17 @@ metadata:
 data:
   config: |
 {{ .Values.configuration | toYaml | indent 4 }}
+{{ if .Values.useReplay }}
+---
+# The replay config that will be use in the replay containers
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: replay-config
+data:
+  replay: |
+{{ .Values.replay | toYaml | indent 4 }}
+{{end}}
 ---
 apiVersion: v1
 kind: ConfigMap
