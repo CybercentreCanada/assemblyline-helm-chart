@@ -41,3 +41,25 @@
 {{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU "limitCPU" .Values.ingesterLimCPU "limitRam" .Values.ingesterLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
+{{ if .Values.useReplay }}
+---
+{{ if eq .Values.replayMode "creator" }}
+{{with merge (dict "component" "replay-creator" "command" "assemblyline_core.replay.creator.run" "requestedCPU" .Values.replayReqCPU "limitCPU" .Values.replayLimCPU "requestedRam" .Values.replayReqRam "limitRam" .Values.replayLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{else}}
+{{with merge (dict "component" "replay-loader" "command" "assemblyline_core.replay.loader.run" "requestedCPU" .Values.replayReqCPU "limitCPU" .Values.replayLimCPU "requestedRam" .Values.replayReqRam "limitRam" .Values.replayLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{end}}
+---
+{{ if eq .Values.replayMode "creator" }}
+{{with merge (dict "component" "replay-creator-worker" "command" "assemblyline_core.replay.creator.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{else}}
+{{with merge (dict "component" "replay-loader-worker" "command" "assemblyline_core.replay.loader.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{end}}
+{{end}}

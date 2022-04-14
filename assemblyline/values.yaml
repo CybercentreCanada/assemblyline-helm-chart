@@ -64,6 +64,11 @@ separateIngestAPI: false
 # elasticsearch database.
 enableAPM: false
 
+# Turn on/off the submission/alert replay feature
+useReplay: false
+# Type of replay containers to load in this deployment (loader or creator)
+replayMode: "loader"
+
 # List of CIDRs privileged services are allowed to access
 privilegedSafelistedCIDRs: []
 
@@ -164,6 +169,7 @@ ingesterInstances: 1
 APIInstances: 1
 ingestAPIInstances: 1
 internalAPIInstances: 1
+replayWorkerInstances: 1
 
 # Maximum Number of pods of each core component types
 serviceServerInstancesMax: 100
@@ -172,6 +178,7 @@ ingesterInstancesMax: 10
 APIInstancesMax: 15
 ingestAPIInstancesMax: 15
 internalAPIInstancesMax: 2
+replayWorkerInstancesMax: 10
 
 # Number of dispatcher result processing threads
 dispatcherResultThreads: 6
@@ -210,6 +217,8 @@ metricsReqCPU: "500m"
 plumberReqCPU: "50m"
 redisVolatileReqCPU: "750m"
 redisPersistentReqCPU: "500m"
+replayReqCPU: "250m"
+replayWorkerReqCPU: 1
 scalerReqCPU: "500m"
 serviceServerReqCPU: "500m"
 socketIOReqCPU: "100m"
@@ -237,6 +246,8 @@ metricsLimCPU: 1
 plumberLimCPU: 1
 redisVolatileLimCPU: 1
 redisPersistentLimCPU: 1
+replayLimCPU: 1
+replayWorkerLimCPU: 1
 scalerLimCPU: 1
 serviceServerLimCPU: 1
 socketIOLimCPU: 1
@@ -254,6 +265,8 @@ ingestUIReqRam: 1Gi
 internalUIReqRam: 1Gi
 logstashReqRam: 1536Mi
 redisPersistentReqRam: 1Gi
+replayReqRam: 256Mi
+replayWorkerReqRam: 1Gi
 scalerReqRam: 512Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
@@ -269,6 +282,8 @@ internalUILimRam: 2Gi
 logstashLimRam: 1536Mi
 redisPersistentLimRam: 8Gi
 redisVolatileLimRam: 8Gi
+replayLimRam: 512Mi
+replayWorkerLimRam: 2Gi
 scalerLimRam: 4Gi
 serviceServerLimRam: 1Gi
 socketIOLimRam: 2Gi
@@ -281,9 +296,44 @@ ingestAPITargetUsage: 30
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
 serviceServerTargetUsage: 50
+replayTargetUsage: 50
 
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false
+
+# Replay configuration block that will be use to sync alerts and submissions 
+# between 2 Assemblyline instances
+replay: 
+  creator:
+    lookback_time: "now-1d"
+    output_filestore: file:///tmp/replay/output
+    working_directory: /tmp/replay/work
+    alert_input: 
+      enabled: true
+      threads: 6
+      filter_queries: ['NOT extended_scan:submitted','workflows_completed:true']
+    submission_input:
+      enabled: true
+      threads: 6
+      filter_queries: ['metadata.replay:requested']
+    client:
+      type: direct
+  loader:
+    failed_directory: /tmp/replay/failed
+    input_threads: 6
+    input_directory: /tmp/replay/input
+    min_classification: null
+    rescan: []
+    working_directory: /tmp/replay/work
+    client:
+      type: direct
+
+replayLivenessCommand: "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"
+replayLoaderVolume:
+  - name: replay-data
+    nfs:
+      server: localhost
+      path: /path/to/folder
 
 # Internal configuration for assemblyline components. See the assemblyline
 # administration documentation for more details.
