@@ -54,7 +54,7 @@
 {{end}}
 ---
 {{ if eq .Values.replayMode "creator" }}
-{{with merge (dict "component" "replay-creator-worker" "command" "assemblyline_core.replay.creator.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand . }}
+{{with merge (dict "component" "replay-creator-worker" "command" "assemblyline_core.replay.creator.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{else}}
