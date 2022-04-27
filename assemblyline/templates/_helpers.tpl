@@ -157,12 +157,11 @@ spec:
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       containers:
         - name: {{ .component }}
-          {{ if .image }}
-          image: {{ .image }}
-          {{ else }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          {{ end }}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: {{ .runAsUser | default 1000}}
+            runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
           {{ else }}
