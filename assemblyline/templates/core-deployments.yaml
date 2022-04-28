@@ -48,7 +48,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{else}}
-{{with merge (dict "component" "replay-loader" "command" "assemblyline_core.replay.loader.run" "requestedCPU" .Values.replayReqCPU "limitCPU" .Values.replayLimCPU "requestedRam" .Values.replayReqRam "limitRam" .Values.replayLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+{{with merge (dict "component" "replay-loader" "command" "assemblyline_core.replay.loader.run" "requestedCPU" .Values.replayReqCPU "limitCPU" .Values.replayLimCPU "requestedRam" .Values.replayReqRam "limitRam" .Values.replayLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand "runAsUser" .Values.replayLoaderUser) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{end}}
@@ -58,7 +58,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{else}}
-{{with merge (dict "component" "replay-loader-worker" "command" "assemblyline_core.replay.loader.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand) . }}
+{{with merge (dict "component" "replay-loader-worker" "command" "assemblyline_core.replay.loader.run_worker" "requestedCPU" .Values.replayWorkerReqCPU "limitCPU" .Values.replayWorkerLimCPU "requestedRam" .Values.replayWorkerReqRam "limitRam" .Values.replayWorkerLimRam "replayContainer" true "livenessCommand" .Values.replayLivenessCommand  "runAsUser" .Values.replayLoaderUser) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{end}}
