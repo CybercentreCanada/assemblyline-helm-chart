@@ -159,6 +159,9 @@ spec:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: {{ .runAsUser | default 1000}}
+            runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
           {{ else }}
@@ -167,7 +170,7 @@ spec:
           volumeMounts:
           {{ if and .replayContainer (eq .Values.replayMode "loader") }}
             - name: replay-data
-              mountPath: /tmp/replay/input
+              mountPath: {{ .Values.replay.loader.input_directory }}
           {{ end}}
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
@@ -183,8 +186,8 @@ spec:
               value: "{{ .terminationSeconds | default 60 }}"
           livenessProbe:
             exec:
-              command: 
-               - bash 
+              command:
+               - bash
                - "-c"
                - {{ .livenessCommand | default "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" }}
             initialDelaySeconds: 30

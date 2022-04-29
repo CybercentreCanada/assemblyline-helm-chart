@@ -68,6 +68,8 @@ enableAPM: false
 useReplay: false
 # Type of replay containers to load in this deployment (loader or creator)
 replayMode: "creator"
+# (Optional) UID for user that's running Replay Loader (default: assemblyline)
+replayLoaderUser: 1000
 
 # List of CIDRs privileged services are allowed to access
 privilegedSafelistedCIDRs: []
@@ -301,14 +303,14 @@ replayTargetUsage: 50
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false
 
-# Replay configuration block that will be use to sync alerts and submissions 
+# Replay configuration block that will be use to sync alerts and submissions
 # between 2 Assemblyline instances
-replay: 
+replay:
   creator:
     lookback_time: "now-1d"
     output_filestore: file:///tmp/replay/output
     working_directory: /tmp/replay/work
-    alert_input: 
+    alert_input:
       enabled: true
       threads: 6
       filter_queries: ['NOT extended_scan:submitted','workflows_completed:true']
