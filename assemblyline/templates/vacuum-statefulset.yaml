@@ -1,0 +1,67 @@
+{{ if .Values.enableVacuum }}
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: vacuum
+  labels:
+    app: assemblyline
+    section: core
+    component: vacuum
+spec:
+  serviceName: vacuum
+  replicas: 1
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: vacuum
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: vacuum
+    spec:
+      priorityClassName: al-infra
+      containers:
+        - name: vacuum
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          command: ['python', '-m', 'assemblyline_core.vacuum.crawler']
+          securityContext:
+            runAsUser: {{ .Values.vacuumUser | default 1000}}
+            runAsGroup: 1000
+          resources:
+            requests:
+              memory: {{ .Values.vacuumReqRam }}
+              cpu: {{ .Values.vacuumReqCPU }}
+          volumeMounts:
+            {{ include "assemblyline.coreMounts" . | indent 12 }}
+            {{ .Values.vacuumMounts | toYaml | nindent 12 }}
+            - name: cache-data
+              mountPath: "/cache"
+          env:
+          {{- include "assemblyline.coreEnv" . | indent 12 }}
+            - name: AL_SHUTDOWN_GRACE
+              value: "60"
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - "-c"
+                - "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi"
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+        {{- include "assemblyline.coreVolumes" . | indent 8 }}
+        {{- .Values.vacuumVolumes | toYaml | nindent 8 }}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: cache-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistantStorageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.vacuumCacheSize }}
+{{ end }}

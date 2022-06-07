@@ -38,3 +38,12 @@
 {{end}}
 {{end}}
 {{end}}
+---
+{{ if .Values.enableVacuum }}
+{{with merge (dict "name" "vacuum-worker"
+                   "maxReplicas" .Values.vacuumInstancesMax
+                   "minReplicas" .Values.vacuumInstances
+                   "targetUsage" .Values.vacuumTargetUsage) . }}
+  {{template "assemblyline.HPA" .}}
+{{end}}
+{{ end }}
