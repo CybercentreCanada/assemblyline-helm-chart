@@ -67,7 +67,6 @@
 {{ if .Values.enableVacuum }}
 {{with merge (dict
     "component" "vacuum-worker"
-    "image" .Values.assemblylineUIImage
     "command" "assemblyline_core.vacuum.worker"
     "requestedCPU" .Values.vacuumWorkerReqCPU
     "limitCPU" .Values.vacuumWorkerLimCPU
