@@ -134,8 +134,7 @@ autoInstallServices:
   - unpacme
   - unpacker
   - vipermonkey
-  - virustotal-dynamic
-  - virustotal-static
+  - virustotal
   - xlmmacrodeobfuscator
   - yara
 
