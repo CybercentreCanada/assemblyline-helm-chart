@@ -52,7 +52,7 @@ kibana:
 # Maximum upload file size (larger than 100MB is not recommanded)
 ingressAnnotations:
   nginx.ingress.kubernetes.io/proxy-body-size: 100m
-ingressClassName: "nginx"
+ingressClassName: "public"
 
 # No need to auto scaler on low resources system
 #    NOTE: If you want to turn it back on, make sure the "metrics-server" addon
