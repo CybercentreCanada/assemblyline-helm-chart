@@ -4,26 +4,26 @@
 dependencies:
   - name: elasticsearch
     repository: https://helm.elastic.co/
-    version: 7.16.1
+    version: 7.17.3
     alias: datastore
   - name: filebeat
     repository: https://helm.elastic.co/
-    version: 7.16.1
+    version: 7.17.3
     alias: filebeat
     condition: enableLogging
   - name: metricbeat
     repository: https://helm.elastic.co/
-    version: 7.16.1
+    version: 7.17.3
     alias: metricbeat
     condition: enableMetricbeat
   - name: elasticsearch
     repository: https://helm.elastic.co/
-    version: 7.16.1
+    version: 7.17.3
     alias: log-storage
     condition: seperateInternalELKStack
   - name: kibana
     repository: https://helm.elastic.co/
-    version: 7.16.1
+    version: 7.17.3
     alias: kibana
     condition: internalELKStack
   - name: minio
