@@ -29,7 +29,7 @@ data:
       password: ${LOGGING_PASSWORD}
       ssl:
         verification_mode: ${LOGGING_TLS_VERIFY}
-        
+
     setup.template.settings.index:
       number_of_shards: 1
       number_of_replicas: 0
