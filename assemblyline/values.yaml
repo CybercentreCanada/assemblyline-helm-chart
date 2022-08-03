@@ -10,7 +10,7 @@ assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
-elasticLogstashTag: "8.3.3"
+elasticLogstashTag: "7.17.4"
 redisImage: redis
 
 # Storage classes for persistent data.
@@ -398,7 +398,7 @@ configuration:
 #     resources
 #     volumeClaimTemplate
 datastore:
-  imageTag: 8.3.3
+  imageTag: 7.17.4
   clusterName: "datastore"
   replicas: 3
   extraEnvs:
@@ -447,7 +447,7 @@ datastore:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
@@ -460,7 +460,7 @@ datastore:
       mountPath: /usr/share/elasticsearch/config/certs
 
 filebeat:
-  imageTag: 8.3.3
+  imageTag: 7.17.4
   labels:
     section: core
     component: filebeat
@@ -574,7 +574,7 @@ filebeat:
 metricbeatIndexPrefix: "metricbeat"
 
 metricbeat:
-  imageTag: 8.3.3
+  imageTag: 7.17.4
   labels:
     section: core
     component: metricbeat
@@ -806,7 +806,7 @@ metricbeat:
       }
 
 kibana:
-  imageTag: 8.3.3
+  imageTag: 7.17.4
   fullnameOverride: kibana
   elasticsearchHosts: http://log-storage-master:9200
   healthCheckPath: /kibana/app/kibana
@@ -816,49 +816,29 @@ kibana:
     labels:
       section: core
   extraEnvs:
+    - name: SERVER_NAME
+      value: localhost
+    - name: ELASTICSEARCH_USERNAME
+      value: elastic
     - name: ELASTICSEARCH_PASSWORD
       valueFrom:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
-  esConfig: 
-    kibana.yml: |
-      elasticsearch.hosts: ["http://elasticsearch:9200"]
-      elasticsearch.username: elastic
-
-      logging.root.level: warn
-
-      server.basePath: /kibana
-      server.publicBaseUrl: https://localhost/kibana
-      server.rewriteBasePath: true
-      server.name: kibana
-      server.host: "0.0.0.0"
-      
-      xpack.reporting.roles.enabled: false
-      # xpack.reporting.encryptionKey: ThisIsSomeRandomKeyThatYouShouldDefinitelyChange!
-      xpack.reporting.kibanaServer.hostname: localhost
-      # xpack.security.encryptionKey: ThisIsSomeRandomKeyThatYouShouldDefinitelyChange!
-      # xpack.encryptedSavedObjects.encryptionKey: ThisIsSomeRandomKeyThatYouShouldDefinitelyChange!
-      xpack.fleet.packages:
-        - name: apm
-          version: latest
-      xpack.fleet.agentPolicies:
-        - name: APM Server
-          id: apm
-          is_managed: false
-          namespace: default
-          package_policies:
-            - name: apm_server
-              id: default-apm-server
-              package:
-                name: apm
-
+    - name: SERVER_BASEPATH
+      value: /kibana
+    - name: SERVER_PUBLICBASEURL
+      value: https://localhost/kibana
+    - name: SERVER_REWRITEBASEPATH
+      value: "true"
+    - name: LOGGING_QUIET
+      value: "true"
   priorityClassName: al-core-priority
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
 log-storage:
-  imageTag: 8.3.3
+  imageTag: 7.17.4
   clusterName: "log-storage"
   replicas: 1
   extraEnvs:
@@ -907,7 +887,7 @@ log-storage:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:8.3.3
+      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.4
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
