@@ -415,6 +415,7 @@ datastore:
   esJavaOpts: "-Xms4g -Xmx4g -Dlog4j2.formatMsgNoLookups=true"
   esConfig:
     elasticsearch.yml: |
+      ingest.geoip.downloader.enabled: false
       logger.level: WARN
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
