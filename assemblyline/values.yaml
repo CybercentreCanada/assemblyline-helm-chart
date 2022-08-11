@@ -64,6 +64,47 @@ separateIngestAPI: false
 # elasticsearch database.
 enableAPM: false
 
+# ILM policy for APM indices (default: Elastic-defined, rollover to warm after 30d)
+apmILM:
+  enabled: "auto"
+  setup:
+    enabled: true
+    overwrite: false
+    require_policy: true
+    mapping:
+      - event_type: "error"
+        policy_name: "apm-rollover-30-days"
+        index_suffix: ""
+      - event_type: "span"
+        policy_name: "apm-rollover-30-days"
+        index_suffix: ""
+      - event_type: "transaction"
+        policy_name: "apm-rollover-30-days"
+        index_suffix: ""
+      - event_type: "metric"
+        policy_name: "apm-rollover-30-days"
+        index_suffix: ""
+      - event_type: "profile"
+        policy_name: "apm-rollover-30-days"
+        index_suffix: ""
+    policies:
+      - name: "apm-rollover-30-days"
+        policy:
+          phases:
+            hot:
+              actions:
+                rollover:
+                  max_size: "50gb"
+                  max_age: "30d"
+                set_priority:
+                  priority: 100
+            warm:
+              min_age: "30d"
+              actions:
+                set_priority:
+                  priority: 50
+                readonly: {}
+
 # Turn on/off the submission/alert replay feature
 useReplay: false
 # Type of replay containers to load in this deployment (loader or creator)
@@ -312,11 +353,12 @@ replay:
     alert_input:
       enabled: true
       threads: 6
-      filter_queries: ['NOT extended_scan:submitted','workflows_completed:true']
+      filter_queries:
+        ["NOT extended_scan:submitted", "workflows_completed:true"]
     submission_input:
       enabled: true
       threads: 6
-      filter_queries: ['metadata.replay:requested']
+      filter_queries: ["metadata.replay:requested"]
     client:
       type: direct
   loader:

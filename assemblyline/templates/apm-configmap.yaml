@@ -19,6 +19,9 @@ data:
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY}
 
+      ilm: {{ printf "\n"}}
+      {{- .Values.apmILM | toYaml | indent 8}}
+
     logging:
       level: warning
       json: true
