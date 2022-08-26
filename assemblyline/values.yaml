@@ -1,5 +1,5 @@
 # Tags for the containers used
-release: "4.2.stable"
+release: "4.3.stable"
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
@@ -133,6 +133,7 @@ autoInstallServices:
   - torrentslicer
   - unpacme
   - unpacker
+  - urldownloader
   - vipermonkey
   - virustotal
   - xlmmacrodeobfuscator
@@ -312,11 +313,13 @@ replay:
     alert_input:
       enabled: true
       threads: 6
-      filter_queries: ['NOT extended_scan:submitted','workflows_completed:true']
+      filter_queries:
+        - "NOT extended_scan:submitted"
+        - "workflows_completed:true"
     submission_input:
       enabled: true
       threads: 6
-      filter_queries: ['metadata.replay:requested']
+      filter_queries: ["metadata.replay:requested"]
     client:
       type: direct
   loader:
