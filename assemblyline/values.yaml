@@ -144,13 +144,17 @@ createAdminAccount: "on-install"
 
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
+  - apivector
   - apkaye
   - antivirus
+  - batchdeobfuscator
   - beaver
   - characterize
   - configextractor
   - cuckoo
   - deobfuscripter
+  - elf
+  - elfparser
   - emlparser
   - espresso
   - extract
@@ -164,7 +168,7 @@ autoInstallServices:
   - overpower
   - pdfid
   - peepdf
-  - pefile
+  - pe
   - pixaxe
   - safelist
   - sigma
