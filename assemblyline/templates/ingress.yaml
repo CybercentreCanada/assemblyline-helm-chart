@@ -73,3 +73,6 @@ spec:
                 port:
                   number: 5601
           {{ end }}
+{{ if .Values.ingressPaths }}
+{{ .Values.ingressPaths | toYaml | indent 10 }}
+{{ end }}
