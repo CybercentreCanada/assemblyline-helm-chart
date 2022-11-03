@@ -59,7 +59,8 @@ spec:
               - key: bootstrap.py
                 path: bootstrap.py
       restartPolicy: Never
-  backoffLimit: 4
+  backoffLimit: 500
+  ttlSecondsAfterFinished: 300
 {{ end }}
 ---
 #
