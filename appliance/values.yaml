@@ -65,6 +65,7 @@ useAutoScaler: false
 #          and that the total # cores for all your nodes is greater or equal then 16 cores
 defaultReqCPU: "0m"
 alerterReqCPU: "0m"
+archiverReqCPU: "0m"
 apmReqCPU: "0m"
 dispatcherReqCPU: "0m"
 elasticHelperReqCPU: "0m"

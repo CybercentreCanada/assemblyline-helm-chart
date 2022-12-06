@@ -2,6 +2,10 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
+{{with merge (dict "component" "archiver" "command" "assemblyline_core.archiver.run_archiver" "requestedCPU" .Values.archiverReqCPU "limitCPU" .Values.archiverLimCPU "limitRam" .Values.archiverLimRam) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+---
 {{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow" "requestedCPU" .Values.workflowReqCPU "limitCPU" .Values.workflowLimCPU "limitRam" .Values.workflowLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}

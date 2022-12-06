@@ -248,6 +248,7 @@ elasticSubmissionShards: 6
 # CPU Revervation
 defaultReqCPU: "50m"
 alerterReqCPU: "50m"
+archiverReqCPU: "50m"
 apmReqCPU: "250m"
 dispatcherReqCPU: "500m"
 elasticHelperReqCPU: "25m"
@@ -277,6 +278,7 @@ workflowReqCPU: "50m"
 # CPU Limits
 defaultLimCPU: 1
 alerterLimCPU: 1
+archiverLimCPU: 1
 apmLimCPU: 1
 dispatcherLimCPU: 1
 elasticHelperLimCPU: "250m"
