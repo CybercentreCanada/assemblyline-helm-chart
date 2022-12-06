@@ -1,9 +1,11 @@
 {{with merge (dict "component" "alerter" "command" "assemblyline_core.alerter.run_alerter" "requestedCPU" .Values.alerterReqCPU "limitCPU" .Values.alerterLimCPU "limitRam" .Values.alerterLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
+{{ if .Values.configuration.datastore.archive.enabled }}
 ---
 {{with merge (dict "component" "archiver" "command" "assemblyline_core.archiver.run_archiver" "requestedCPU" .Values.archiverReqCPU "limitCPU" .Values.archiverLimCPU "limitRam" .Values.archiverLimRam) . }}
   {{template "assemblyline.coreService" .}}
+{{end}}
 {{end}}
 ---
 {{with merge (dict "component" "workflow" "command" "assemblyline_core.workflow.run_workflow" "requestedCPU" .Values.workflowReqCPU "limitCPU" .Values.workflowLimCPU "limitRam" .Values.workflowLimRam) . }}
