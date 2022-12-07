@@ -69,3 +69,19 @@
 {{end}}
 {{end}}
 {{end}}
+---
+{{ if .Values.enableVacuum }}
+{{with merge (dict
+    "component" "vacuum-worker"
+    "command" "assemblyline_core.vacuum.worker"
+    "requestedCPU" .Values.vacuumWorkerReqCPU
+    "limitCPU" .Values.vacuumWorkerLimCPU
+    "requestedRam" .Values.vacuumWorkerReqRam
+    "limitRam" .Values.vacuumWorkerLimRam
+    "volumes" .Values.vacuumVolumes
+    "mounts" .Values.vacuumMounts
+    "runAsUser" .Values.vacuumUser
+  ) . }}
+  {{template "assemblyline.coreService" .}}
+{{end}}
+{{ end }}

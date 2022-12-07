@@ -132,6 +132,13 @@ ingressHost:
 # If left null, a self signed cert will be generated.
 tlsSecretName:
 
+# Turn on the directory reader module
+enableVacuum: false
+vacuumVolumes:
+vacuumMounts:
+vacuumCacheSize: "100Gi"
+vacuumUser: 1000
+
 # Bootstrap process settings
 # Whether an admin account should be created by the back end.
 #   Accepted Values:
@@ -217,6 +224,7 @@ APIInstances: 1
 ingestAPIInstances: 1
 internalAPIInstances: 1
 replayWorkerInstances: 1
+vacuumInstances: 1
 
 # Maximum Number of pods of each core component types
 serviceServerInstancesMax: 100
@@ -226,6 +234,7 @@ APIInstancesMax: 15
 ingestAPIInstancesMax: 15
 internalAPIInstancesMax: 2
 replayWorkerInstancesMax: 10
+vacuumInstancesMax: 10
 
 # Number of dispatcher result processing threads
 dispatcherResultThreads: 6
@@ -274,6 +283,8 @@ statisticsReqCPU: "50m"
 uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
+vacuumReqCPU: "0m"
+vacuumWorkerReqCPU: "0m"
 
 # CPU Limits
 defaultLimCPU: 1
@@ -304,6 +315,7 @@ statisticsLimCPU: 1
 uiLimCPU: 1
 updaterLimCPU: "0.5"
 workflowLimCPU: 1
+vacuumWorkerLimCPU: 1
 
 # Memory reservation
 defaultReqRam: 128Mi
@@ -320,6 +332,8 @@ scalerReqRam: 512Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
 uiReqRam: 1Gi
+vacuumReqRam: 5Gi
+vacuumWorkerReqRam: 1Gi
 
 # Memory Limits
 defaultLimRam: 1Gi
@@ -337,6 +351,7 @@ scalerLimRam: 4Gi
 serviceServerLimRam: 1Gi
 socketIOLimRam: 2Gi
 uiLimRam: 2Gi
+vacuumWorkerLimRam: "5Gi"
 
 # HPA Target Usage
 APITargetUsage: 50
@@ -346,6 +361,7 @@ ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
 serviceServerTargetUsage: 50
 replayTargetUsage: 50
+vacuumTargetUsage: 70
 
 # Is the namespace of your cluster resource limitted
 namespaceResourceLimited: false

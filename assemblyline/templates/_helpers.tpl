@@ -157,7 +157,7 @@ spec:
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       containers:
         - name: {{ .component }}
-          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
           securityContext:
             runAsUser: {{ .runAsUser | default 1000}}
@@ -173,6 +173,9 @@ spec:
               mountPath: {{ .Values.replay.loader.input_directory }}
           {{ end}}
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .mounts }}
+          {{ .mounts | toYaml | nindent 12 }}
+          {{ end }}
           resources:
             requests:
               memory: {{ .requestedRam | default .Values.defaultReqRam }}
@@ -195,6 +198,9 @@ spec:
       volumes:
       {{ include "assemblyline.replayVolume" . | indent 8 }}
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .volumes }}
+      {{ .volumes | toYaml | nindent 8 }}
+      {{ end }}
 {{ end }}
 ---
 {{ define "assemblyline.coreServiceNoCheck" }}
@@ -230,6 +236,9 @@ spec:
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .mounts }}
+          {{ .mounts | toYaml | nindent 12 }}
+          {{ end }}
           resources:
             requests:
               memory: {{ .requestedRam | default .Values.defaultReqRam }}
@@ -243,6 +252,9 @@ spec:
               value: "{{ .terminationSeconds | default 60 }}"
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .volumes }}
+      {{ .volumes | toYaml | nindent 8 }}
+      {{ end }}
 {{ end }}
 ---
 {{ define "assemblyline.HPA" }}
