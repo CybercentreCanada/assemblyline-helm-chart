@@ -427,10 +427,7 @@ configuration:
       enabled: False
     hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
   filestore:
-    archive:
-      [
-        "s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-archive&use_ssl=False",
-      ]
+    archive: []
     cache:
       [
         "s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-cache&use_ssl=False",
