@@ -248,6 +248,7 @@ elasticSubmissionShards: 6
 # CPU Revervation
 defaultReqCPU: "50m"
 alerterReqCPU: "50m"
+archiverReqCPU: "50m"
 apmReqCPU: "250m"
 dispatcherReqCPU: "500m"
 elasticHelperReqCPU: "25m"
@@ -277,6 +278,7 @@ workflowReqCPU: "50m"
 # CPU Limits
 defaultLimCPU: 1
 alerterLimCPU: 1
+archiverLimCPU: 1
 apmLimCPU: 1
 dispatcherLimCPU: 1
 elasticHelperLimCPU: "250m"
@@ -421,8 +423,11 @@ configuration:
           - name: "SERVICE_API_HOST"
             value: "http://service-server:5003"
   datastore:
+    archive:
+      enabled: False
     hosts: ["http://elastic:${ELASTIC_PASSWORD}@datastore-master:9200"]
   filestore:
+    archive: []
     cache:
       [
         "s3://${INTERNAL_FILESTORE_ACCESS}:${INTERNAL_FILESTORE_KEY}@filestore:9000?s3_bucket=al-cache&use_ssl=False",
