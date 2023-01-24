@@ -104,6 +104,12 @@
   subPath: replay
   readOnly: true
 {{ end }}
+{{ if .Values.enableInternalEncryption }}
+- name: root-cert
+  mountPath: "/etc/assemblyline/ssl/al_root-ca.crt"
+  subPath: tls.crt
+  readOnly: true
+{{ end }}
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
@@ -117,6 +123,11 @@
 - name: replay-config
   configMap:
     name: {{ .Release.Name }}-replay-config
+{{ end }}
+{{ if .Values.enableInternalEncryption }}
+- name: root-cert
+  secret:
+    secretName: {{ .Release.Name }}.internal-generated-ca
 {{ end }}
 {{ if .Values.coreVolumes }}
 {{- .Values.coreVolumes | toYaml -}}
