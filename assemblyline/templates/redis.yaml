@@ -27,7 +27,7 @@ spec:
         - name: redis
           image: {{ .Values.redisImage }}
           command: ['redis-server']
-          args: ['--appendonly', 'no', '--maxclients', '100000', '--save', ''{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }}{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }} {{if .Values.enableInternalEncryption }}, '--tls-port', '6379', '--port', '0', '--tls-cert-file', '/etc/tls/tls.crt', '--tls-key-file', '/etc/tls/tls.key', '--tls-ca-cert-file', '/etc/root-ca.crt', '--tls-auth-clients', 'no' {{ end }}]
+          args: ['--appendonly', 'no', '--maxclients', '100000', '--save', ''{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }} {{if .Values.enableInternalEncryption }}, '--tls-port', '6379', '--port', '0', '--tls-cert-file', '/etc/tls/tls.crt', '--tls-key-file', '/etc/tls/tls.key', '--tls-ca-cert-file', '/etc/root-ca.crt', '--tls-auth-clients', 'no' {{ end }}]
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
