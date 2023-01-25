@@ -1,6 +1,7 @@
 {{if .Values.enableInternalEncryption }}
 # Generate CA if one isn't already provided
-{{ $ca := (lookup "v1" "Secret" .Release.Namespace "{{ .Release.Name }}.internal-generated-ca") | default (genCA "assemblyline.internal" 365) }}
+{{ $release_ns := .Release.Namespace }}
+{{ $ca := (lookup "v1" "Secret" $release_ns "{{ .Release.Name }}.internal-generated-ca") | default (genCA "assemblyline.internal" 365) }}
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/tls
@@ -14,7 +15,7 @@ data:
 ---
 # Create signed certificates for hosts specified in values.yaml
 {{ range $host := .Values.autoCreateCertificates }}
-{{ $server := genSignedCert $host nil nil 365 $ca }}
+{{ $server := (lookup "v1" "Secret" $release_ns "{{ $host }}-cert") | default (genSignedCert $host nil (list $host) 365 $ca) }}
 apiVersion: v1
 kind: Secret
 type: kubernetes.io/tls
@@ -27,4 +28,17 @@ data:
   tls.key: {{ b64enc $server.Key }}
 ---
 {{ end }}
+# Certificate for service updaters
+{{ $server := genSignedCert "updates" nil (list "*-updates") 365 $ca }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: updates-cert
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ b64enc $server.Cert }}
+  tls.key: {{ b64enc $server.Key }}
+---
 {{ end }}
