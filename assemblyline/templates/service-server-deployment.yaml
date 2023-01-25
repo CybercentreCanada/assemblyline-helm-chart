@@ -42,6 +42,12 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/service-server/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/service-server/tls.key
+          {{ end}}
           resources:
             limits:
               cpu: {{.Values.serviceServerLimCPU}}

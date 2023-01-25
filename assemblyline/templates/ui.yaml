@@ -143,6 +143,12 @@ spec:
               value: '2'
             - name: AL_UNSECURED_UI
               value: "true"
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/internal-ui/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/internal-ui/tls.key
+          {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.enableInternalEncryption }}
