@@ -1,44 +1,12 @@
-{{if .Values.enableInternalEncryption }}
-# Generate CA if one isn't already provided
-{{ $release_ns := .Release.Namespace }}
-{{ $ca := (lookup "v1" "Secret" $release_ns "{{ .Release.Name }}.internal-generated-ca") | default (genCA "assemblyline.internal" 36500) }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: {{ .Release.Name }}.internal-generated-ca
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ b64enc $ca.Cert }}
-  tls.key: {{ b64enc $ca.Key }}
----
-# Create signed certificates for hosts specified in values.yaml
-{{ range $host := .Values.autoCreateCertificates }}
-{{ $server := (lookup "v1" "Secret" $release_ns "{{ $host }}-cert") | default (genSignedCert $host nil (list $host) 36500 $ca) }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: {{ $host }}-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ b64enc $server.Cert }}
-  tls.key: {{ b64enc $server.Key }}
----
+{{ if .Values.enableInternalEncryption }}
+{{ $ca_secret := lookup "v1" "Secret" .Release.Namespace (print .Release.Name ".internal-generated-ca") }}
+{{ if $ca_secret }}
+# Can we re-use an existing CA?
+{{$ca := (buildCustomCert (get $ca_secret.data "tls.crt") (get $ca_secret.data "tls.key")) }}
+{{with merge (dict "ca" $ca) . }}{{template "assemblyline.InternalCertificates" .}}{{end}}
+{{ else }}
+# Generate a new CA
+{{ $ca := (genCA "assemblyline.internal" 36500) }}
+{{with merge (dict "ca" $ca) . }}{{template "assemblyline.InternalCertificates" .}}{{end}}
 {{ end }}
-# Certificate for service updaters
-{{ $server := genSignedCert "updates" nil (list "*-updates") 365 $ca }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: updates-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ b64enc $server.Cert }}
-  tls.key: {{ b64enc $server.Key }}
----
 {{ end }}
