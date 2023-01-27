@@ -6,6 +6,7 @@ metadata:
   labels:
     k8s-app: apm
 data:
+  {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
   apm.yml: |
     apm-server:
       host: "0.0.0.0:8200"
@@ -13,7 +14,38 @@ data:
         enabled: true
         host: {{ .Values.kibanaHost }}
         path:
-        protocol: https
+        username: ${LOGGING_USERNAME}
+        password: ${LOGGING_PASSWORD}
+        ssl:
+          verification_mode: ${LOGGING_TLS_VERIFY}
+
+      ilm: {{ printf "\n"}}
+      {{- .Values.apmILM | toYaml | indent 8}}
+
+    logging:
+      level: warning
+      json: true
+
+    output.elasticsearch:
+      hosts: ['${LOGGING_URL}']
+      username: ${LOGGING_USERNAME}
+      password: ${LOGGING_PASSWORD}
+      protocol: ${ELASTICSEARCH_PROTOCOL}
+      ssl:
+        verification_mode: ${LOGGING_TLS_VERIFY}
+        certificate_authorities: ['${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES}']
+
+    setup.template.settings.index:
+      number_of_shards: 1
+      number_of_replicas: 0
+  {{ else }}
+  apm.yml: |
+    apm-server:
+      host: "0.0.0.0:8200"
+      kibana:
+        enabled: true
+        host: {{ .Values.kibanaHost }}
+        path:
         username: ${LOGGING_USERNAME}
         password: ${LOGGING_PASSWORD}
         ssl:
@@ -36,4 +68,5 @@ data:
     setup.template.settings.index:
       number_of_shards: 1
       number_of_replicas: 0
+  {{ end }}
 {{end}}
