@@ -31,10 +31,14 @@ data:
   logging-ssl-enabled: "true"
   logging-protocol: https
   logging-ca: "/etc/certs/ca.crt"
+  logging-ssl-key: "/usr/share/elasticsearch/config/http_ssl/tls.key"
+  logging-ssl-cert: "/usr/share/elasticsearch/config/http_ssl/tls.crt"
   {{ else }}
   logging-ssl-enabled: "false"
   logging-protocol: http
   logging-ca: ""
+  logging-ssl-key: "/usr/share/elasticsearch/config/http_ssl/tls.key"
+  logging-ssl-cert: "/usr/share/elasticsearch/config/http_ssl/tls.crt"
   {{ end }}
   metricbeat-index-prefix: {{ .Values.metricbeatIndexPrefix }}
 

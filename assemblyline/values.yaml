@@ -159,6 +159,7 @@ autoCreateCertificates:
  - datastore-master
  - service-server
  - internal-ui
+ - log-storage-master
 
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
@@ -991,18 +992,18 @@ log-storage:
           key: logging-password
     - name: LOGGING_SSL_ENABLED
       valueFrom:
-        secretKeyRef:
-          name: assemblyline-system-passwords
+        configMapKeyRef:
+          name: system-settings
           key: logging-ssl-enabled
     - name: LOGGING_SSL_KEY
       valueFrom:
-        secretKeyRef:
-          name: assemblyline-system-passwords
+        configMapKeyRef:
+          name: system-settings
           key: logging-ssl-key
     - name: LOGGING_SSL_CERTIFICIATE
       valueFrom:
-        secretKeyRef:
-          name: assemblyline-system-passwords
+        configMapKeyRef:
+          name: system-settings
           key: logging-ssl-cert
   labels:
     section: core
