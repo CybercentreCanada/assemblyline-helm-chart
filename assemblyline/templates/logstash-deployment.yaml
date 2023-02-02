@@ -30,10 +30,18 @@ spec:
             topologyKey: kubernetes.io/hostname
       containers:
       - image: {{ .Values.elasticLogstashImage }}:{{ .Values.elasticLogstashTag }}
+        {{ if .Values.enableInternalEncryption }}
+        command: ["bash", "-c", "mkdir /usr/share/logstash/ssl; openssl pkcs8 -inform PEM -in /usr/share/logstash/ssl_rsa/tls.key -topk8 -nocrypt -outform PEM -out /usr/share/logstash/ssl/tls.key; cp /usr/share/logstash/ssl_rsa/tls.crt /usr/share/logstash/ssl/tls.crt; bin/logstash"]
+        {{ end }}
         env:
         {{ include "assemblyline.coreEnv" . | indent 8 }}
         - name: LS_JAVA_OPTS
           value: -Xmx1g -Xms1g
+        - name: LOGGING_PROTOCOL
+          valueFrom:
+            configMapKeyRef:
+              name: system-settings
+              key: logging-protocol
         livenessProbe:
           failureThreshold: 3
           httpGet:
@@ -84,6 +92,16 @@ spec:
         - mountPath: /usr/share/logstash/pipeline/logstash.conf
           name: logstashpipeline
           subPath: logstash.conf
+      {{ if .Values.enableInternalEncryption }}
+        - mountPath: /usr/share/logstash/ssl_rsa/
+          name: logstash-cert
+          readOnly: true
+        - mountPath: /etc/certs/ca.crt
+          name: root-ca
+          subPath: tls.crt
+          readOnly: true
+      {{ end }}
+
 {{ if  .Values.logstashMounts  }}{{ .Values.logstashMounts | toYaml | indent 8 }}{{ end }}
       securityContext:
         fsGroup: 1000
@@ -98,5 +116,13 @@ spec:
           defaultMode: 420
           name: logstash-pipeline
         name: logstashpipeline
+      {{ if .Values.enableInternalEncryption }}
+      - name: logstash-cert
+        secret:
+          secretName: logstash-cert
+      - name: root-ca
+        secret:
+          secretName: {{ .Release.Name }}.internal-generated-ca          
+      {{ end }}        
 {{ if  .Values.logstashVolumes }}{{ .Values.logstashVolumes | toYaml | indent 6 }}{{ end }}
 {{ end }}

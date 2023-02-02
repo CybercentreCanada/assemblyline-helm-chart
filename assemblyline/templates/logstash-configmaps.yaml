@@ -61,7 +61,7 @@ data:
     }
     output {
       elasticsearch {
-        hosts => ["${LOGGING_HOST}"]
+        hosts => ["${LOGGING_PROTOCOL}://${LOGGING_HOST}"]
         user => "${LOGGING_USERNAME}"
         password => "${LOGGING_PASSWORD}"
         sniffing => false

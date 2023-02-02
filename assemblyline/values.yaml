@@ -160,6 +160,7 @@ autoCreateCertificates:
  - service-server
  - internal-ui
  - log-storage-master
+ - logstash
 
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
