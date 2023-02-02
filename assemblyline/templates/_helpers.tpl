@@ -298,7 +298,7 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ range $host := .Values.autoCreateCertificates }}
+{{ range $host := list "service-server" "internal-ui" "redis-persistent" "redis-volatile" "logstash" (print .Values.datastore.clusterName "-master") (print .Values.log-storage.clusterName "-master") }}
 {{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ $host }}-cert" }}
 {{ if $server_sec }}
 apiVersion: v1

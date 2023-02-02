@@ -149,18 +149,8 @@ vacuumUser: 1000
 # key of the assemblyline-system-passwords secret
 createAdminAccount: "on-install"
 
-# Internal communications are encrypted for hosts in 'autoCreateCertificates' value
+# Internal communications are encrypted for hosts part of this chart
 enableInternalEncryption: false
-
-# List of hosts to generate certificates for to facilitate encrypted traffic
-autoCreateCertificates:
- - redis-persistent
- - redis-volatile
- - datastore-master
- - service-server
- - internal-ui
- - log-storage-master
- - logstash
 
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
