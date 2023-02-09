@@ -27,19 +27,11 @@ data:
   logging-host: {{ if .Values.seperateInternalELKStack}}log-storage-master:9200{{ else if .Values.internalELKStack }}datastore-master:9200{{ else }}{{ .Values.loggingHost | default "localhost:9200" }}{{ end }}
   logging-username: {{ if .Values.internalELKStack }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
   logging-tls-verify: {{ .Values.loggingTLSVerify }}
-  {{ if (and .Values.enableInternalEncryption .Values.internalELKStack )}}
-  logging-ssl-enabled: "true"
-  logging-protocol: https
-  logging-ca: "/etc/certs/ca.crt"
-  logging-ssl-key: "/usr/share/elasticsearch/config/http_ssl/tls.key"
-  logging-ssl-cert: "/usr/share/elasticsearch/config/http_ssl/tls.crt"
-  {{ else }}
-  logging-ssl-enabled: "false"
-  logging-protocol: http
-  logging-ca: ""
-  logging-ssl-key: "/usr/share/elasticsearch/config/http_ssl/tls.key"
-  logging-ssl-cert: "/usr/share/elasticsearch/config/http_ssl/tls.crt"
-  {{ end }}
+  logging-ssl-enabled: {{ .Values.enableInternalEncryption | quote }}
+  logging-ssl-key: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.key"{{ else }}''{{ end }}
+  logging-ssl-cert: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.crt"{{ else }}''{{ end }}
+  logging-ca: {{ if .Values.enableInternalEncryption }}"/etc/certs/ca.crt"{{ else }}''{{ end }}
+  logging-protocol: {{ if .Values.enableInternalEncryption }}"https"{{ else }}"http"{{ end }}
   metricbeat-index-prefix: {{ .Values.metricbeatIndexPrefix }}
 
 
