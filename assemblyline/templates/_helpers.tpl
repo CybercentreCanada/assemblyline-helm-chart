@@ -104,6 +104,12 @@
   subPath: replay
   readOnly: true
 {{ end }}
+{{ if .Values.enableInternalEncryption }}
+- name: root-cert
+  mountPath: "/etc/assemblyline/ssl/al_root-ca.crt"
+  subPath: tls.crt
+  readOnly: true
+{{ end }}
 {{ if .Values.coreMounts }}
 {{- .Values.coreMounts | toYaml -}}
 {{ end }}
@@ -117,6 +123,11 @@
 - name: replay-config
   configMap:
     name: {{ .Release.Name }}-replay-config
+{{ end }}
+{{ if .Values.enableInternalEncryption }}
+- name: root-cert
+  secret:
+    secretName: {{ .Release.Name }}.internal-generated-ca
 {{ end }}
 {{ if .Values.coreVolumes }}
 {{- .Values.coreVolumes | toYaml -}}
@@ -270,4 +281,79 @@ spec:
     kind: Deployment
     name: {{.name}}
   targetCPUUtilizationPercentage: {{.targetUsage}}
+{{ end }}
+---
+{{ define "assemblyline.InternalCertificates" }}
+# Store CA
+{{ $ca := .ca }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ .Release.Name }}.internal-generated-ca
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ b64enc $ca.Cert }}
+  tls.key: {{ b64enc $ca.Key }}
+---
+# Create signed certificates for hosts specified in values.yaml
+{{ range $host := list "service-server" "internal-ui" "redis-persistent" "redis-volatile" "logstash" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ $host }}-cert" }}
+{{ if $server_sec }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ $host }}-cert
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ get $server_sec.data "tls.crt" }}
+  tls.key: {{ get $server_sec.data "tls.key" }}
+---
+{{ else }}
+{{ $server := genSignedCert $host nil (list $host) 36500 $ca}}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: {{ $host }}-cert
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ (b64enc $server.Cert) }}
+  tls.key: {{ (b64enc $server.Key) }}
+---
+{{ end }}
+{{ end }}
+
+# Certificate for service updaters
+{{ $updates_sec := lookup "v1" "Secret" $.Release.Namespace "updates-cert"}}
+{{ if $updates_sec }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: updates-cert
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ (get $updates_sec.data "tls.crt") }}
+  tls.key: {{ (get $updates_sec.data "tls.key") }}
+---
+{{ else }}
+{{ $server := genSignedCert "updates" nil (list "*-updates") 365 $ca  }}
+apiVersion: v1
+kind: Secret
+type: kubernetes.io/tls
+metadata:
+  name: updates-cert
+  labels:
+    app: assembyline
+data:
+  tls.crt: {{ (b64enc $server.Cert) }}
+  tls.key: {{ (b64enc $server.Key) }}
+---
+{{ end }}
 {{ end }}

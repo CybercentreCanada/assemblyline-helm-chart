@@ -58,14 +58,35 @@ spec:
                 configMapKeyRef:
                   name: system-settings
                   key: logging-tls-verify
+            - name: ELASTICSEARCH_PROTOCOL
+              valueFrom:
+                configMapKeyRef:
+                  name: system-settings
+                  key: logging-protocol
+            - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+              valueFrom:
+                configMapKeyRef:
+                  name: system-settings
+                  key: logging-ca
           volumeMounts:
           - name: config
             mountPath: /usr/share/apm-server/apm-server.yml
             readOnly: true
             subPath: apm.yml
+          {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
+          - name: root-ca
+            mountPath: /etc/certs/ca.crt
+            readOnly: true
+            subPath: tls.crt
+          {{ end}}
       volumes:
       - name: config
         configMap:
           defaultMode: 0644
           name: apm-config
+      {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
+      - name: root-ca
+        secret:
+          secretName: {{ .Release.Name }}.internal-generated-ca
+      {{ end}}
 {{ end }}

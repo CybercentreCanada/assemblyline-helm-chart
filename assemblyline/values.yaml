@@ -149,6 +149,9 @@ vacuumUser: 1000
 # key of the assemblyline-system-passwords secret
 createAdminAccount: "on-install"
 
+# Internal communications are encrypted for hosts part of this chart
+enableInternalEncryption: false
+
 # A list of services to be installed, only run during a helm install.
 autoInstallServices:
   - apivector
@@ -477,6 +480,21 @@ datastore:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: datastore-password
+    - name: DATASTORE_SSL_ENABLED
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: datastore-ssl-enabled
+    - name: DATASTORE_SSL_KEY
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: datastore-ssl-key
+    - name: DATASTORE_SSL_CERTIFICIATE
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: datastore-ssl-cert
   labels:
     section: core
     component: datastore
@@ -491,9 +509,10 @@ datastore:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.enabled: false
-      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+      xpack.security.http.ssl.enabled: ${DATASTORE_SSL_ENABLED:false}
+      xpack.security.http.ssl.verification_mode: full
+      xpack.security.http.ssl.key: ${DATASTORE_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
+      xpack.security.http.ssl.certificate: ${DATASTORE_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
   resources:
     requests:
       cpu: 1
@@ -551,6 +570,16 @@ filebeat:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+    - name: ELASTICSEARCH_PROTOCOL
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-protocol
+    - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-ca
     - name: LOGGING_TLS_VERIFY
       valueFrom:
         configMapKeyRef:
@@ -596,6 +625,8 @@ filebeat:
         hosts: ["datastore-master:9200"]
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
+        protocol: ${ELASTICSEARCH_PROTOCOL}
+        ssl.certificate_authorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
 
       setup.template.settings:
         index.number_of_shards: 1
@@ -669,6 +700,16 @@ metricbeat:
           secretKeyRef:
             name: assemblyline-system-passwords
             key: logging-password
+      - name: ELASTICSEARCH_PROTOCOL
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: logging-protocol
+      - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: logging-ca
       - name: LOGGING_TLS_VERIFY
         valueFrom:
           configMapKeyRef:
@@ -700,6 +741,16 @@ metricbeat:
           secretKeyRef:
             name: assemblyline-system-passwords
             key: logging-password
+      - name: ELASTICSEARCH_PROTOCOL
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: logging-protocol
+      - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+        valueFrom:
+          configMapKeyRef:
+            name: system-settings
+            key: logging-ca
       - name: LOGGING_TLS_VERIFY
         valueFrom:
           configMapKeyRef:
@@ -781,8 +832,10 @@ metricbeat:
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
         index: "${METRICBEAT_INDEX}-%{[agent.version]}-%{+yyyy.MM.dd}"
+        protocol: ${ELASTICSEARCH_PROTOCOL:http}
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY:full}
+          certificate_authorities: ${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}
 
       setup.template.name: "${METRICBEAT_INDEX}"
       setup.template.pattern: "${METRICBEAT_INDEX}-*"
@@ -824,8 +877,10 @@ metricbeat:
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
         index: "${METRICBEAT_INDEX}-%{[agent.version]}-%{+yyyy.MM.dd}"
+        protocol: ${ELASTICSEARCH_PROTOCOL:http}
         ssl:
           verification_mode: ${LOGGING_TLS_VERIFY:full}
+          certificate_authorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
 
       setup.template.name: "${METRICBEAT_INDEX}"
       setup.template.pattern: "${METRICBEAT_INDEX}-*"
@@ -891,6 +946,11 @@ kibana:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+    - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-ca
     - name: SERVER_BASEPATH
       value: /kibana
     - name: SERVER_PUBLICBASEURL
@@ -900,6 +960,13 @@ kibana:
     - name: LOGGING_QUIET
       value: "true"
   priorityClassName: al-core-priority
+  kibanaConfig:
+    kibana.yaml: |
+      elasticsearch:
+        hosts: ['${ELASTICSEARCH_HOSTS}']
+        username: ${ELASTICSEARCH_USERNAME}
+        password: ${ELASTICSEARCH_PASSWORD}
+        ssl.certificate_authorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
@@ -914,6 +981,21 @@ log-storage:
         secretKeyRef:
           name: assemblyline-system-passwords
           key: logging-password
+    - name: LOGGING_SSL_ENABLED
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-ssl-enabled
+    - name: LOGGING_SSL_KEY
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-ssl-key
+    - name: LOGGING_SSL_CERTIFICIATE
+      valueFrom:
+        configMapKeyRef:
+          name: system-settings
+          key: logging-ssl-cert
   labels:
     section: core
     component: log-storage
@@ -927,9 +1009,10 @@ log-storage:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.enabled: false
-      xpack.security.http.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
+      xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED:false}
+      xpack.security.http.ssl.verification_mode: full
+      xpack.security.http.ssl.key: ${LOGGING_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
+      xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
   resources:
     requests:
       cpu: 1

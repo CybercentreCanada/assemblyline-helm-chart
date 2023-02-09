@@ -21,10 +21,20 @@ kind: ConfigMap
 metadata:
   name: system-settings
 data:
+  datastore-ssl-enabled: {{ .Values.enableInternalEncryption | quote }}
+  datastore-ssl-key: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.key"{{ else }}''{{ end }}
+  datastore-ssl-cert: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.crt"{{ else }}''{{ end }}
   logging-host: {{ if .Values.seperateInternalELKStack}}log-storage-master:9200{{ else if .Values.internalELKStack }}datastore-master:9200{{ else }}{{ .Values.loggingHost | default "localhost:9200" }}{{ end }}
   logging-username: {{ if .Values.internalELKStack }}elastic{{ else }}{{ .Values.loggingUsername }}{{ end }}
   logging-tls-verify: {{ .Values.loggingTLSVerify }}
+  logging-ssl-enabled: {{ .Values.enableInternalEncryption | quote }}
+  logging-ssl-key: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.key"{{ else }}''{{ end }}
+  logging-ssl-cert: {{ if .Values.enableInternalEncryption }}"/usr/share/elasticsearch/config/http_ssl/tls.crt"{{ else }}''{{ end }}
+  logging-ca: {{ if .Values.enableInternalEncryption }}"/etc/certs/ca.crt"{{ else }}''{{ end }}
+  logging-protocol: {{ if .Values.enableInternalEncryption }}"https"{{ else }}"http"{{ end }}
   metricbeat-index-prefix: {{ .Values.metricbeatIndexPrefix }}
+
+
 
 ---
 # The assemblyline config that will be projected into all the assemblyline pods

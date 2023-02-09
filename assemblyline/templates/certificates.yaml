@@ -1,0 +1,12 @@
+{{ if .Values.enableInternalEncryption }}
+{{ $ca_secret := lookup "v1" "Secret" .Release.Namespace (print .Release.Name ".internal-generated-ca") }}
+{{ if $ca_secret }}
+# Can we re-use an existing CA?
+{{$ca := (buildCustomCert (get $ca_secret.data "tls.crt") (get $ca_secret.data "tls.key")) }}
+{{with merge (dict "ca" $ca) . }}{{template "assemblyline.InternalCertificates" .}}{{end}}
+{{ else }}
+# Generate a new CA
+{{ $ca := (genCA "assemblyline.internal" 36500) }}
+{{with merge (dict "ca" $ca) . }}{{template "assemblyline.InternalCertificates" .}}{{end}}
+{{ end }}
+{{ end }}

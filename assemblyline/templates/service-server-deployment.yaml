@@ -30,6 +30,11 @@ spec:
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_service_server.app"]
           {{ end }}
           volumeMounts:
+          {{ if .Values.enableInternalEncryption }}
+            - name: service-server-cert
+              mountPath: "/etc/assemblyline/ssl/service-server/"
+              readOnly: true
+          {{ end }}
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5003
@@ -37,6 +42,12 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/service-server/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/service-server/tls.key
+          {{ end}}
           resources:
             limits:
               cpu: {{.Values.serviceServerLimCPU}}
@@ -50,12 +61,14 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5003
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5003
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 60
@@ -63,7 +76,13 @@ spec:
             httpGet:
               path: /healthz/ready
               port: 5003
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
       volumes:
+        {{ if .Values.enableInternalEncryption }}
+        - name: service-server-cert
+          secret:
+            secretName: service-server-cert
+        {{ end }}
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
