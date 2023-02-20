@@ -73,7 +73,7 @@ spec:
             mountPath: /usr/share/apm-server/apm-server.yml
             readOnly: true
             subPath: apm.yml
-          {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
+          {{ if .Values.enableInternalEncryption }}
           - name: root-ca
             mountPath: /etc/certs/ca.crt
             readOnly: true
@@ -81,24 +81,28 @@ spec:
           - name: apm-cert
             mountPath: /etc/certs/http_ssl
             readOnly: true
+          {{ if .Values.internalELKStack }}
           - name: kibana-cert
             mountPath: /etc/certs/kibana
             readOnly: true
-          {{ end}}
+          {{ end }}
+          {{ end }}
       volumes:
       - name: config
         configMap:
           defaultMode: 0644
           name: apm-config
-      {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
+      {{ if .Values.enableInternalEncryption }}
       - name: apm-cert
         secret:
           secretName: apm-cert
-      - name: kibana-cert
-        secret:
-          secretName: kibana-cert
       - name: root-ca
         secret:
           secretName: {{ .Release.Name }}.internal-generated-ca
+      {{ if .Values.internalELKStack }}
+      - name: kibana-cert
+        secret:
+          secretName: kibana-cert
+      {{ end }}
       {{ end}}
 {{ end }}
