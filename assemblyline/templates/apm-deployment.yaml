@@ -78,6 +78,12 @@ spec:
             mountPath: /etc/certs/ca.crt
             readOnly: true
             subPath: tls.crt
+          - name: apm-cert
+            mountPath: /etc/certs/http_ssl
+            readOnly: true
+          - name: kibana-cert
+            mountPath: /etc/certs/kibana
+            readOnly: true
           {{ end}}
       volumes:
       - name: config
@@ -85,6 +91,12 @@ spec:
           defaultMode: 0644
           name: apm-config
       {{ if (and .Values.enableInternalEncryption .Values.internalELKStack)}}
+      - name: apm-cert
+        secret:
+          secretName: apm-cert
+      - name: kibana-cert
+        secret:
+          secretName: kibana-cert
       - name: root-ca
         secret:
           secretName: {{ .Release.Name }}.internal-generated-ca

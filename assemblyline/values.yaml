@@ -961,7 +961,7 @@ kibana:
       value: "true"
   priorityClassName: al-core-priority
   kibanaConfig:
-    kibana.yaml: |
+    kibana.yml: |
       elasticsearch:
         hosts: ['${ELASTICSEARCH_HOSTS}']
         username: ${ELASTICSEARCH_USERNAME}

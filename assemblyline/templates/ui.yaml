@@ -48,14 +48,24 @@ spec:
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
-          volumeMounts:
-          {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5000
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/ui/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/ui/tls.key
+          {{ end}}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: ui-cert
+              mountPath: '/etc/assemblyline/ssl/ui/'
+          {{ end }}
           resources:
             limits:
               cpu: {{.Values.uiLimCPU}}
@@ -69,12 +79,14 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 60
@@ -82,10 +94,16 @@ spec:
             httpGet:
               path: /healthz/ready
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: ui-cert
+          secret:
+            secretName: ui-cert
+      {{ end }}
 ---
 apiVersion: v1
 kind: Service
@@ -145,15 +163,15 @@ spec:
               value: "true"
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
-              value: /etc/assemblyline/ssl/internal-ui/tls.crt
+              value: /etc/assemblyline/ssl/ui/tls.crt
             - name: KEYFILE
-              value: /etc/assemblyline/ssl/internal-ui/tls.key
+              value: /etc/assemblyline/ssl/ui/tls.key
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.enableInternalEncryption }}
-            - name: internal-ui-cert
-              mountPath: '/etc/assemblyline/ssl/internal-ui/'
+            - name: ui-cert
+              mountPath: '/etc/assemblyline/ssl/ui/'
           {{ end }}
           ports:
             - containerPort: 5000
@@ -191,7 +209,7 @@ spec:
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
       {{ if .Values.enableInternalEncryption }}
-        - name: internal-ui-cert
+        - name: ui-cert
           secret:
             secretName: internal-ui-cert
       {{ end }}
@@ -245,12 +263,22 @@ spec:
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
-          volumeMounts:
-          {{ include "assemblyline.coreMounts" . | indent 12 }}
           ports:
             - containerPort: 5002
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/sio/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/sio/tls.key
+          {{ end}}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: socketio-cert
+              mountPath: '/etc/assemblyline/ssl/sio/'
+          {{ end }}
           resources:
             limits:
               cpu: {{.Values.socketIOLimCPU}}
@@ -264,12 +292,14 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 60
@@ -277,10 +307,16 @@ spec:
             httpGet:
               path: /healthz/ready
               port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: socketio-cert
+          secret:
+            secretName: socketio-cert
+      {{ end }}
 ---
 apiVersion: v1
 kind: Service
@@ -328,6 +364,9 @@ spec:
       containers:
         - name: frontend
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
+          {{ if .Values.enableInternalEncryption }}
+          command: ["serve", "-s",  "-l", "3000", '--ssl-key', '/etc/certs/tls.key', '--ssl-cert', '/etc/certs/tls.crt']
+          {{ end }}
           ports:
             - containerPort: 3000
           resources:
@@ -339,6 +378,17 @@ spec:
               {{ if .Values.namespaceResourceLimited }}
               memory:  {{ .Values.frontendLimRam}}
               {{ end }}
+          volumeMounts:
+          {{ if .Values.enableInternalEncryption }}
+            - name: frontend-cert
+              mountPath: '/etc/certs/'
+          {{ end }}
+      volumes:
+      {{ if .Values.enableInternalEncryption }}
+        - name: frontend-cert
+          secret:
+            secretName: frontend-cert
+      {{ end }}
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1
@@ -393,12 +443,22 @@ spec:
           {{ end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: ui-cert
+              mountPath: '/etc/assemblyline/ssl/ui/'
+          {{ end }}
           ports:
             - containerPort: 5000
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/ui/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/ui/tls.key
+          {{ end}}
           resources:
             limits:
               cpu: {{.Values.ingestUILimCPU}}
@@ -412,12 +472,14 @@ spec:
             httpGet:
               path: /healthz/live
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
           startupProbe:
             httpGet:
               path: /healthz/ready
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
             periodSeconds: 60
@@ -425,8 +487,14 @@ spec:
             httpGet:
               path: /healthz/ready
               port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
             periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: ui-cert
+          secret:
+            secretName: ui-cert
+      {{ end }}
 {{end}}
