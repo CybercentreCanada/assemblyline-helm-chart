@@ -211,7 +211,7 @@ spec:
       {{ if .Values.enableInternalEncryption }}
         - name: ui-cert
           secret:
-            secretName: ui-cert
+            secretName: internal-ui-cert
       {{ end }}
 ---
 apiVersion: v1
