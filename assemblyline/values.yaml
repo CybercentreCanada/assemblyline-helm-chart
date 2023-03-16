@@ -966,7 +966,7 @@ kibana:
         hosts: ['${ELASTICSEARCH_HOSTS}']
         username: ${ELASTICSEARCH_USERNAME}
         password: ${ELASTICSEARCH_PASSWORD}
-        ssl.certificate_authorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
+        ssl.certificateAuthorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
