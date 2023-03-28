@@ -56,10 +56,9 @@ spec:
           resources:
             limits:
               cpu: {{ .Values.updaterLimCPU }}
-              {{ if .Values.namespaceResourceLimited }}
-              memory: "1Gi"
-              {{ end }}
+              memory: {{ .Values.updaterLimRam }}
             requests:
               cpu: {{ .Values.updaterReqCPU }}
+              memory: {{ .Values.updaterReqRam }}
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}

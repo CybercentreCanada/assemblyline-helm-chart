@@ -43,9 +43,7 @@ spec:
         resources:
           limits:
             cpu: {{ .Values.elasticHelperLimCPU }}
-            {{ if .Values.namespaceResourceLimited }}
             memory: {{ .Values.elasticHelperLimRam }}
-            {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
             memory: {{ .Values.elasticHelperReqRam }}
@@ -56,9 +54,7 @@ spec:
         resources:
           limits:
             cpu: {{ .Values.elasticHelperLimCPU }}
-            {{ if .Values.namespaceResourceLimited }}
             memory: {{ .Values.elasticHelperLimRam }}
-            {{ end }}
           requests:
             cpu: {{ .Values.elasticHelperReqCPU }}
             memory: {{ .Values.elasticHelperReqRam }}

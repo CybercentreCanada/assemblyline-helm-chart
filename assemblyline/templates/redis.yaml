@@ -34,11 +34,10 @@ spec:
           resources:
             requests:
               cpu: {{ .Values.redisVolatileReqCPU }}
+              memory: {{ .Values.redisVolatileReqRam }}
             limits:
               cpu: {{ .Values.redisVolatileLimCPU }}
-              {{ if .Values.namespaceResourceLimited }}
               memory: {{ .Values.redisVolatileLimRam }}
-              {{ end }}
 {{if .Values.enableInternalEncryption }}
           volumeMounts:
             - name: redis-cert
@@ -135,9 +134,7 @@ spec:
         resources:
           limits:
             cpu: {{ .Values.redisPersistentLimCPU }}
-            {{ if .Values.namespaceResourceLimited }}
             memory: {{ .Values.redisPersistentLimRam }}
-            {{ end }}
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}
             memory: {{ .Values.redisPersistentReqRam }}

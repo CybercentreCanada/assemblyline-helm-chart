@@ -51,9 +51,7 @@ spec:
           resources:
             limits:
               cpu: {{.Values.serviceServerLimCPU}}
-              {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
-              {{ end }}
+              memory: {{.Values.serviceServerLimRam}}
             requests:
               cpu: {{ .Values.serviceServerReqCPU }}
               memory: {{ .Values.serviceServerReqRam }}

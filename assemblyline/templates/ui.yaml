@@ -69,9 +69,7 @@ spec:
           resources:
             limits:
               cpu: {{.Values.uiLimCPU}}
-              {{ if .Values.namespaceResourceLimited }}
               memory: {{.Values.uiLimRam}}
-              {{ end }}
             requests:
               cpu: {{ .Values.uiReqCPU }}
               memory: {{ .Values.uiReqRam }}
@@ -178,9 +176,7 @@ spec:
           resources:
             limits:
               cpu: {{.Values.internalUILimCPU}}
-              {{ if .Values.namespaceResourceLimited }}
               memory: {{.Values.internalUILimRam}}
-              {{ end }}
             requests:
               cpu: {{ .Values.internalUIReqCPU }}
               memory: {{ .Values.internalUIReqRam }}
@@ -282,9 +278,7 @@ spec:
           resources:
             limits:
               cpu: {{.Values.socketIOLimCPU}}
-              {{ if .Values.namespaceResourceLimited }}
               memory: {{.Values.socketIOLimRam}}
-              {{ end }}
             requests:
               cpu: {{ .Values.socketIOReqCPU }}
               memory: {{ .Values.socketIOReqRam }}
@@ -375,9 +369,7 @@ spec:
               memory: {{ .Values.frontendReqRam }}
             limits:
               cpu: 1
-              {{ if .Values.namespaceResourceLimited }}
               memory:  {{ .Values.frontendLimRam}}
-              {{ end }}
           volumeMounts:
           {{ if .Values.enableInternalEncryption }}
             - name: frontend-cert
@@ -462,9 +454,7 @@ spec:
           resources:
             limits:
               cpu: {{.Values.ingestUILimCPU}}
-              {{ if .Values.namespaceResourceLimited }}
               memory: {{.Values.ingestUILimRam}}
-              {{ end }}
             requests:
               cpu: {{ .Values.ingestUIReqCPU }}
               memory: {{ .Values.ingestUIReqRam }}
