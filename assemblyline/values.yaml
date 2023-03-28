@@ -321,29 +321,35 @@ workflowLimCPU: 1
 vacuumWorkerLimCPU: 1
 
 # Memory reservation
+apmReqRam: 512Mi
 defaultReqRam: 128Mi
 dispatcherReqRam: 256Mi
 elasticHelperReqRam: 32Mi
 frontendReqRam: 128Mi
 ingestUIReqRam: 1Gi
+installJobReqRam: 256Mi
 internalUIReqRam: 1Gi
 logstashReqRam: 1536Mi
 redisPersistentReqRam: 1Gi
+redisVolatileReqRam: 1Gi
 replayReqRam: 256Mi
 replayWorkerReqRam: 1Gi
 scalerReqRam: 512Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
 uiReqRam: 1Gi
+updaterReqRam: 256Mi
 vacuumReqRam: 5Gi
 vacuumWorkerReqRam: 1Gi
 
 # Memory Limits
+apmLimRam: 2Gi
 defaultLimRam: 1Gi
 dispatcherLimRam: 1Gi
 elasticHelperLimRam: 256Mi
 frontendLimRam: 1Gi
 ingestUILimRam: 2Gi
+installJobLimRam: 1Gi
 internalUILimRam: 2Gi
 logstashLimRam: 1536Mi
 redisPersistentLimRam: 8Gi
@@ -354,6 +360,7 @@ scalerLimRam: 4Gi
 serviceServerLimRam: 1Gi
 socketIOLimRam: 2Gi
 uiLimRam: 2Gi
+updaterLimRam: 1Gi
 vacuumWorkerLimRam: "5Gi"
 
 # HPA Target Usage
@@ -365,9 +372,6 @@ dispatcherTargetUsage: 70
 serviceServerTargetUsage: 50
 replayTargetUsage: 50
 vacuumTargetUsage: 70
-
-# Is the namespace of your cluster resource limitted
-namespaceResourceLimited: false
 
 # Replay configuration block that will be use to sync alerts and submissions
 # between 2 Assemblyline instances

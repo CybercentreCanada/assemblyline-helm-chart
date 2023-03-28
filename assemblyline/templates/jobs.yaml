@@ -45,11 +45,10 @@ spec:
         resources:
           requests:
             cpu: {{ .Values.installJobReqCPU }}
+            memory: {{ .Values.installJobReqRam }}
           limits:
             cpu: {{ .Values.installJobLimCPU }}
-            {{ if .Values.namespaceResourceLimited }}
-            memory: 1Gi
-            {{ end }}
+            memory: {{ .Values.installJobLimRam }}
       volumes:
        {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: script-volume
@@ -95,11 +94,10 @@ spec:
         resources:
           requests:
             cpu: {{ $.Values.installJobReqCPU }}
+            memory: {{ $.Values.installJobReqRam }}
           limits:
             cpu: {{ $.Values.installJobLimCPU }}
-            {{ if $.Values.namespaceResourceLimited }}
-            memory: 1Gi
-            {{ end }}
+            memory: {{ $.Values.installJobLimRam }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300

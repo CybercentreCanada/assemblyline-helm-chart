@@ -32,11 +32,10 @@ spec:
           resources:
             limits:
               cpu: {{ .Values.apmLimCPU }}
-              {{ if .Values.namespaceResourceLimited }}
-              memory: 2Gi
-              {{ end }}
+              memory: {{ .Values.apmLimRam }}
             requests:
               cpu: {{ .Values.apmReqCPU }}
+              memory: {{ .Values.apmReqRam }}
           env:
             - name: LOGGING_PASSWORD
               valueFrom:
