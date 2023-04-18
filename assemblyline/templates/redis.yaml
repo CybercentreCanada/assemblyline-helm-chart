@@ -40,12 +40,12 @@ spec:
               memory: {{ .Values.redisVolatileLimRam }}
           livenessProbe:
             exec:
-              command: ['response=$(redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping);', 'if', '[', '"$response"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
+              command: ['if', '[', '"$(timeout', '3s', 'redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping)"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
             timeoutSeconds: 5
             periodSeconds: 60
           readinessProbe:
             exec:
-              command: ['response=$(redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping);', 'if', '[', '"$response"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
+              command: ['if', '[', '"$(timeout', '3s', 'redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping)"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
             timeoutSeconds: 5
             periodSeconds: 60
 {{if .Values.enableInternalEncryption }}
@@ -131,12 +131,12 @@ spec:
             - containerPort: 6379
           livenessProbe:
             exec:
-              command: ['response=$(redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping);', 'if', '[', '"$response"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
+              command: ['if', '[', '"$(timeout', '3s', 'redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping)"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
             timeoutSeconds: 5
             periodSeconds: 60
           readinessProbe:
             exec:
-              command: ['response=$(redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping);', 'if', '[', '"$response"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
+              command: ['if', '[', '"$(timeout', '3s', 'redis-cli'{{if .Values.enableInternalEncryption }}, '--tls', '--cacert', '/etc/root-ca.crt'{{ end }}, 'ping)"',  '!=', '"PONG"', '];', 'then', 'exit', '1;', 'fi']
             timeoutSeconds: 5
             periodSeconds: 60
           volumeMounts:
