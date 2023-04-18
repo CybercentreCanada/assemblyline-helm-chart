@@ -139,20 +139,20 @@ spec:
         - containerPort: 6379
         livenessProbe:
           exec:
-            {{if .Values.enableInternalEncryption }}
-              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli --tls --cacert /etc/root-ca.crt ping)" != "PONG" ]; then exit 1; fi']
-            {{else}}
-              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli ping)" != "PONG" ]; then exit 1; fi']
-            {{ end }}
+          {{if .Values.enableInternalEncryption }}
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli --tls --cacert /etc/root-ca.crt ping)" != "PONG" ]; then exit 1; fi']
+          {{else}}
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli ping)" != "PONG" ]; then exit 1; fi']
+          {{ end }}
           timeoutSeconds: 5
           periodSeconds: 60
          readinessProbe:
           exec:
-            {{if .Values.enableInternalEncryption }}
-              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli --tls --cacert /etc/root-ca.crt ping)" != "PONG" ]; then exit 1; fi']
-            {{else}}
-              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli ping)" != "PONG" ]; then exit 1; fi']
-            {{ end }}
+          {{if .Values.enableInternalEncryption }}
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli --tls --cacert /etc/root-ca.crt ping)" != "PONG" ]; then exit 1; fi']
+          {{else}}
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli ping)" != "PONG" ]; then exit 1; fi']
+          {{ end }}
           timeoutSeconds: 5
           periodSeconds: 60
         volumeMounts:
