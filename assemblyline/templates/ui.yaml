@@ -54,6 +54,11 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
@@ -159,6 +164,11 @@ spec:
               value: '2'
             - name: AL_UNSECURED_UI
               value: "true"
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
@@ -263,6 +273,11 @@ spec:
             - containerPort: 5002
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/sio/tls.crt
@@ -445,6 +460,11 @@ spec:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
               value: '2'
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
