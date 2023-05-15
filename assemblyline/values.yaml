@@ -977,6 +977,8 @@ kibana:
 log-storage:
   clusterName: "log-storage"
   replicas: 1
+  # 'clusterHealthCheckParams' setting can be omitted if 'replicas' > 1
+  clusterHealthCheckParams: "wait_for_status=yellow&timeout=1s"
   extraEnvs:
     - name: ELASTIC_USERNAME
       value: elastic
