@@ -84,7 +84,7 @@ spec:
     spec:
       containers:
       - name: install-alsvc-{{- . }}
-        image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:stable
+        image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}
         imagePullPolicy: Always
         env:
           - name: SERVICE_API_HOST
