@@ -244,6 +244,9 @@ spec:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: Always
+          securityContext:
+            runAsUser: {{ .runAsUser | default 1000}}
+            runAsGroup: 1000
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
