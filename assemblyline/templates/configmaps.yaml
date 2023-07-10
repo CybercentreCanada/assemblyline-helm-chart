@@ -71,13 +71,14 @@ data:
 
     ADMIN_USER = 'admin'
     INITIAL_ADMIN_PASSWORD = os.environ['INITIAL_ADMIN_PASSWORD']
+    Classification = forge.get_classification()
 
     if __name__ == '__main__':
         ds = forge.get_datastore()
         if not ds.user.get_if_exists(ADMIN_USER):
             user_data = User({
                 "agrees_with_tos": "NOW",
-                "classification": "RESTRICTED",
+                "classification": Classification.RESTRICTED,
                 "name": "Administrator",
                 "password": get_password_hash(INITIAL_ADMIN_PASSWORD),
                 "uname": ADMIN_USER,
