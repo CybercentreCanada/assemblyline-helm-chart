@@ -21,6 +21,8 @@ spec:
       name: logstash
     spec:
       affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
         podAntiAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
           - labelSelector:
@@ -122,7 +124,7 @@ spec:
           secretName: logstash-cert
       - name: root-ca
         secret:
-          secretName: {{ .Release.Name }}.internal-generated-ca          
-      {{ end }}        
+          secretName: {{ .Release.Name }}.internal-generated-ca
+      {{ end }}
 {{ if  .Values.logstashVolumes }}{{ .Values.logstashVolumes | toYaml | indent 6 }}{{ end }}
 {{ end }}
