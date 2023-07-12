@@ -204,6 +204,10 @@ coreEnv: []
 coreMounts: []
 coreVolumes: []
 
+# An affinity to be applied to all core (non-service) pods not provided by imported charts.
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
+nodeAffinity:
+
 # Should we use logstash to aggregate logs or let file write to elastic directly
 useLogstash: false
 

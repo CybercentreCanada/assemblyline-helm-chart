@@ -23,6 +23,9 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
       - name: elastic-helper
         image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}

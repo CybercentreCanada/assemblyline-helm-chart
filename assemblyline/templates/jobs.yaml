@@ -13,6 +13,9 @@ spec:
         section: core
         component: bootstrap
     spec:
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
       - name: pi
         image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
@@ -82,6 +85,9 @@ spec:
         section: service
         component: alsvc_{{ . }}
     spec:
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
       - name: install-alsvc-{{- . }}
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}

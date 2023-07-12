@@ -23,6 +23,9 @@ spec:
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       priorityClassName: al-core-priority
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: scaler
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

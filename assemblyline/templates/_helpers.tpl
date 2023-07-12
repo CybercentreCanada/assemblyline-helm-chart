@@ -93,6 +93,12 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.nodeAffinity" }}
+{{ if .Values.nodeAffinity }}
+{{- .Values.nodeAffinity | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreMounts" }}
 - name: al-config
   mountPath: /etc/assemblyline/config.yml
@@ -166,6 +172,9 @@ spec:
     spec:
       priorityClassName: al-core-priority
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: {{ .component }}
           image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
@@ -240,6 +249,9 @@ spec:
     spec:
       priorityClassName: al-core-priority
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

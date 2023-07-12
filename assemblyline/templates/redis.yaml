@@ -23,6 +23,9 @@ spec:
         component: redis-volatile
     spec:
       priorityClassName: al-infra
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: redis
           image: {{ .Values.redisImage }}
@@ -117,6 +120,9 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       priorityClassName: al-infra
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
       - name: redis
         image: {{ .Values.redisImage }}

@@ -23,6 +23,9 @@ spec:
         component: vacuum
     spec:
       priorityClassName: al-infra
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: vacuum
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

@@ -25,6 +25,7 @@ Please see: https://cybercentrecanada.github.io/assemblyline4_docs/installation/
 | `assemblylineUIImage`            | Container image name for API server component.                                                                                                     | `cccs/assemblyline-ui`                                                  |
 | `autoInstallServices`            | A list of services to install on `helm install`. Used in conjuction with `assemblylineServiceImagePrefix`.                                         | See: [Values.yaml](./values.yaml)                                       |
 | `configuration`                  | [Assemblyline's Configuration](https://cybercentrecanada.github.io/assemblyline4_docs/odm/models/config/) Block                                    | See: [Values.yaml](./values.yaml)                                       |
+| `coreAffinity`                   | Affinity applied to all core pods.                                   | `null`
 | `coreEnv`                        | Environment variables that are added to all core containers                                                                                        | `[]`                                                                    |
 | `coreMounts`                     | Mounts that are added to all core containers                                                                                                       | `[]`                                                                    |
 | `coreVolumes`                    | Volumes that are added to all containers                                                                                                           | `[]`                                                                    |
@@ -199,3 +200,18 @@ Please see: https://cybercentrecanada.github.io/assemblyline4_docs/installation/
 | `vacuumWorkerReqRam`             | RAM requested for Vacuum worker pods                                                                                                               | `1Gi`                                                                   |
 | `workflowLimCPU`                 | CPU limit for Workflow pods                                                                                                                        | `1`                                                                     |
 | `workflowReqCPU`                 | CPU requested for Workflow pods                                                                                                                    | `50m`                                                                   |
+
+
+## Node selection
+
+You may want to control which nodes assemblyline assigns work to, the configuration
+for this is set in several different places:
+
+- Core pods can be controlled via the `nodeAffinity` key in the values file.
+- Service pods can be controlled via the `configuration.core.scaler.linux_node_selector` field. Note this uses a syntax slightly different than the typical kubernetes affinity fields.
+- System elasticsearch is set via `datastore.nodeAffinity`
+- If the `seperateInternalELKStack` condition is true, the logging elasticsearch instance is controlled via `log-storage.nodeAffinity`
+- If the `enableLogging` condition is true filebeat pods can be controlled with `filebeat.daemonset.affinity` and `filebeat.deployment.affinity`
+- If the `enableMetricbeat` condition is true metricbeat pods can be controlled with `metricbeat.daemonset.affinity` and `metricbeat.deployment.affinity`
+- If the `internalELKStack` condition is true kibana pods can be controlled with `kibana.affinity`
+- If the `internalFilestore` condition is true minio pods can be controlled with `filestore.affinity`

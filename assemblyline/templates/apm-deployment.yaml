@@ -23,6 +23,9 @@ spec:
         component: apm
     spec:
       priorityClassName: al-core-priority
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: apm
           image: {{ .Values.elasticAPMImage }}:7.17.3

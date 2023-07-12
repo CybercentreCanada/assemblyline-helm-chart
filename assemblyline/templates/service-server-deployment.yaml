@@ -22,6 +22,9 @@ spec:
         component: service-server
     spec:
       priorityClassName: al-core-priority
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: service-server
           image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.release }}
