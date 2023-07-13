@@ -87,7 +87,7 @@ spec:
     spec:
       affinity:
         nodeAffinity:
-          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+          {{ include "assemblyline.nodeAffinity" $ | indent 10 }}
       containers:
       - name: install-alsvc-{{- . }}
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}
