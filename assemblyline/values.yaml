@@ -472,6 +472,7 @@ configuration:
     cpu_reservation: 0.60
   ui:
     fqdn: "localhost"
+    secret_key: "${FLASK_SECRET_KEY}"
 
 # Configuration for the elasticsearch instance used for system data.
 # Values an administrator is likely to want to change to scale their deployment are:
