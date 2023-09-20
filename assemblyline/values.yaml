@@ -442,6 +442,7 @@ configuration:
         host: redis-persistent
         port: 6379
     scaler:
+      cluster_pod_list: true
       service_defaults:
         backlog: 10
         min_instances: 1
