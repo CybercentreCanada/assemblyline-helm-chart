@@ -28,7 +28,7 @@ spec:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
       containers:
         - name: apm
-          image: {{ .Values.elasticAPMImage }}:7.17.3
+          image: {{ .Values.elasticAPMImage }}:8.10.2
 #          command: ["/bin/bash", "-c", "/usr/local/bin/docker-entrypoint -e -E output.elasticsearch.password=$$ELASTICSEARCH_PASSWORD"]
           ports:
           - containerPort: 8200

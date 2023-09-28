@@ -11,7 +11,7 @@ assemblylineServiceImagePrefix: cccs/assemblyline-service-
 assemblylineServiceVersion: "4.4.stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
-elasticLogstashTag: "7.17.3"
+elasticLogstashTag: "8.10.2"
 redisImage: redis
 
 # Storage classes for persistent data.
@@ -480,7 +480,16 @@ configuration:
 #     resources
 #     volumeClaimTemplate
 datastore:
+  imageTag: "8.10.2"
   clusterName: "datastore"
+  createCert: False
+  roles:
+    - master
+    - data
+    - data_content
+    - data_hot
+    - data_warm
+    - data_cold
   replicas: 3
   extraEnvs:
     - name: ELASTIC_USERNAME
@@ -545,7 +554,7 @@ datastore:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+      image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
@@ -1045,7 +1054,7 @@ log-storage:
           secretKeyRef:
             name: elastic-helper-secret
             key: password
-      image: docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+      image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
       command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
