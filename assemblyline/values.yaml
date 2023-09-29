@@ -1081,12 +1081,12 @@ uiPlugins:
       configMapName:
       # or define your own configMap contents
       configMapData: |-
-        verify: true
+        VT_VERIFY: true
         maxLimit: "100"
-        maxTimeout: "3"
-        apiURL: "https://mb-api.abuse.ch/api/v1"
-        frontendURL: "https://bazaar.abuse.ch/browse.php"
-        classification: null
+        MAX_TIMEOUT: "3"
+        API_URL: "https://mb-api.abuse.ch/api/v1"
+        FRONTEND_URL: "https://bazaar.abuse.ch/browse.php"
+        CLASSIFICATION: null
     - enabled: false
       lookupName: virustotal
       image: cccs/assemblyline-ui-plugin-lookup-virustotal
@@ -1097,11 +1097,11 @@ uiPlugins:
       limRam: 256Mi
       containerPort: 8000
       configMapData: |-
-        verify: true
-        maxLimit: "100"
-        maxTimeout: "3"
-        apiURL: "https://www.virustotal.com/api/v3"
-        frontendURL: "https://www.virustotal.com/gui/search"
-        classification: null
+        MB_VERIFY: true
+        MB_MAX_LIMIT: "100"
+        MAX_TIMEOUT: "3"
+        API_URL: "https://www.virustotal.com/api/v3"
+        FRONTEND_URL: "https://www.virustotal.com/gui/search"
+        CLASSIFICATION: null
       # supply an existing secret
       secretName: ui-plugin-lookup-virustotal-apikey-secret
