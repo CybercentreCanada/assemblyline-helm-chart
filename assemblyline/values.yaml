@@ -1063,3 +1063,45 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
+
+uiPlugins:
+  lookup:
+    enabled: false
+    plugins:
+    - enabled: false
+      lookupName: malwarebazaar
+      image: cccs/assemblyline-ui-plugin-lookup-malwarebazaar
+      imageTag:
+      instances: 1
+      reqCPU: 250m
+      reqRam: 256Mi
+      limRam: 256Mi
+      containerPort: 8000
+      # supply an existing configMap
+      configMapName:
+      # or define your own configMap contents
+      configMapData: |-
+        verify: true
+        maxLimit: "100"
+        maxTimeout: "3"
+        apiURL: "https://mb-api.abuse.ch/api/v1"
+        frontendURL: "https://bazaar.abuse.ch/browse.php"
+        classification: null
+    - enabled: false
+      lookupName: virustotal
+      image: cccs/assemblyline-ui-plugin-lookup-virustotal
+      imageTag:
+      instances: 1
+      reqCPU: 250m
+      reqRam: 256Mi
+      limRam: 256Mi
+      containerPort: 8000
+      configMapData: |-
+        verify: true
+        maxLimit: "100"
+        maxTimeout: "3"
+        apiURL: "https://www.virustotal.com/api/v3"
+        frontendURL: "https://www.virustotal.com/gui/search"
+        classification: null
+      # supply an existing secret
+      secretName: ui-plugin-lookup-virustotal-apikey-secret
