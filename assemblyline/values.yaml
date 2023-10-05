@@ -528,10 +528,10 @@ datastore:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.enabled: ${DATASTORE_SSL_ENABLED:false}
-      xpack.security.http.ssl.verification_mode: full
-      xpack.security.http.ssl.key: ${DATASTORE_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
-      xpack.security.http.ssl.certificate: ${DATASTORE_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
+      # xpack.security.http.ssl.enabled: ${DATASTORE_SSL_ENABLED:false}
+      # xpack.security.http.ssl.verification_mode: full
+      # xpack.security.http.ssl.key: ${DATASTORE_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
+      # xpack.security.http.ssl.certificate: ${DATASTORE_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
   resources:
     requests:
       cpu: 1
@@ -1028,10 +1028,10 @@ log-storage:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED:false}
-      xpack.security.http.ssl.verification_mode: full
-      xpack.security.http.ssl.key: ${LOGGING_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
-      xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
+      # xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED:false}
+      # xpack.security.http.ssl.verification_mode: full
+      # xpack.security.http.ssl.key: ${LOGGING_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
+      # xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
   resources:
     requests:
       cpu: 1
