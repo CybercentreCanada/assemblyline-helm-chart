@@ -10,6 +10,15 @@ data:
 {{ .configMapData | indent 2 }}
 ---
 {{- end }}
+{{- if .secretData }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+stringData:
+{{ .secretData | indent 2 }}
+---
+{{- end }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -57,10 +66,12 @@ spec:
         nodeAffinity:
           {{ $.Values.nodeAffinity | toYaml | indent 10 }}
       {{- end }}
+      {{- if .securityContext }}
       securityContext:
-        runAsUser: 1000
-        runAsGroup: 1000
-        fsGroup: 1000
+        runAsUser: {{ .securityContext.user }}
+        runAsGroup: {{ .securityContext.group }}
+        fsGroup: {{ .securityContext.fsGroup }}
+      {{- end }}
       containers:
       - name: lookup-{{ .lookupName | lower }}
         image: {{ .image }}:{{ coalesce .imageTag $.Values.release }}
@@ -71,9 +82,13 @@ spec:
             {{- else }}
             name: ui-plugin-lookup-{{ .lookupName | lower }}-config-cm
             {{- end }}
-        {{- if .secretName }}
+        {{- if or .secretName .secretData }}
         - secretRef:
+          {{- if .secretName }}
             name: {{ .secretName }}
+          {{- else }}
+            name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+          {{- end }}
         {{- end }}
         ports:
         - name: http
