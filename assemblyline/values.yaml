@@ -476,11 +476,11 @@ configuration:
     # if plugins are defined and enabled
     # external_sources:
     # - name: virustotal
-    #   url: ui-plugin-lookup-virustotal:8000
+    #   url: http://ui-plugin-lookup-virustotal:8000
     #   classification:
     #   max_classification:
     # - name: malware_bazaar
-    #   url: ui-plugin-lookup-malwarebazaar:8000
+    #   url: http://ui-plugin-lookup-malwarebazaar:8000
     #   classification:
     #   max_classification:
 
