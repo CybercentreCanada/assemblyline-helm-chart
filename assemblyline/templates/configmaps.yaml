@@ -113,3 +113,52 @@ data:
     if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO)
         app.run(ssl_context='adhoc', host='0.0.0.0', port=8000)
+---
+{{ if .Values.internalELKStack }}
+# The configmap to initialize service account for Kibana
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-kibana-token
+data:
+  create_serviceaccount_token.py: |
+    import os
+    import requests
+    from kubernetes import client, config
+    from kubernetes.client import V1Secret, V1ObjectMeta
+
+    required_envs = {'ELASTICSEARCH_USERNAME', 'ELASTICSEARCH_PASSWORD', 'ELASTICSEARCH_HOSTS'}
+    missing_envs = {'ELASTICSEARCH_USERNAME', 'ELASTICSEARCH_PASSWORD', 'ELASTICSEARCH_HOSTS'} - set(os.environ.keys())
+    if missing_envs:
+        raise ValueError(f"The following environment variables are missing to initialize the service account token: {missing_envs}")
+
+    if __name__ == "__main__":
+      # Try loading a kubernetes connection from either the fact that we are running
+      # inside of a cluster, or have a config file that tells us how
+      try:
+          config.load_incluster_config()
+      except config.config_exception.ConfigException:
+          # Load the configuration once to initialize the defaults
+          config.load_kube_config()
+          # Now we can actually apply any changes we want to make
+          cfg = client.configuration.Configuration(client.configuration.Configuration)
+          if 'HTTPS_PROXY' in os.environ:
+              cfg.proxy = os.environ['HTTPS_PROXY']
+              if not cfg.proxy.startswith("http"):
+                  cfg.proxy = "https://" + cfg.proxy
+              client.Configuration.set_default(cfg)
+          # Load again with our settings set
+          config.load_kube_config(client_configuration=cfg)
+
+      host = os.environ['ELASTICSEARCH_HOSTS']
+      auth = (os.environ['ELASTICSEARCH_USERNAME'], os.environ['ELASTICSEARCH_PASSWORD'])
+      # Delete existing token 
+      requests.delete(f"{host}/_security/service/elastic/kibana/credential/token/kibana", auth=auth, verify=False)
+      # Create a new token 
+      resp = requests.post(f"{host}/_security/service/elastic/kibana/credential/token/kibana", auth=auth, verify=False).json()
+      core_api = client.CoreV1Api()
+      try:
+        core_api.create_namespaced_secret(namespace=os.getenv('NAMESPACE', 'al'), body=V1Secret(metadata=V1ObjectMeta(name="kibana-service-token"), string_data={"token": resp['token']['value']}))
+      except:
+        core_api.patch_namespaced_secret(name="kibana-service-token", namespace=os.getenv('NAMESPACE', 'al'), body=V1Secret(metadata=V1ObjectMeta(name="kibana-service-token"), string_data={"token": resp['token']['value']}))
+{{ end }}

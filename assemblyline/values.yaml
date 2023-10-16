@@ -490,6 +490,8 @@ datastore:
     - data_hot
     - data_warm
     - data_cold
+    # Only if using the same Elasticsearch instance for logging as well
+    # - ingest
   replicas: 3
   extraEnvs:
     - name: ELASTIC_USERNAME
@@ -528,10 +530,11 @@ datastore:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      # xpack.security.http.ssl.enabled: ${DATASTORE_SSL_ENABLED:false}
+      # Below configurations are used when `enableInternalEncryption: true`
+      # xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED}
       # xpack.security.http.ssl.verification_mode: full
-      # xpack.security.http.ssl.key: ${DATASTORE_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
-      # xpack.security.http.ssl.certificate: ${DATASTORE_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
+      # xpack.security.http.ssl.key: ${LOGGING_SSL_KEY}
+      # xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE}
   resources:
     requests:
       cpu: 1
@@ -958,13 +961,11 @@ kibana:
   extraEnvs:
     - name: SERVER_NAME
       value: localhost
-    - name: ELASTICSEARCH_USERNAME
-      value: elastic
-    - name: ELASTICSEARCH_PASSWORD
+    - name: ELASTICSEARCH_SERVICEACCOUNTTOKEN
       valueFrom:
         secretKeyRef:
-          name: assemblyline-system-passwords
-          key: logging-password
+          name: kibana-service-token
+          key: token
     - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
       valueFrom:
         configMapKeyRef:
@@ -978,19 +979,49 @@ kibana:
       value: "true"
     - name: LOGGING_QUIET
       value: "true"
+  extraInitContainers: |
+    - name: init-service-token
+      image: "cccs/assemblyline-core:stable"
+      command: ["python", "/etc/assemblyline/create_serviceaccount_token.py"]
+      env:
+        - name: ELASTICSEARCH_USERNAME
+          value: elastic
+        - name: ELASTICSEARCH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: assemblyline-system-passwords
+              key: logging-password      
+        - name: ELASTICSEARCH_HOSTS
+          value: {{ .Values.elasticsearchHosts }}
+      volumeMounts:
+        - name: init-script  
+          mountPath: "/etc/assemblyline/"
+  extraVolumes:
+    - name: init-script      
+      configMap:
+        name: init-kibana-token
   priorityClassName: al-core-priority
   kibanaConfig:
     kibana.yml: |
       elasticsearch:
         hosts: ['${ELASTICSEARCH_HOSTS}']
-        username: ${ELASTICSEARCH_USERNAME}
-        password: ${ELASTICSEARCH_PASSWORD}
-        ssl.certificateAuthorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
+        serviceAccountToken: '${ELASTICSEARCH_SERVICEACCOUNTTOKEN}'
+        #ssl.certificateAuthorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
 log-storage:
+  imageTag: "8.10.2"
   clusterName: "log-storage"
+  createCert: False
+  roles:
+    - master
+    - data
+    - data_content
+    - data_hot
+    - data_warm
+    - data_cold
+    - ingest
   replicas: 1
   extraEnvs:
     - name: ELASTIC_USERNAME
@@ -1028,10 +1059,11 @@ log-storage:
       xpack.security.transport.ssl.verification_mode: certificate
       xpack.security.transport.ssl.keystore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
       xpack.security.transport.ssl.truststore.path: /usr/share/elasticsearch/config/certs/elastic-certificates.p12
-      # xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED:false}
+      # Below configurations are used when `enableInternalEncryption: true`
+      # xpack.security.http.ssl.enabled: ${LOGGING_SSL_ENABLED}
       # xpack.security.http.ssl.verification_mode: full
-      # xpack.security.http.ssl.key: ${LOGGING_SSL_KEY:/usr/share/elasticsearch/config/http_ssl/tls.key}
-      # xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE:/usr/share/elasticsearch/config/http_ssl/tls.crt}
+      # xpack.security.http.ssl.key: ${LOGGING_SSL_KEY}
+      # xpack.security.http.ssl.certificate: ${LOGGING_SSL_CERTIFICIATE}
   resources:
     requests:
       cpu: 1
