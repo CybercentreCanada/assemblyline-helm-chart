@@ -979,27 +979,6 @@ kibana:
       value: "true"
     - name: LOGGING_QUIET
       value: "true"
-  extraInitContainers: |
-    - name: init-service-token
-      image: "cccs/assemblyline-core:stable"
-      command: ["python", "/etc/assemblyline/create_serviceaccount_token.py"]
-      env:
-        - name: ELASTICSEARCH_USERNAME
-          value: elastic
-        - name: ELASTICSEARCH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: assemblyline-system-passwords
-              key: logging-password      
-        - name: ELASTICSEARCH_HOSTS
-          value: {{ .Values.elasticsearchHosts }}
-      volumeMounts:
-        - name: init-script  
-          mountPath: "/etc/assemblyline/"
-  extraVolumes:
-    - name: init-script      
-      configMap:
-        name: init-kibana-token
   priorityClassName: al-core-priority
   kibanaConfig:
     kibana.yml: |
