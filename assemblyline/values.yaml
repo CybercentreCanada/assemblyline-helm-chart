@@ -985,7 +985,13 @@ kibana:
       elasticsearch:
         hosts: ['${ELASTICSEARCH_HOSTS}']
         serviceAccountToken: '${ELASTICSEARCH_SERVICEACCOUNTTOKEN}'
-        #ssl.certificateAuthorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
+      # Below configurations are used when `enableInternalEncryption: true`
+      #   ssl.certificateAuthorities: '${ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES:[]}'
+      # server.ssl:
+      #   enabled: true
+      #   certificate: /etc/certs/kibana/tls.crt
+      #   key: /etc/certs/kibana/tls.key
+      #   certificateAuthorities: /etc/certs/ca.crt        
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
