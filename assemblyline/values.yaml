@@ -953,6 +953,7 @@ kibana:
   fullnameOverride: kibana
   elasticsearchHosts: http://log-storage-master:9200
   healthCheckPath: /kibana/app/kibana
+  imageTag: "8.10.2"
   labels:
     section: core
   service:
