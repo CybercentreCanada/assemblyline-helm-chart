@@ -1091,7 +1091,7 @@ uiPlugins:
       configMapName:
       # or define your own configMap contents
       configMapData: |-
-        MB_VERIFY: true
+        MB_VERIFY: "true"
         MB_MAX_LIMIT: "100"
         MAX_TIMEOUT: "3"
         API_URL: "https://mb-api.abuse.ch/api/v1"
@@ -1111,7 +1111,7 @@ uiPlugins:
       limRam: 256Mi
       containerPort: 8000
       configMapData: |-
-        VT_VERIFY: true
+        VT_VERIFY: "true"
         MAX_TIMEOUT: "3"
         API_URL: "https://www.virustotal.com/api/v3"
         FRONTEND_URL: "https://www.virustotal.com/gui/search"
