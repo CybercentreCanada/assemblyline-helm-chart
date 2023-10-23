@@ -292,7 +292,7 @@ uiReqCPU: "500m"
 updaterReqCPU: "100m"
 workflowReqCPU: "50m"
 vacuumReqCPU: "0m"
-vacuumWorkerReqCPU: "0m"
+vacuumWorkerReqCPU: "500m"
 
 # CPU Limits
 defaultLimCPU: 1
@@ -376,7 +376,7 @@ ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
 serviceServerTargetUsage: 50
 replayTargetUsage: 50
-vacuumTargetUsage: 70
+vacuumTargetUsage: 150
 
 # Replay configuration block that will be use to sync alerts and submissions
 # between 2 Assemblyline instances
