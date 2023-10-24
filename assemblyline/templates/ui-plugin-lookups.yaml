@@ -1,64 +1,64 @@
 {{- if .Values.uiPlugins.lookup.enabled }}
-{{- range .Values.uiPlugins.lookup.plugins }}
-{{- if .enabled }}
-{{- if .configMapData }}
+{{- range $lookupName, $lookupConfig := .Values.uiPlugins.lookup.plugins }}
+{{- if $lookupConfig.enabled }}
+{{- if $lookupConfig.configMapData }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: ui-plugin-lookup-{{ .lookupName | lower }}-config-cm
+  name: ui-plugin-lookup-{{ $lookupName | lower }}-config-cm
 data:
-{{ .configMapData | indent 2 }}
+{{ $lookupConfig.configMapData | indent 2 }}
 ---
 {{- end }}
-{{- if .secretData }}
+{{- if $lookupConfig.secretData }}
 apiVersion: v1
 kind: Secret
 metadata:
-  name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+  name: ui-plugin-lookup-{{ $lookupName | lower }}-secret
 stringData:
-{{ .secretData | indent 2 }}
+{{ $lookupConfig.secretData | indent 2 }}
 ---
 {{- end }}
 apiVersion: v1
 kind: Service
 metadata:
-  name: ui-plugin-lookup-{{ .lookupName | lower }}
+  name: ui-plugin-lookup-{{ $lookupName | lower }}
   labels:
     app: assemblyline
     section: proxy
-    component: ui-plugin-lookup-{{ .lookupName | lower }}
+    component: ui-plugin-lookup-{{ $lookupName | lower }}
 spec:
   selector:
     app: assemblyline
     section: proxy
-    component: ui-plugin-lookup-{{ .lookupName | lower }}
+    component: ui-plugin-lookup-{{ $lookupName | lower }}
   ports:
   - protocol: TCP
-    port: {{ .containerPort }}
+    port: {{ $lookupConfig.containerPort }}
     targetPort: http
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ui-plugin-lookup-{{ .lookupName | lower }}
+  name: ui-plugin-lookup-{{ $lookupName | lower }}
   labels:
     app: assemblyline
     section: proxy
-    component: ui-plugin-lookup-{{ .lookupName | lower }}
+    component: ui-plugin-lookup-{{ $lookupName | lower }}
 spec:
-  replicas: {{ .instances }}
+  replicas: {{ $lookupConfig.instances }}
   revisionHistoryLimit: {{ $.Values.revisionCount }}
   selector:
     matchLabels:
       app: assemblyline
       section: proxy
-      component: ui-plugin-lookup-{{ .lookupName | lower }}
+      component: ui-plugin-lookup-{{ $lookupName | lower }}
   template:
     metadata:
       labels:
         app: assemblyline
         section: proxy
-        component: ui-plugin-lookup-{{ .lookupName | lower }}
+        component: ui-plugin-lookup-{{ $lookupName | lower }}
     spec:
       priorityClassName: al-infra
       {{- if $.Values.nodeAffinity }}
@@ -66,39 +66,39 @@ spec:
         nodeAffinity:
           {{ $.Values.nodeAffinity | toYaml | indent 10 }}
       {{- end }}
-      {{- if .securityContext }}
+      {{- if $lookupConfig.securityContext }}
       securityContext:
-        runAsUser: {{ .securityContext.user }}
-        runAsGroup: {{ .securityContext.group }}
-        fsGroup: {{ .securityContext.fsGroup }}
+        runAsUser: {{ $lookupConfig.securityContext.user }}
+        runAsGroup: {{ $lookupConfig.securityContext.group }}
+        fsGroup: {{ $lookupConfig.securityContext.fsGroup }}
       {{- end }}
       containers:
-      - name: lookup-{{ .lookupName | lower }}
-        image: {{ .image }}:{{ coalesce .imageTag $.Values.release }}
+      - name: lookup-{{ $lookupName | lower }}
+        image: {{ $lookupConfig.image }}:{{ coalesce $lookupConfig.imageTag $.Values.release }}
         envFrom:
         - configMapRef:
-            {{- if .configMapName }}
-            name: {{ .configMapName }}
+            {{- if $lookupConfig.configMapName }}
+            name: {{ $lookupConfig.configMapName }}
             {{- else }}
-            name: ui-plugin-lookup-{{ .lookupName | lower }}-config-cm
+            name: ui-plugin-lookup-{{ $lookupName | lower }}-config-cm
             {{- end }}
-        {{- if or .secretName .secretData }}
+        {{- if or $lookupConfig.secretName .secretData }}
         - secretRef:
-          {{- if .secretName }}
-            name: {{ .secretName }}
+          {{- if $lookupConfig.secretName }}
+            name: {{ $lookupConfig.secretName }}
           {{- else }}
-            name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+            name: ui-plugin-lookup-{{ $lookupName | lower }}-secret
           {{- end }}
         {{- end }}
         ports:
         - name: http
-          containerPort: {{ .containerPort }}
+          containerPort: {{ $lookupConfig.containerPort }}
         resources:
           requests:
-            cpu: {{ .reqCPU }}
-            memory: {{ .reqRam }}
+            cpu: {{ $lookupConfig.reqCPU }}
+            memory: {{ $lookupConfig.reqRam }}
           limits:
-            memory: {{ .limRam }}
+            memory: {{ $lookupConfig.limRam }}
 ---
 {{- end }}
 {{- end }}
