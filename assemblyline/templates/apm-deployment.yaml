@@ -23,6 +23,7 @@ spec:
         component: apm
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}

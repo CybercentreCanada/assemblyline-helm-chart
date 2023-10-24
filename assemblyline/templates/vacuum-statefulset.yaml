@@ -23,6 +23,7 @@ spec:
         component: vacuum
     spec:
       priorityClassName: al-infra
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}

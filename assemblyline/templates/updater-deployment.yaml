@@ -51,6 +51,8 @@ spec:
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://internal-ui:5000
             - name: SERVICE_API_HOST
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
+            - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
+              value: {{ .Values.privilegedServiceAccountName }}
           livenessProbe:
             exec:
               command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]

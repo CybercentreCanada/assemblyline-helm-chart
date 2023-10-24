@@ -42,6 +42,7 @@ spec:
         component: ui
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -155,6 +156,7 @@ spec:
         component: internal-ui
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -269,6 +271,7 @@ spec:
         component: socketio
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -379,6 +382,7 @@ spec:
         component: frontend
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -454,6 +458,7 @@ spec:
         component: ui-ingest
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}

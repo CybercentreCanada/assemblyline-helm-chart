@@ -150,6 +150,14 @@ vacuumUser: 1000
 # key of the assemblyline-system-passwords secret
 createAdminAccount: "on-install"
 
+# Service Accounts
+# bound to all core pods
+coreServiceAccountName:
+# bound to privileged service pods that Scaler creates
+privilegedServiceAccountName:
+# bound to unprivileged service pods that Scaler creates
+unprivilegedServiceAccountName:
+
 # Internal communications are encrypted for hosts part of this chart
 enableInternalEncryption: false
 
