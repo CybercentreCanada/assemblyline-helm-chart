@@ -1,0 +1,224 @@
+{{- if .Values.uiPlugins.lookup.enabled }}
+{{- range .Values.uiPlugins.lookup.plugins }}
+{{- if .enabled }}
+{{- if .configMapData }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ui-plugin-lookup-{{ .lookupName | lower }}-config-cm
+data:
+{{ .configMapData | indent 2 }}
+---
+{{- end }}
+{{- if .secretData }}
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+stringData:
+{{ .secretData | indent 2 }}
+---
+{{- end }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-plugin-lookup-{{ .lookupName | lower }}
+  labels:
+    app: assemblyline
+    section: proxy
+    component: ui-plugin-lookup-{{ .lookupName | lower }}
+spec:
+  selector:
+    app: assemblyline
+    section: proxy
+    component: ui-plugin-lookup-{{ .lookupName | lower }}
+  ports:
+  - protocol: TCP
+    port: {{ .containerPort }}
+    targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-plugin-lookup-{{ .lookupName | lower }}
+  labels:
+    app: assemblyline
+    section: proxy
+    component: ui-plugin-lookup-{{ .lookupName | lower }}
+spec:
+  replicas: {{ .instances }}
+  revisionHistoryLimit: {{ $.Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: proxy
+      component: ui-plugin-lookup-{{ .lookupName | lower }}
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: proxy
+        component: ui-plugin-lookup-{{ .lookupName | lower }}
+    spec:
+      priorityClassName: al-infra
+      {{- if $.Values.nodeAffinity }}
+      affinity:
+        nodeAffinity:
+          {{ $.Values.nodeAffinity | toYaml | indent 10 }}
+      {{- end }}
+      {{- if .securityContext }}
+      securityContext:
+        runAsUser: {{ .securityContext.user }}
+        runAsGroup: {{ .securityContext.group }}
+        fsGroup: {{ .securityContext.fsGroup }}
+      {{- end }}
+      containers:
+      - name: lookup-{{ .lookupName | lower }}
+        image: {{ .image }}:{{ coalesce .imageTag $.Values.release }}
+        envFrom:
+        - configMapRef:
+            {{- if .configMapName }}
+            name: {{ .configMapName }}
+            {{- else }}
+            name: ui-plugin-lookup-{{ .lookupName | lower }}-config-cm
+            {{- end }}
+        {{- if or .secretName .secretData }}
+        - secretRef:
+          {{- if .secretName }}
+            name: {{ .secretName }}
+          {{- else }}
+            name: ui-plugin-lookup-{{ .lookupName | lower }}-secret
+          {{- end }}
+        {{- end }}
+        ports:
+        - name: http
+          containerPort: {{ .containerPort }}
+        resources:
+          requests:
+            cpu: {{ .reqCPU }}
+            memory: {{ .reqRam }}
+          limits:
+            memory: {{ .limRam }}
+---
+{{- end }}
+{{- end }}
+# Allow ui to query lookup proxies
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http-ui-ingress-proxy
+  labels:
+    app: assemblyline
+    section: proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: proxy
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          component: ui
+    ports:
+    - port: http
+  - from:
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          component: internal-ui
+    ports:
+    - port: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http-ui-egress-proxy
+  labels:
+    app: assemblyline
+    section: proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      component: ui
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          section: proxy
+    ports:
+    - port: http
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-http-internalui-egress-proxy
+  labels:
+    app: assemblyline
+    section: proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      component: internal-ui
+  policyTypes:
+  - Egress
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: assemblyline
+          section: proxy
+    ports:
+    - port: http
+---
+# Allow lookup proxies to use dns
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns-proxy
+  labels:
+    app: assemblyline
+    section: proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: proxy
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - port: 53
+      protocol: UDP
+    - port: 53
+      protocol: TCP
+---
+# Allow lookup proxies to query internet
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-http-egress-proxy
+  labels:
+    app: assemblyline
+    section: proxy
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: proxy
+  policyTypes:
+  - Egress
+  egress:
+  - ports:
+    - port: 80
+    - port: 443
+---
+{{- end }}
