@@ -128,6 +128,7 @@ spec:
         section: core
         component: kibana-bootstrap
     spec:
+      serviceAccountName: {{ .Release.Name }}-scaling-manager
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -136,6 +137,8 @@ spec:
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           command: ["python",  "/mount/create_serviceaccount_token.py"]
           env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace }}
             - name: LOGGING_BASEURL
               value: {{ .Values.kibana.elasticsearchHosts }}          
           {{ include "assemblyline.coreEnv" . | indent 12 }}
