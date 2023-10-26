@@ -483,6 +483,8 @@ datastore:
   imageTag: "8.10.2"
   clusterName: "datastore"
   createCert: False
+  secret:
+    enabled: false  
   roles:
     - master
     - data
@@ -523,6 +525,7 @@ datastore:
   esJavaOpts: "-Xms4g -Xmx4g -Dlog4j2.formatMsgNoLookups=true"
   esConfig:
     elasticsearch.yml: |
+      cluster.deprecation_indexing.enabled: false
       ingest.geoip.downloader.enabled: false
       logger.level: WARN
       xpack.security.enabled: true
@@ -1000,6 +1003,8 @@ log-storage:
   imageTag: "8.10.2"
   clusterName: "log-storage"
   createCert: False
+  secret:
+    enabled: false
   roles:
     - master
     - data
@@ -1039,6 +1044,7 @@ log-storage:
   protocol: http
   esConfig:
     elasticsearch.yml: |
+      cluster.deprecation_indexing.enabled: false
       logger.level: WARN
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
