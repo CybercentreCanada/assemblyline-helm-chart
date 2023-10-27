@@ -528,6 +528,12 @@ datastore:
       cluster.deprecation_indexing.enabled: false
       ingest.geoip.downloader.enabled: false
       logger.level: WARN
+      # Shut raise logger levels for certain annoying loggers
+      logger.org.elasticsearch.cluster.coordination.ClusterBootstrapService: ERROR
+      logger.com.amazonaws.auth.profile.internal.BasicProfileConfigFileLoader: ERROR
+      logger.org.elasticsearch.cluster.coordination.Coordinator: ERROR
+      logger.org.elasticsearch.deprecation: ERROR
+      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR          
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
@@ -1046,6 +1052,12 @@ log-storage:
     elasticsearch.yml: |
       cluster.deprecation_indexing.enabled: false
       logger.level: WARN
+      # Shut raise logger levels for certain annoying loggers
+      logger.org.elasticsearch.cluster.coordination.ClusterBootstrapService: ERROR
+      logger.com.amazonaws.auth.profile.internal.BasicProfileConfigFileLoader: ERROR
+      logger.org.elasticsearch.cluster.coordination.Coordinator: ERROR
+      logger.org.elasticsearch.deprecation: ERROR
+      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR            
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
