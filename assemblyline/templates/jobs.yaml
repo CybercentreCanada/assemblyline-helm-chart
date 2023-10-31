@@ -112,3 +112,59 @@ spec:
 ---
 {{- end }}
 {{ end }}
+{{ if .Values.internalELKStack }}
+{{ $kibana_token := (lookup "v1" "Secret" .Release.Namespace "kibana-service-token").data.token }}
+{{ if eq $kibana_token "" }}
+ # If we're deploying Kibana and the service account token hasn't been initialized, then start job
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: init-kibana-service-token
+  labels:
+    section: core
+spec:
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: kibana-bootstrap
+    spec:
+      serviceAccountName: {{ .Release.Name }}-scaling-manager
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      containers:
+        - name: pi
+          image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          command: ["python",  "/mount/create_serviceaccount_token.py"]
+          env:
+            - name: NAMESPACE
+              value: {{ .Release.Namespace }}
+            - name: LOGGING_BASEURL
+              value: {{ .Values.kibana.elasticsearchHosts }}          
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+          volumeMounts:
+            - name: init-script  
+              mountPath: "/mount"
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          resources:
+            requests:
+              cpu: {{ .Values.installJobReqCPU }}
+              memory: {{ .Values.installJobReqRam }}
+            limits:
+              cpu: {{ .Values.installJobLimCPU }}
+              memory: {{ .Values.installJobLimRam }}
+      volumes:
+        - name: init-script      
+          configMap:
+            name: init-kibana-token
+            items:
+              - key: create_serviceaccount_token.py
+                path: create_serviceaccount_token.py
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      restartPolicy: Never
+  backoffLimit: 500
+  ttlSecondsAfterFinished: 300
+{{ end }}
+{{ end }}

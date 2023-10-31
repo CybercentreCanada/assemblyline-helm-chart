@@ -113,3 +113,59 @@ data:
     if __name__ == "__main__":
         logging.basicConfig(level=logging.INFO)
         app.run(ssl_context='adhoc', host='0.0.0.0', port=8000)
+---
+# The ConfigMap to initialize service account for Kibana
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: init-kibana-token
+data:
+  create_serviceaccount_token.py: |
+    import os
+    import requests
+    from datetime import datetime
+    from kubernetes import client, config
+    from kubernetes.client import V1Secret, V1ObjectMeta
+
+    if __name__ == "__main__":
+      # Try loading a kubernetes connection from either the fact that we are running
+      # inside of a cluster, or have a config file that tells us how
+      try:
+          config.load_incluster_config()
+      except config.config_exception.ConfigException:
+          # Load the configuration once to initialize the defaults
+          config.load_kube_config()
+          # Now we can actually apply any changes we want to make
+          cfg = client.configuration.Configuration(client.configuration.Configuration)
+          if 'HTTPS_PROXY' in os.environ:
+              cfg.proxy = os.environ['HTTPS_PROXY']
+              if not cfg.proxy.startswith("http"):
+                  cfg.proxy = "https://" + cfg.proxy
+              client.Configuration.set_default(cfg)
+          # Load again with our settings set
+          config.load_kube_config(client_configuration=cfg)
+
+      base = os.environ['LOGGING_BASEURL']
+      auth = (os.environ['LOGGING_USERNAME'], os.environ['LOGGING_PASSWORD'])
+      verify = "/etc/assemblyline/ssl/al_root-ca.crt" if os.path.exists("/etc/assemblyline/ssl/al_root-ca.crt") else True
+      # Delete existing token 
+      requests.delete(f"{base}/_security/service/elastic/kibana/credential/token/kibana", auth=auth, verify=verify)
+      # Create a new token 
+      resp = requests.post(f"{base}/_security/service/elastic/kibana/credential/token/kibana", auth=auth, verify=verify).json()
+      core_api = client.CoreV1Api()
+      core_api.patch_namespaced_secret(name="kibana-service-token", namespace=os.getenv('NAMESPACE', 'al'), body=V1Secret(metadata=V1ObjectMeta(name="kibana-service-token"), string_data={"token": resp['token']['value']}))
+      # Restart Kibana deployment
+      now = datetime.utcnow()
+      now = str(now.isoformat("T") + "Z")      
+      body = {
+          'spec': {
+              'template':{
+                  'metadata': {
+                      'annotations': {
+                          'kubectl.kubernetes.io/restartedAt': now
+                      }
+                  }
+              }
+          }
+      }      
+      client.AppsV1Api().patch_namespaced_deployment("kibana", namespace=os.getenv('NAMESPACE', 'al'), body=body, pretty='true')
