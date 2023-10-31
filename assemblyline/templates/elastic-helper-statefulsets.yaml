@@ -18,6 +18,7 @@ spec:
         component: elastic-helper
     spec:
       terminationGracePeriodSeconds: 10
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       priorityClassName: al-infra
       securityContext:
         runAsUser: 1000

@@ -13,6 +13,7 @@ spec:
         section: core
         component: bootstrap
     spec:
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -85,6 +86,7 @@ spec:
         section: service
         component: alsvc_{{ . }}
     spec:
+      serviceAccountName: { .Values.unprivilegedServiceAccountName }
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" $ | indent 10 }}

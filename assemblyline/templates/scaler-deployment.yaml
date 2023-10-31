@@ -53,6 +53,10 @@ spec:
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
             - name: CONFIGURATION_CONFIGMAP
               value: {{ .Release.Name }}-global-config
+            - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
+              value: {{ .Values.privilegedServiceAccountName }}
+            - name: UNPRIVILEGED_SERVICE_ACCOUNT_NAME
+              value: {{ .Values.unprivilegedServiceAccountName }}
           resources:
             limits:
               cpu: {{ .Values.scalerLimCPU }}

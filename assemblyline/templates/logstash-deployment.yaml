@@ -20,6 +20,7 @@ spec:
         section: core
       name: logstash
     spec:
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}

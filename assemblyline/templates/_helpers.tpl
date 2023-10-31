@@ -171,6 +171,7 @@ spec:
         component: {{ .component }}
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       affinity:
         nodeAffinity:
@@ -248,6 +249,7 @@ spec:
         component: {{ .component }}
     spec:
       priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       affinity:
         nodeAffinity:
