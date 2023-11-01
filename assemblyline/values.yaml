@@ -1170,7 +1170,7 @@ uiPlugins:
           API_URL: "https://www.virustotal.com/api/v3"
           FRONTEND_URL: "https://www.virustotal.com/gui/search"
           CLASSIFICATION: ""
-        # efine your own configMap contents
+        # define your own configMap contents
         secretData: |-
           VT_API_KEY: ""
         # or supply an existing secret to expose all keys
