@@ -90,6 +90,16 @@ spec:
             name: ui-plugin-lookup-{{ $lookupName | lower }}-secret
           {{- end }}
         {{- end }}
+        {{- if $lookupConfig.secretKeys }}
+        env:
+        {{- range $secret := $lookupConfig.secretKeys }}
+        - name: {{ $secret.varName }}
+          valueFrom:
+            secretKeyRef:
+              name: {{ $secret.secretName }}
+              key: {{ $secret.secretKey }}
+        {{- end }}
+        {{- end }}
         ports:
         - name: http
           containerPort: {{ $lookupConfig.containerPort }}
