@@ -132,6 +132,17 @@ ingressHost:
 # If a tls secret name is given here, that certificate will be used for https
 # If left null, a self signed cert will be generated.
 tlsSecretName:
+useSharedTLSCert:
+
+# Use this to pull TLS from KeyVault using CSI driver
+secretsProvider:
+  enabled: true
+  className: "azure-kvname-secrets-provider" # Replace 'kvname' with the actual KeyVault name
+  tlsSecretName: "tls-secret-for-app" # Descriptive name for the secret in your Kubernetes cluster
+  tlsObjectName: "app-tls-certificate" # Name of the TLS certificate object in Azure KeyVault
+  identity: "keyvault-identity" # Azure identity to access KeyVault (usually a Managed Identity)
+  tenantId: "azure-tenant-id" # Your Azure Tenant ID
+  keyvault: "myapp-keyvault" # Name of the Azure KeyVault to use
 
 # Turn on the directory reader module
 enableVacuum: false
@@ -503,7 +514,7 @@ datastore:
   clusterName: "datastore"
   createCert: False
   secret:
-    enabled: false  
+    enabled: false
   roles:
     - master
     - data
@@ -1020,7 +1031,7 @@ kibana:
       #   enabled: true
       #   certificate: /etc/certs/kibana/tls.crt
       #   key: /etc/certs/kibana/tls.key
-      #   certificateAuthorities: /etc/certs/ca.crt        
+      #   certificateAuthorities: /etc/certs/ca.crt
 
 # Configuration for the internal logging elasticsearch instance, only used
 # if the internal logging flag is set
