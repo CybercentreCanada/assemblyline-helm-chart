@@ -65,9 +65,9 @@ spec:
                   key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.crt
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt
             - name: KEYFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.key
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -113,19 +113,19 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ else if .Values.enableInternalEncryption }}
         - name: ui-cert
           secret:
             secretName: ui-cert
       {{ end }}
-      {{ if .Values.secretsProvider.enabled }} # This is only used for the website TLS
+      {{ if .Values.tlsSecretProvider.enabled }} # This is only used for the website TLS
         - name: secrets-store01-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 ---
 apiVersion: v1
@@ -195,9 +195,9 @@ spec:
                   key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.crt
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt
             - name: KEYFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.key
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -244,19 +244,19 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ else if .Values.enableInternalEncryption }}
         - name: ui-cert
           secret:
             secretName: ui-cert
       {{ end }}
-      {{ if .Values.secretsProvider.enabled }} # This is only used for the website TLS
+      {{ if .Values.tlsSecretProvider.enabled }} # This is only used for the website TLS
         - name: secrets-store01-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 ---
 apiVersion: v1
@@ -323,9 +323,9 @@ spec:
                   key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
-              value: /etc/assemblyline/ssl/sio/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.crt
+              value: /etc/assemblyline/ssl/sio/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt
             - name: KEYFILE
-              value: /etc/assemblyline/ssl/sio/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.key
+              value: /etc/assemblyline/ssl/sio/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
@@ -370,19 +370,19 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ else if .Values.enableInternalEncryption }}
         - name: socketio-cert
           secret:
             secretName: socketio-cert
       {{ end }}
-      {{ if .Values.secretsProvider.enabled }} # This is only used for the sites TLS
+      {{ if .Values.tlsSecretProvider.enabled }} # This is only used for the sites TLS
         - name: secrets-store01-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 ---
 apiVersion: v1
@@ -437,7 +437,7 @@ spec:
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
           {{ if .Values.enableInternalEncryption }}
           command: ["serve", "-s",  "-l", "3000"]
-          args: ["--ssl-key", "/etc/certs/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.key", "--ssl-cert", "/etc/certs/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.crt"]
+          args: ["--ssl-key", "/etc/certs/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key", "--ssl-cert", "/etc/certs/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt"]
           {{ end }}
           ports:
             - containerPort: 3000
@@ -460,19 +460,19 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ else if .Values.enableInternalEncryption }}
         - name: frontend-cert
           secret:
             secretName: frontend-cert
       {{ end }}
-      {{ if .Values.secretsProvider.enabled }} # This is only used for the website TLS
+      {{ if .Values.tlsSecretProvider.enabled }} # This is only used for the website TLS
         - name: secrets-store01-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 {{ if .Values.separateIngestAPI }}
 ---
@@ -549,9 +549,9 @@ spec:
                   key: password
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.crt
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt
             - name: KEYFILE
-              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.secretsProvider.tlsObjectName }}.key
+              value: /etc/assemblyline/ssl/ui/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key
           {{ end}}
           resources:
             limits:
@@ -590,18 +590,18 @@ spec:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ else if .Values.enableInternalEncryption }}
         - name: ui-cert
           secret:
             secretName: ui-cert
       {{ end }}
-      {{ if .Values.secretsProvider.enabled }} # This is only used for the website TLS
+      {{ if .Values.tlsSecretProvider.enabled }} # This is only used for the website TLS
         - name: secrets-store01-inline
           csi:
             driver: secrets-store.csi.k8s.io
             readOnly: true
             volumeAttributes:
-              secretProviderClass: {{ .Values.secretsProvider.className }}
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 {{end}}
