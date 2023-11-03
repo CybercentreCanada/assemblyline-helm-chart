@@ -135,14 +135,13 @@ tlsSecretName:
 useSharedTLSCert:
 
 # Use this to pull TLS from KeyVault using CSI driver
-secretsProvider:
-  enabled: true
-  className: "azure-kvname-secrets-provider" # Replace 'kvname' with the actual KeyVault name
+#SecretProvider definition that will be specifically for TLS
+tlsSecretProvider: 
+  className: # Name of SecretProvider class object
   tlsSecretName: "tls-secret-for-app" # Descriptive name for the secret in your Kubernetes cluster
   tlsObjectName: "app-tls-certificate" # Name of the TLS certificate object in Azure KeyVault
-  identity: "keyvault-identity" # Azure identity to access KeyVault (usually a Managed Identity)
-  tenantId: "azure-tenant-id" # Your Azure Tenant ID
-  keyvault: "myapp-keyvault" # Name of the Azure KeyVault to use
+  provider: # Name of your provider
+  parameters: {} # Used to configure your CSI relative to the provider
 
 # Turn on the directory reader module
 enableVacuum: false
