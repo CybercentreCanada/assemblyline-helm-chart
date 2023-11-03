@@ -134,9 +134,11 @@ ingressHost:
 tlsSecretName:
 useSharedTLSCert:
 
-# Use this to pull TLS from KeyVault using CSI driver
-#SecretProvider definition that will be specifically for TLS
-tlsSecretProvider: 
+# SecretProvider definition that will be specifically for TLS
+# This requires installation of Secrets Store CSI Driver:
+# https://secrets-store-csi-driver.sigs.k8s.io/getting-started/installation
+tlsSecretProvider:
+  enabled: false
   className: # Name of SecretProvider class object
   tlsSecretName: "tls-secret-for-app" # Descriptive name for the secret in your Kubernetes cluster
   tlsObjectName: "app-tls-certificate" # Name of the TLS certificate object in Azure KeyVault
@@ -562,7 +564,7 @@ datastore:
       logger.com.amazonaws.auth.profile.internal.BasicProfileConfigFileLoader: ERROR
       logger.org.elasticsearch.cluster.coordination.Coordinator: ERROR
       logger.org.elasticsearch.deprecation: ERROR
-      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR          
+      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
@@ -1086,7 +1088,7 @@ log-storage:
       logger.com.amazonaws.auth.profile.internal.BasicProfileConfigFileLoader: ERROR
       logger.org.elasticsearch.cluster.coordination.Coordinator: ERROR
       logger.org.elasticsearch.deprecation: ERROR
-      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR            
+      logger.org.elasticsearch.xpack.ml.inference.loadingservice.ModelLoadingService: ERROR
       xpack.security.enabled: true
       xpack.security.transport.ssl.enabled: true
       xpack.security.transport.ssl.verification_mode: certificate
