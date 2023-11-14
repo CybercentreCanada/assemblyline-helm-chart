@@ -31,7 +31,29 @@ spec:
         - name: redis
           image: {{ .Values.redisImage }}
           command: ['redis-server']
-          args: ['--appendonly', 'no', '--maxclients', '100000', '--save', ''{{ if ne (.Values.redisVolatileIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisVolatileIOThreads }}'{{ end }} {{if .Values.enableInternalEncryption }}, '--tls-port', '6379', '--port', '0', '--tls-cert-file', '/etc/tls/tls.crt', '--tls-key-file', '/etc/tls/tls.key', '--tls-ca-cert-file', '/etc/root-ca.crt', '--tls-auth-clients', 'no' {{ end }}]
+          args:
+            - '--appendonly'
+            - 'no'
+            - '--maxclients'
+            - '100000'
+            - '--save'
+            - '""'
+            - '--io-threads'
+            - '$REDIS_IO_THREADS'
+            {{- if .Values.enableInternalEncryption }}
+            - '--tls-port'
+            - '$REDIS_TLS_PORT'
+            - '--port'
+            - '$REDIS_PORT'
+            - '--tls-cert-file'
+            - '$REDIS_TLS_CERT_FILE'
+            - '--tls-key-file'
+            - '$REDIS_TLS_KEY_FILE'
+            - '--tls-ca-cert-file'
+            - '$REDIS_TLS_CA_CERT_FILE'
+            - '--tls-auth-clients'
+            - '$REDIS_TLS_AUTH_CLIENTS'
+            {{- end }}
           imagePullPolicy: Always
           ports:
             - containerPort: 6379
@@ -42,12 +64,42 @@ spec:
             limits:
               cpu: {{ .Values.redisVolatileLimCPU }}
               memory: {{ .Values.redisVolatileLimRam }}
+          env:
+            {{- if ne (.Values.redisVolatileIOThreads | toString) "1" }}
+            - name: REDIS_IO_THREADS
+              value: "{{ .Values.redisVolatileIOThreads }}"
+            {{- end }}
+            {{- if .Values.enableInternalEncryption }}
+            - name: REDIS_TLS_PORT
+              value: "6379"
+            - name: REDIS_PORT
+              value: "0"
+            - name: REDIS_TLS_CERT_FILE
+              value: "/etc/tls/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+            - name: REDIS_TLS_KEY_FILE
+              value: "/etc/tls/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key"
+            - name: REDIS_TLS_CA_CERT_FILE
+              value: "/etc/tls/{{ default "root-ca" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+            - name: REDIS_TLS_AUTH_CLIENTS
+              value: "no"
+            {{- end }}
           readinessProbe:
             exec:
-              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert /etc/root-ca.crt {{ end }}ping)" != "PONG" ]; then exit 1; fi']
+              command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert $REDIS_TLS_CA_CERT_FILE {{ end }}ping)" != "PONG" ]; then exit 1; fi']
             timeoutSeconds: 5
             periodSeconds: 5
-{{if .Values.enableInternalEncryption }}
+{{ if and .Values.enableInternalEncryption .Values.useSharedTLSCert}}
+          volumeMounts:
+            - name: redis-cert
+              mountPath: /etc/tls
+      volumes:
+        - name: redis-cert
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
+{{ else if .Values.enableInternalEncryption }}
           volumeMounts:
             - name: redis-cert
               mountPath: /etc/tls
@@ -81,25 +133,6 @@ spec:
   - protocol: TCP
     port: 6379
 ---
-# Create a StatefulSet/Service for persistent redis
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-persistent
-  labels:
-    app: assemblyline
-    section: core
-    component: redis-persistent
-spec:
-  clusterIP: None
-  selector:
-    app: assemblyline
-    section: core
-    component: redis-persistent
-  ports:
-  - protocol: TCP
-    port: 6379
----
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -128,12 +161,51 @@ spec:
       - name: redis
         image: {{ .Values.redisImage }}
         command: ['redis-server']
-        args: ['--appendonly', 'yes', '--maxclients', '100000', '--auto-aof-rewrite-percentage', '200'{{ if ne (.Values.redisPersistentIOThreads | toString) "1" }}, '--io-threads', '{{ .Values.redisPersistentIOThreads }}'{{ end }} {{if .Values.enableInternalEncryption }}, '--tls-port', '6379', '--port', '0', '--tls-cert-file', '/etc/tls/tls.crt', '--tls-key-file', '/etc/tls/tls.key', '--tls-ca-cert-file', '/etc/root-ca.crt', '--tls-auth-clients', 'no' {{ end }}]
+        args:
+          - "--appendonly"
+          - "yes"
+          - "--maxclients"
+          - "100000"
+          - "--auto-aof-rewrite-percentage"
+          - "200"
+          - "--io-threads"
+          - "$(REDIS_IO_THREADS)"
+          - "--tls-port"
+          - "$(REDIS_TLS_PORT)"
+          - "--port"
+          - "$(REDIS_PORT)"
+          {{- if .Values.enableInternalEncryption }}
+          - "--tls-cert-file"
+          - "$(REDIS_TLS_CERT_FILE)"
+          - "--tls-key-file"
+          - "$(REDIS_TLS_KEY_FILE)"
+          - "--tls-ca-cert-file"
+          - "$(REDIS_TLS_CA_CERT_FILE)"
+          - "--tls-auth-clients"
+          - "$(REDIS_TLS_AUTH_CLIENTS)"
+          {{- end }}
+        env:
+          - name: REDIS_IO_THREADS
+            value: {{ default "1" .Values.redisPersistentIOThreads | quote }}
+          - name: REDIS_TLS_PORT
+            value: "6379"
+          - name: REDIS_PORT
+            value: "0"
+          {{- if .Values.enableInternalEncryption }}
+          - name: REDIS_TLS_CERT_FILE
+            value: "/etc/tls/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+          - name: REDIS_TLS_KEY_FILE
+            value: "/etc/tls/{{ default "tls" .Values.tlsSecretProvider.tlsObjectName }}.key"
+          - name: REDIS_TLS_CA_CERT_FILE
+            value: "/etc/tls/{{ default "root-ca" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+          - name: REDIS_TLS_AUTH_CLIENTS
+            value: "no"
+          {{- end }}
         ports:
         - containerPort: 6379
         readinessProbe:
           exec:
-            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert /etc/root-ca.crt {{ end }}ping)" != "PONG" ]; then exit 1; fi']
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert REDIS_TLS_CA_CERT_FILE {{ end }}ping)" != "PONG" ]; then exit 1; fi']
           timeoutSeconds: 5
           periodSeconds: 5
         volumeMounts:
@@ -141,7 +213,10 @@ spec:
           mountPath: /var/opt/redislabs/
         - name: redis-data
           mountPath: /data
-        {{if .Values.enableInternalEncryption }}
+        {{ if and .Values.enableInternalEncryption .Values.useSharedTLSCert}}
+        - name: redis-cert
+          mountPath: /etc/tls
+        {{ else if .Values.enableInternalEncryption }}
         - name: redis-cert
           mountPath: /etc/tls
         - name: root-cert
@@ -155,7 +230,15 @@ spec:
           requests:
             cpu: {{ .Values.redisPersistentReqCPU }}
             memory: {{ .Values.redisPersistentReqRam }}
-      {{if .Values.enableInternalEncryption }}
+{{ if and .Values.enableInternalEncryption .Values.useSharedTLSCert}}
+      volumes:
+        - name: redis-cert
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
+{{ else if .Values.enableInternalEncryption }}
       volumes:
         - name: redis-cert
           secret:
@@ -163,7 +246,7 @@ spec:
         - name: root-cert
           secret:
             secretName: {{ .Release.Name }}.internal-generated-ca
-      {{ end }}
+{{ end }}
   volumeClaimTemplates:
   - metadata:
       name: redis-data

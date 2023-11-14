@@ -110,7 +110,12 @@
   subPath: replay
   readOnly: true
 {{ end }}
-{{ if .Values.enableInternalEncryption }}
+{{ if and .Values.enableInternalEncryption .Values.tlsSecretProvider.enabled }}
+- name: root-cert
+  mountPath: "/etc/assemblyline/ssl/{{ default "al_root-ca" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+  subPath: tls.crt
+  readOnly: true
+{{ else if .Values.enableInternalEncryption }}
 - name: root-cert
   mountPath: "/etc/assemblyline/ssl/al_root-ca.crt"
   subPath: tls.crt
@@ -130,7 +135,14 @@
   configMap:
     name: {{ .Release.Name }}-replay-config
 {{ end }}
-{{ if .Values.enableInternalEncryption }}
+{{ if and .Values.enableInternalEncryption .Values.useSharedTLSCert }}
+- name: root-cert
+  csi:
+    driver: secrets-store.csi.k8s.io
+    readOnly: true
+    volumeAttributes:
+      secretProviderClass: {{ .Values.tlsSecretProvider.className }}
+{{ else if .Values.enableInternalEncryption }}
 - name: root-cert
   secret:
     secretName: {{ .Release.Name }}.internal-generated-ca
