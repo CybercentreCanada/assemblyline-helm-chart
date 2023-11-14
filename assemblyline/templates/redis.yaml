@@ -30,29 +30,21 @@ spec:
       containers:
         - name: redis
           image: {{ .Values.redisImage }}
-          command: ['redis-server']
+          command: ["/bin/sh"]
           args:
-            - '--appendonly'
-            - 'no'
-            - '--maxclients'
-            - '100000'
-            - '--save'
-            - '""'
-            - '--io-threads'
-            - '$REDIS_IO_THREADS'
+            - "-c"
+            - |
+              redis-server --appendonly no \
+                          --maxclients 100000 \
+                          --save "" \
+                          --io-threads $REDIS_IO_THREADS \
             {{- if .Values.enableInternalEncryption }}
-            - '--tls-port'
-            - '$REDIS_TLS_PORT'
-            - '--port'
-            - '$REDIS_PORT'
-            - '--tls-cert-file'
-            - '$REDIS_TLS_CERT_FILE'
-            - '--tls-key-file'
-            - '$REDIS_TLS_KEY_FILE'
-            - '--tls-ca-cert-file'
-            - '$REDIS_TLS_CA_CERT_FILE'
-            - '--tls-auth-clients'
-            - '$REDIS_TLS_AUTH_CLIENTS'
+                          --tls-port $REDIS_TLS_PORT \
+                          --port $REDIS_PORT \
+                          --tls-cert-file $REDIS_TLS_CERT_FILE \
+                          --tls-key-file $REDIS_TLS_KEY_FILE \
+                          --tls-ca-cert-file $REDIS_TLS_CA_CERT_FILE \
+                          --tls-auth-clients $REDIS_TLS_AUTH_CLIENTS \
             {{- end }}
           imagePullPolicy: Always
           ports:
@@ -160,29 +152,20 @@ spec:
       containers:
       - name: redis
         image: {{ .Values.redisImage }}
-        command: ['redis-server']
+        command: ["/bin/sh", "-c"]
         args:
-          - "--appendonly"
-          - "yes"
-          - "--maxclients"
-          - "100000"
-          - "--auto-aof-rewrite-percentage"
-          - "200"
-          - "--io-threads"
-          - "$(REDIS_IO_THREADS)"
-          - "--tls-port"
-          - "$(REDIS_TLS_PORT)"
-          - "--port"
-          - "$(REDIS_PORT)"
+          - |
+            redis-server --appendonly yes \
+                        --maxclients 100000 \
+                        --auto-aof-rewrite-percentage 200 \
+                        --io-threads $REDIS_IO_THREADS \
+                        --tls-port $REDIS_TLS_PORT \
+                        --port $REDIS_PORT \
           {{- if .Values.enableInternalEncryption }}
-          - "--tls-cert-file"
-          - "$(REDIS_TLS_CERT_FILE)"
-          - "--tls-key-file"
-          - "$(REDIS_TLS_KEY_FILE)"
-          - "--tls-ca-cert-file"
-          - "$(REDIS_TLS_CA_CERT_FILE)"
-          - "--tls-auth-clients"
-          - "$(REDIS_TLS_AUTH_CLIENTS)"
+                        --tls-cert-file $REDIS_TLS_CERT_FILE \
+                        --tls-key-file $REDIS_TLS_KEY_FILE \
+                        --tls-ca-cert-file $REDIS_TLS_CA_CERT_FILE \
+                        --tls-auth-clients $REDIS_TLS_AUTH_CLIENTS \
           {{- end }}
         env:
           - name: REDIS_IO_THREADS
@@ -205,7 +188,7 @@ spec:
         - containerPort: 6379
         readinessProbe:
           exec:
-            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert REDIS_TLS_CA_CERT_FILE {{ end }}ping)" != "PONG" ]; then exit 1; fi']
+            command: ['bash', '-c', 'if [ "$(timeout 3s redis-cli {{ if .Values.enableInternalEncryption}}--tls --cacert $REDIS_TLS_CA_CERT_FILE {{ end }}ping)" != "PONG" ]; then exit 1; fi']
           timeoutSeconds: 5
           periodSeconds: 5
         volumeMounts:
