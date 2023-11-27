@@ -112,7 +112,7 @@
 {{ end }}
 {{ if and .Values.enableInternalEncryption .Values.tlsSecretProvider.enabled }}
 - name: root-cert
-  mountPath: "/etc/assemblyline/ssl/{{ default "al_root-ca" .Values.tlsSecretProvider.tlsObjectName }}.crt"
+  mountPath: "/etc/assemblyline/ssl/al_root-ca.crt"
   subPath: assemblyline-tls-certificate.crt
   readOnly: true
 {{ else if .Values.enableInternalEncryption }}
