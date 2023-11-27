@@ -57,7 +57,31 @@ spec:
       initContainers:
       - name: create-certs
         image: {{ .Values.datastore.image }}:{{ .Values.datastore.imageTag }}
-        command: [ 'bash', '-c', "ls -la /usr/share/elasticsearch/config/certs/ && if [ ! -f /data/elastic-certificates.p12 ]; then openssl pkcs12 -export -in /usr/share/elasticsearch/config/certs/assemblyline-tls-certificate.crt -inkey /usr/share/elasticsearch/config/certs/assemblyline-tls-certificate.key -out /data/elastic-certificates.p12 -name elasticsearch -CAfile /usr/share/elasticsearch/config/certs/ca.crt -caname root -passout pass:; ls -la /data/; fi" ]
+        command: [
+          'bash',
+          '-c',
+          "echo 'Cleaning up existing certificates...' && \
+          rm -f /data/elastic-* && \
+          echo 'Listing certs directory after cleanup:' && \
+          ls -la /usr/share/elasticsearch/config/certs/ && \
+          echo 'Creating new PKCS#12 truststore...' && \
+          openssl pkcs12 -export \
+          -inkey /usr/share/elasticsearch/config/certs/assemblyline-tls-certificate.key \
+          -in /usr/share/elasticsearch/config/certs/assemblyline-tls-certificate.crt \
+          -out /data/elastic-certificates.p12 \
+          -passout pass: && \
+          echo 'Creating PKCS#12 file for just the CA certificate directly from the truststore...' && \
+          openssl pkcs12 \
+          -in /data/elastic-certificates.p12 \
+          -out /data/elastic-stack-ca.p12 \
+          -cacerts \
+          -nokeys \
+          -passin pass: \
+          -passout pass: && \
+          echo 'New truststore contents:' && \
+          ls -la /data/; \
+          "
+        ]
         resources:
           limits:
             cpu: {{ .Values.elasticHelperLimCPU }}
