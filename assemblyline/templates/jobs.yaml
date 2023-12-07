@@ -42,6 +42,8 @@ spec:
               secretKeyRef:
                 name: assemblyline-system-passwords
                 key: filestore-password
+          - name: DATASTORE_VERIFY_CERTS
+            value: "false"
         volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 10 }}
           - name: script-volume
