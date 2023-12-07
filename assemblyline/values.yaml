@@ -390,7 +390,7 @@ vacuumTargetUsage: 150
 # between 2 Assemblyline instances
 replay:
   creator:
-    lookback_time: "now-1d"
+    lookback_time: "*"
     output_filestore: file:///tmp/replay/output
     working_directory: /tmp/replay/work
     alert_input:
