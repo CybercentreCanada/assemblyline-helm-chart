@@ -88,7 +88,7 @@ spec:
         section: service
         component: alsvc_{{ . }}
     spec:
-      serviceAccountName: { .Values.unprivilegedServiceAccountName }
+      serviceAccountName: {{ $.Values.unprivilegedServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" $ | indent 10 }}
@@ -98,9 +98,11 @@ spec:
         imagePullPolicy: Always
         env:
           - name: SERVICE_API_HOST
-            value: http://service-server:5003
+            value: https://service-server:5003
           - name: REGISTER_ONLY
             value: 'True'
+          - name: DATASTORE_VERIFY_CERTS
+            value: "false"
         resources:
           requests:
             cpu: {{ $.Values.installJobReqCPU }}

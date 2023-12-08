@@ -74,6 +74,8 @@ spec:
               value: "/etc/tls/{{ default "root-ca" .Values.tlsSecretProvider.tlsObjectName }}.crt"
             - name: REDIS_TLS_AUTH_CLIENTS
               value: "no"
+            - name: DATASTORE_VERIFY_CERTS
+              value: "false"
             {{- end }}
           readinessProbe:
             exec:
@@ -121,6 +123,25 @@ spec:
     app: assemblyline
     section: core
     component: redis-volatile
+  ports:
+  - protocol: TCP
+    port: 6379
+---
+# Create a StatefulSet/Service for persistent redis
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-persistent
+  labels:
+    app: assemblyline
+    section: core
+    component: redis-persistent
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: redis-persistent
   ports:
   - protocol: TCP
     port: 6379
