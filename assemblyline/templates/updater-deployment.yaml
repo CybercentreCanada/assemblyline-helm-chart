@@ -20,6 +20,7 @@ spec:
         app: assemblyline
         section: core
         component: updater
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       priorityClassName: al-core-priority

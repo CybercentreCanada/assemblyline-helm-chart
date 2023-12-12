@@ -99,6 +99,12 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.coreLabels" }}
+{{ if .Values.coreLabels }}
+{{- .Values.coreLabels | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreMounts" }}
 - name: al-config
   mountPath: /etc/assemblyline/config.yml
@@ -169,6 +175,7 @@ spec:
         app: assemblyline
         section: core
         component: {{ .component }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -247,6 +254,7 @@ spec:
         app: assemblyline
         section: core
         component: {{ .component }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}

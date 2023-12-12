@@ -18,6 +18,7 @@ spec:
       labels:
         component: logstash
         section: core
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
       name: logstash
     spec:
       serviceAccountName: {{ .Values.coreServiceAccountName }}

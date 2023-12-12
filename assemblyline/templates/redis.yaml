@@ -21,6 +21,7 @@ spec:
         app: assemblyline
         section: core
         component: redis-volatile
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-infra
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -118,6 +119,7 @@ spec:
         app: assemblyline
         section: core
         component: redis-persistent
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       terminationGracePeriodSeconds: 10
       priorityClassName: al-infra
