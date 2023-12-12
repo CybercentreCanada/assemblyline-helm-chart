@@ -16,6 +16,7 @@ spec:
         app: assemblyline
         section: core
         component: elastic-helper
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: {{ .Values.coreServiceAccountName }}

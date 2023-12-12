@@ -21,6 +21,7 @@ spec:
         app: assemblyline-apm
         section: core
         component: apm
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}

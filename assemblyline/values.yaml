@@ -219,7 +219,7 @@ autoInstallServices:
 # to the assemblyline core components. These values won't be passed to analysis
 # services.
 coreEnv: []
-coreLabels: []
+coreLabels: {}
 coreMounts: []
 coreVolumes: []
 
