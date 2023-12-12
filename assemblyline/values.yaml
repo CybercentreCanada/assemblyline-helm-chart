@@ -54,6 +54,10 @@ seperateInternalELKStack: true
 # that Assemblyline generates or will generate and save to, set this setting to false.
 # If `internalDatastore: true`, this will cause Helm to start up an internal Elasticsearch
 # instance called "datastore-master" on the deployment cluster
+# Logs and metric data will not be stored in the same Elasticsearch instance unless
+# `seperateInternalELKStack: false`.
+# Note: We recommend using the default setting in most deployment cases as Assemblyline heavily
+# depends on the datastore for most operations with regards to internal document management
 internalDatastore: true
 
 # If you have an ftp server, s3 bucket, azure blob storage account or other
