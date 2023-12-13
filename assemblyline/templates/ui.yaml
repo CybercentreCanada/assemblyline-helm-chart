@@ -185,8 +185,10 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+            - name: ui-tls-cert
+              mountPath: '/mnt/assemblyline/'
           {{ if .Values.enableInternalEncryption }}
-            - name: ui-cert
+            - name: ui-cert # Creates the secret from the secret provider
               mountPath: '/etc/assemblyline/ssl/ui/'
           {{ end }}
           ports:
@@ -226,6 +228,14 @@ spec:
         - name: ui-cert
           secret:
             secretName: internal-ui-cert
+      {{ end }}
+      {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
+        - name: ui-tls-cert
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
       {{ end }}
 ---
 apiVersion: v1
