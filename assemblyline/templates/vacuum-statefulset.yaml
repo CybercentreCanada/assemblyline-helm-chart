@@ -21,6 +21,7 @@ spec:
         app: assemblyline
         section: core
         component: vacuum
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-infra
       serviceAccountName: {{ .Values.coreServiceAccountName }}

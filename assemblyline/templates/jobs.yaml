@@ -12,6 +12,7 @@ spec:
         app: assemblyline
         section: core
         component: bootstrap
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
@@ -129,6 +130,7 @@ spec:
         app: assemblyline
         section: core
         component: kibana-bootstrap
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       affinity:

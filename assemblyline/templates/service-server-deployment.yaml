@@ -20,6 +20,7 @@ spec:
         app: assemblyline
         section: core
         component: service-server
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}

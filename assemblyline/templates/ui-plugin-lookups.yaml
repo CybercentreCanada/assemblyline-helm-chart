@@ -64,7 +64,7 @@ spec:
       {{- if $.Values.nodeAffinity }}
       affinity:
         nodeAffinity:
-          {{ $.Values.nodeAffinity | toYaml | indent 10 }}
+{{ $.Values.nodeAffinity | toYaml | indent 10 }}
       {{- end }}
       {{- if $lookupConfig.securityContext }}
       securityContext:
