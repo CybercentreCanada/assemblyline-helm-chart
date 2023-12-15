@@ -1,3 +1,4 @@
+{{ if or .Values.internalDatastore .Values.seperateInternalELKStack}}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -16,7 +17,7 @@ spec:
         app: assemblyline
         section: core
         component: elastic-helper
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -84,3 +85,4 @@ spec:
       resources:
         requests:
           storage: 1Gi
+{{ end }}

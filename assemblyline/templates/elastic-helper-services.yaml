@@ -1,3 +1,4 @@
+{{ if or .Values.internalDatastore .Values.seperateInternalELKStack}}
 apiVersion: v1
 kind: Service
 metadata:
@@ -16,3 +17,4 @@ spec:
   - protocol: TCP
     port: 8000
     targetPort: 8000
+{{ end }}
