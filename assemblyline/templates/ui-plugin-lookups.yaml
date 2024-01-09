@@ -227,8 +227,10 @@ spec:
   policyTypes:
   - Egress
   egress:
-  - ports:
-    - port: 80
-    - port: 443
+  {{- if .Values.uiPlugins.lookup.egress }}
+    {{- .Values.uiPlugins.lookup.egress | toYaml | nindent 2 }}
+  {{- else -}}
+    {{- list | toYaml | indent 1 }}
+  {{- end }}
 ---
 {{- end }}

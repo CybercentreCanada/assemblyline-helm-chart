@@ -1142,6 +1142,10 @@ filestore:
 uiPlugins:
   lookup:
     enabled: false
+    egress:
+    - ports:
+      - port: 80
+      - port: 443
     plugins:
       malwarebazaar:
         enabled: false
