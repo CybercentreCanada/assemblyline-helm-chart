@@ -68,6 +68,10 @@ spec:
             - name: AL_HSTS_MAX_AGE
               value: "{{ .Values.HSTSMaxAge }}"
           {{ end }}
+          {{ if .Values.enableSessionCookieSamesite }}
+            - name: AL_SESSION_COOKIE_SAMESITE
+              value: {{ .Values.sessionCookieSamesite }}
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
