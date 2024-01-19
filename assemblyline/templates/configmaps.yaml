@@ -37,6 +37,7 @@ data:
 
 
 ---
+{{ if .Values.enableHSTSHeader }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -48,17 +49,16 @@ data:
         {
           "source":"**/*",
           "headers": [
-            {{ if .Values.enableHSTSHeader }}
               {
                 "key": "Strict-Transport-Security", 
                 "value": "max-age={{ .Values.HSTSMaxAge }};includeSubDomains"
               }
-            {{ end }}
           ]
         }
       ]
     }
 ---
+{{ end }}
 # The assemblyline config that will be projected into all the assemblyline pods
 apiVersion: v1
 kind: ConfigMap

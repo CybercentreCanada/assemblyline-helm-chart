@@ -414,18 +414,22 @@ spec:
             - name: frontend-cert
               mountPath: '/etc/certs/'
           {{ end }}
+          {{ if .Values.enableHSTSHeader }}
             - name: config-map
               mountPath: '/usr/src/app/serve.json'
               subPath: serve.json
+          {{ end }}
       volumes:
       {{ if .Values.enableInternalEncryption }}
         - name: frontend-cert
           secret:
             secretName: frontend-cert
       {{ end }}
+      {{ if .Values.enableHSTSHeader }}
         - name: config-map
           configMap:
             name: frontend-config
+      {{ end }}
  
 {{ if .Values.separateIngestAPI }}
 ---
