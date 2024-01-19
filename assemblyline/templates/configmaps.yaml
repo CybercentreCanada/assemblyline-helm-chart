@@ -37,6 +37,28 @@ data:
 
 
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  serve.json: |
+    {
+      "headers": [
+        {
+          "source":"**/*",
+          "headers": [
+            {{ if .Values.enableHSTSHeader }}
+              {
+                "key": "Strict-Transport-Security", 
+                "value": "max-age={{ .Values.HSTSMaxAge }};includeSubDomains"
+              }
+            {{ end }}
+          ]
+        }
+      ]
+    }
+---
 # The assemblyline config that will be projected into all the assemblyline pods
 apiVersion: v1
 kind: ConfigMap
