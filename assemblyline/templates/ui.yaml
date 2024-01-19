@@ -64,6 +64,10 @@ spec:
                 secretKeyRef:
                   name: flask-secret
                   key: password
+          {{ if .Values.enableSessionCookieSamesite }}
+            - name: AL_SESSION_COOKIE_SAMESITE
+              value: {{ .Values.sessionCookieSamesite }}
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
