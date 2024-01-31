@@ -353,32 +353,4 @@ data:
 {{ end }}
 {{ end }}
 
-# Certificate for service updaters
-{{ $updates_sec := lookup "v1" "Secret" $.Release.Namespace "updates-cert"}}
-{{ if $updates_sec }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: updates-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ (get $updates_sec.data "tls.crt") }}
-  tls.key: {{ (get $updates_sec.data "tls.key") }}
----
-{{ else }}
-{{ $server := genSignedCert "updates" nil (list "*-updates") 365 $ca  }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: updates-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ (b64enc $server.Cert) }}
-  tls.key: {{ (b64enc $server.Key) }}
----
-{{ end }}
 {{ end }}
