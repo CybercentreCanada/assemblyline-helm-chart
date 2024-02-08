@@ -9,6 +9,7 @@ assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 assemblylineServiceVersion: "4.4.stable"
+retrohuntImage: cccs/hauntedhouse:0.0.37
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
@@ -74,6 +75,17 @@ separateIngestAPI: false
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
 enableAPM: false
+
+# When true containers are launched to index the bodies of all analyzied 
+# files for yara signature based retrohunting
+retrohuntCacheSize: 100Gi
+retrohuntLocalStorageSize: 1T
+retrohuntScale: 3
+retrohuntRequestedCPU: 1
+retrohuntRequestedRam: 4Gi
+retrohuntWorkerLimRam: 4Gi
+retrohuntWorkerRequestedCPU: 1
+retrohuntWorkerRequestedRam: 4Gi
 
 # ILM policy for APM indices (default: Elastic-defined, rollover to warm after 30d)
 apmILM:
@@ -488,6 +500,9 @@ configuration:
     log_to_console: true
     log_to_file: false
     log_to_syslog: false
+  retrohunt:
+    enabled: false
+    api_key: "${RETROHUNT_API_KEY}"
   services:
     cpu_reservation: 0.60
   ui:

@@ -1,0 +1,328 @@
+{{ if .Values.configuration.retrohunt.enabled }}
+# server service
+apiVersion: v1
+kind: Service
+metadata:
+  name: hauntedhouse
+  labels:
+    app: assemblyline
+    section: core
+    component: hauntedhouse-server
+spec:
+  selector:
+    app: assemblyline
+    section: core
+    component: hauntedhouse-server
+  clusterIP: None
+  ports:
+  - protocol: TCP
+    port: 4443
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-retrohunt-server
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: hauntedhouse-server
+  ingress:
+  - from: []
+  egress:
+  - to: []
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hauntedhouse-worker
+  labels:
+    app: assemblyline
+    section: core
+    component: hauntedhouse-server
+spec:
+  selector:
+    app: assemblyline
+    section: core
+    component: hauntedhouse-server
+  clusterIP: None
+  ports:
+  - port: 4443
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-into-retrohunt-worker
+spec:
+  podSelector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: hauntedhouse-worker
+  ingress:
+  - from: []
+---
+# Server stateful set
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hauntedhouse-server
+  labels:
+    app: assemblyline
+    section: core
+    component: hauntedhouse-server
+spec:
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: hauntedhouse-server
+  serviceName: hauntedhouse
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: hauntedhouse-server
+    spec:
+      revisionHistoryLimit: {{ .Values.revisionCount }}
+      terminationGracePeriodSeconds: 10
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+      - name: hauntedhouse-server
+        image: {{ .Values.retrohuntImage }}
+        imagePullPolicy: Always
+        command: ['haunted-house']
+        args: ['server', '--config', '/config/core.json']
+        ports:
+        - containerPort: 4443
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: config
+          mountPath: /config
+        env:
+          {{ include "assemblyline.coreEnv" . | indent 10 }}
+          - name: RUST_LOG
+            value: "haunted_house=info"
+          - name: CLUSTER_CA_CERT
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}.internal-generated-ca
+                key: tls.crt
+          - name: TLS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: retrohunt-cert
+                key: tls.key
+          - name: TLS_CERT
+            valueFrom:
+              secretKeyRef:
+                name: retrohunt-cert
+                key: tls.crt
+        volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 10 }}
+        resources:
+          requests:
+            cpu: {{ .retrohuntRequestedCPU | default .Values.defaultReqCPU }}
+            memory: {{ .retrohuntRequestedRam | default .Values.defaultReqRam }}
+      volumes:
+        - name: config
+          secret:
+            secretName: hauntedhouse-config
+        {{ include "assemblyline.coreVolumes" . | indent 8 }}
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistantStorageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.retrohuntCacheSize }}
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: hauntedhouse-worker
+spec:
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: hauntedhouse-server
+  serviceName: hauntedhouse-worker
+  replicas: {{ .Values.retrohuntScale }}
+  template:
+    metadata:
+      name: hauntedhouse-worker
+      labels:
+        app: assemblyline
+        section: core
+        component: hauntedhouse-server
+    spec:
+      affinity:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                - key: component
+                  operator: In
+                  values:
+                  - hauntedhouse-worker
+              topologyKey: kubernetes.io/hostname
+      revisionHistoryLimit: {{ .Values.revisionCount }}
+      terminationGracePeriodSeconds: 10
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: hauntedhouse-worker
+          image: {{ .Values.retrohuntImage }}
+          imagePullPolicy: Always
+          command: ['haunted-house']
+          args: ['worker', '--config', '/config/worker.json']
+          ports:
+          - containerPort: 4443
+          volumeMounts:
+          - name: scratch-data
+            mountPath: /cache
+          - name: filter-data
+            mountPath: /data
+          - name: config
+            mountPath: /config
+          env:
+            {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: RUST_LOG
+              value: "haunted_house=info"
+            - name: TLS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: retrohunt-worker-cert
+                  key: tls.key
+            - name: TLS_CERT
+              valueFrom:
+                secretKeyRef:
+                  name: retrohunt-worker-cert
+                  key: tls.crt
+          resources:
+            requests:
+              cpu:  {{ .Values.retrohuntWorkerRequestedCPU | default .Values.defaultReqCPU }}
+              memory: {{ .Values.retrohuntWorkerRequestedRam | default .Values.defaultReqRam }}
+            limits:
+              memory: {{ .Values.retrohuntWorkerLimRam }}
+      volumes:
+        - name: config
+          secret:
+            secretName: hauntedhouse-config
+        - name: scratch-data
+          ephemeral:
+            volumeClaimTemplate:
+              spec:
+                accessModes: [ "ReadWriteOnce" ]
+                storageClassName: {{ .Values.persistantStorageClass }}
+                resources:
+                  requests:
+                    storage: {{ .Values.retrohuntCacheSize }}
+  volumeClaimTemplates:
+  - metadata:
+      name: filter-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: {{ .Values.persistantStorageClass }}
+      resources:
+        requests:
+          storage: {{ .Values.retrohuntLocalStorageSize }}
+---
+# Configuration secret
+apiVersion: v1
+kind: Secret
+metadata:
+  name: hauntedhouse-config
+type: Opaque
+stringData:
+  core.json: |
+    {
+      "authentication": {
+        "static_keys": [
+          {
+            "key": "${RETROHUNT_API_KEY}",
+            "roles": ["Search"]
+          }
+        ]
+      },
+      "database": {
+        "SQLite": {
+          "path": "/data/sqlite/staging.db"
+        }
+      },
+      "workers": {
+        {{- range $i, $e := until (int (sub $.Values.retrohuntScale 1)) }}
+        "{{$e}}": "hauntedhouse-worker-{{$e}}:4443",
+        {{- end }}        
+        "{{(sub .Values.retrohuntScale 1)}}": "hauntedhouse-worker-{{(sub .Values.retrohuntScale 1)}}:4443"
+      },
+      "datastore": {
+        "url": {{ .Values.configuration.datastore.hosts | toJson }},
+        "ca_cert": "${CLUSTER_CA_CERT}",
+      },
+      "classification_path": "etc/assemblyline/classification.yml"
+      {{ if .Values.enableInternalEncryption -}}
+      "worker_certificate": {"Certificate": "${CLUSTER_CA_CERT}"},
+      {{ else -}}
+      "worker_certificate": "AllowAll",
+      {{ end -}}
+      "bind_address": "0.0.0.0:4443",
+      {{ if .Values.enableInternalEncryption -}}
+      "tls": {
+        "key_pem": "${TLS_KEY}"
+        "certificate_pem": "${TLS_CERT}"
+      }
+      {{ else -}}
+      "tls": null
+      {{ end -}}
+    }
+
+  worker.json: |
+    {
+      "file_cache": {
+        "Directory": {
+          "path": "/cache/files",
+          "size": "100Gi"
+        }
+      },
+      "files": {
+        "URL": {{ .Values.configuration.filestore.storage | toJson }}
+      },
+      "settings": {
+        "ingest_batch_size": 100,
+        "data_path": "/data/"
+      },
+      "bind_address": "0.0.0.0:4443",
+      {{ if .Values.enableInternalEncryption -}}
+      "tls": {
+        "key_pem": "${TLS_KEY}"
+        "certificate_pem": "${TLS_CERT}"
+      }
+      {{ else -}}
+      "tls": null
+      {{ end -}}
+    }
+
+{{ end }}
