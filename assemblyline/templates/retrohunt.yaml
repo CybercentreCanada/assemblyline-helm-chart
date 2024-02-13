@@ -107,14 +107,20 @@ spec:
         ports:
         - containerPort: 4443
         volumeMounts:
-        - name: data
-          mountPath: /data
-        - name: config
-          mountPath: /config
+          - name: data
+            mountPath: /data
+          - name: config
+            mountPath: /config
+          {{ include "assemblyline.coreMounts" . | indent 10 }}
         env:
           {{ include "assemblyline.coreEnv" . | indent 10 }}
           - name: RUST_LOG
             value: "haunted_house=info"
+{{- if .Values.configuration.datastore.archive.enabled }}
+          - name: ARCHIVE_ACTIVE
+            value: true
+{{- end }}
+{{- if .Values.enableInternalEncryption }}
           - name: CLUSTER_CA_CERT
             valueFrom:
               secretKeyRef:
@@ -130,8 +136,7 @@ spec:
               secretKeyRef:
                 name: retrohunt-cert
                 key: tls.crt
-        volumeMounts:
-          {{ include "assemblyline.coreMounts" . | indent 10 }}
+{{- end }}
         resources:
           requests:
             cpu: {{ .retrohuntRequestedCPU | default .Values.defaultReqCPU }}
@@ -160,7 +165,7 @@ spec:
     matchLabels:
       app: assemblyline
       section: core
-      component: hauntedhouse-server
+      component: hauntedhouse-worker
   serviceName: hauntedhouse-worker
   replicas: {{ .Values.retrohuntScale }}
   template:
@@ -169,7 +174,7 @@ spec:
       labels:
         app: assemblyline
         section: core
-        component: hauntedhouse-server
+        component: hauntedhouse-worker
     spec:
       affinity:
           podAntiAffinity:
@@ -201,6 +206,7 @@ spec:
           ports:
           - containerPort: 4443
           volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 10 }}
           - name: scratch-data
             mountPath: /cache
           - name: filter-data
@@ -211,6 +217,7 @@ spec:
             {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: RUST_LOG
               value: "haunted_house=info"
+{{- if .Values.enableInternalEncryption }}
             - name: TLS_KEY
               valueFrom:
                 secretKeyRef:
@@ -221,6 +228,7 @@ spec:
                 secretKeyRef:
                   name: retrohunt-worker-cert
                   key: tls.crt
+{{ end }}
           resources:
             requests:
               cpu:  {{ .Values.retrohuntWorkerRequestedCPU | default .Values.defaultReqCPU }}
@@ -228,6 +236,7 @@ spec:
             limits:
               memory: {{ .Values.retrohuntWorkerLimRam }}
       volumes:
+        {{ include "assemblyline.coreVolumes" . | indent 8 }}
         - name: config
           secret:
             secretName: hauntedhouse-config
@@ -267,11 +276,7 @@ stringData:
           }
         ]
       },
-      "database": {
-        "SQLite": {
-          "path": "/data/sqlite/staging.db"
-        }
-      },
+      "local_storage": "/data",
       "workers": {
         {{- range $i, $e := until (int (sub $.Values.retrohuntScale 1)) }}
         "{{$e}}": "hauntedhouse-worker-{{$e}}:4443",
@@ -280,9 +285,12 @@ stringData:
       },
       "datastore": {
         "url": {{ .Values.configuration.datastore.hosts | toJson }},
+        "archive_access": ${ARCHIVE_ACTIVE:false}
+        {{- if .Values.enableInternalEncryption }},
         "ca_cert": "${CLUSTER_CA_CERT}",
+        {{ end }}
       },
-      "classification_path": "etc/assemblyline/classification.yml"
+      "classification_path": "/etc/assemblyline/classification.yml",
       {{ if .Values.enableInternalEncryption -}}
       "worker_certificate": {"Certificate": "${CLUSTER_CA_CERT}"},
       {{ else -}}
@@ -314,6 +322,7 @@ stringData:
         "ingest_batch_size": 100,
         "data_path": "/data/"
       },
+      "classification_path": "/etc/assemblyline/classification.yml",
       "bind_address": "0.0.0.0:4443",
       {{ if .Values.enableInternalEncryption -}}
       "tls": {

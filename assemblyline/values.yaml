@@ -502,6 +502,7 @@ configuration:
     log_to_syslog: false
   retrohunt:
     enabled: false
+    url: https://hauntedhouse:4443
     api_key: "${RETROHUNT_API_KEY}"
   services:
     cpu_reservation: 0.60
