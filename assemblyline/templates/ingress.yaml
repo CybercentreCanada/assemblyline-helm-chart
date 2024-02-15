@@ -129,6 +129,36 @@ spec:
 {{end}}
 
 ---
+
+# KIBANA INGRESS (Internal)
+{{ if .Values.internalELKStack}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-kibana
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "kibana"
+spec:
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+  rules:
+    - host: {{ .Values.configuration.ui.fqdn | quote }}
+      http:
+        paths:
+          - path: /kibana/
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana
+                port:
+                  number: 5601
+{{end}}
+
+---
 {{ if .Values.ingressPaths }}
 {{ .Values.ingressPaths | toYaml | indent 10 }}
 {{ end }}
