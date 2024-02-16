@@ -3,10 +3,6 @@
 {{with merge (dict "name" "ui" "maxReplicas" .Values.APIInstancesMax "minReplicas" .Values.APIInstances "targetUsage" .Values.APITargetUsage) . }}
   {{template "assemblyline.HPA" .}}
 {{end}}
----
-{{with merge (dict "name" "internal-ui" "maxReplicas" .Values.internalAPIInstancesMax "minReplicas" .Values.internalAPIInstances "targetUsage" .Values.internalAPITargetUsage) . }}
-  {{template "assemblyline.HPA" .}}
-{{end}}
 {{ if .Values.separateIngestAPI }}
 ---
 {{with merge (dict "name" "ui-ingest" "maxReplicas" .Values.ingestAPIInstancesMax "minReplicas" .Values.ingestAPIInstances "targetUsage" .Values.ingestAPITargetUsage) . }}
