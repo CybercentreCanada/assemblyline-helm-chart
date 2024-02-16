@@ -142,6 +142,18 @@ ingressHost:
 # If a tls secret name is given here, that certificate will be used for https
 # If left null, a self signed cert will be generated.
 tlsSecretName:
+useSharedTLSCert:
+
+# SecretProvider definition that will be specifically for TLS
+# This requires installation of Secrets Store CSI Driver:
+# https://secrets-store-csi-driver.sigs.k8s.io/getting-started/installation
+tlsSecretProvider:
+  enabled: false
+  className: # Name of SecretProvider class object
+  tlsSecretName: "tls-secret-for-app" # Descriptive name for the secret in your Kubernetes cluster
+  tlsObjectName: "app-tls-certificate" # Name of the TLS certificate object in Azure KeyVault
+  provider: # Name of your provider
+  parameters: {} # Used to configure your CSI relative to the provider
 
 # Turn on the directory reader module
 enableVacuum: false
