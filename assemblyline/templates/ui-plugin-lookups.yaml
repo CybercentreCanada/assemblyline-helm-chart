@@ -159,29 +159,6 @@ spec:
     ports:
     - port: http
 ---
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-http-ui-egress-proxy
-  labels:
-    app: assemblyline
-    section: proxy
-spec:
-  podSelector:
-    matchLabels:
-      app: assemblyline
-      component: ui
-  policyTypes:
-  - Egress
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline
-          section: proxy
-    ports:
-    - port: http
----
 # Allow lookup proxies to use dns
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
