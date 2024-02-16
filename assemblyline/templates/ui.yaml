@@ -187,8 +187,10 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
             - name: ui-tls-cert
               mountPath: '/mnt/assemblyline/'
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: ui-cert # Creates the secret from the secret provider
               mountPath: '/etc/assemblyline/ssl/ui/'
