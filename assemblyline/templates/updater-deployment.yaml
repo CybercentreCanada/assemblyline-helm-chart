@@ -20,7 +20,7 @@ spec:
         app: assemblyline
         section: core
         component: updater
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       priorityClassName: al-core-priority
@@ -48,8 +48,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: UI_SERVER
-              value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://internal-ui:5000
             - name: SERVICE_API_HOST
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
             - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
