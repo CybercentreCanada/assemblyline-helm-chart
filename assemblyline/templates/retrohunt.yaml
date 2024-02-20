@@ -118,7 +118,7 @@ spec:
             value: "haunted_house=info"
 {{- if .Values.configuration.datastore.archive.enabled }}
           - name: ARCHIVE_ACTIVE
-            value: true
+            value: "true"
 {{- end }}
 {{- if .Values.enableInternalEncryption }}
           - name: CLUSTER_CA_CERT
