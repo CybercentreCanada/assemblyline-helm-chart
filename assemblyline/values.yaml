@@ -9,7 +9,8 @@ assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 assemblylineServiceVersion: "4.4.stable"
-retrohuntImage: cccs/hauntedhouse:0.0.37
+retrohuntImage: cccs/hauntedhouse
+retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
@@ -504,6 +505,7 @@ configuration:
     enabled: false
     url: https://hauntedhouse:4443
     api_key: "${RETROHUNT_API_KEY}"
+    tls_verify: "${ENABLE_INTERNAL_ENCRYPTION}"
   services:
     cpu_reservation: 0.60
   ui:

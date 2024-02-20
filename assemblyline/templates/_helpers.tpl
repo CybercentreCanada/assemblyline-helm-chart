@@ -69,6 +69,8 @@
     secretKeyRef:
       name: retrohunt-secret
       key: password
+- name: ENABLE_INTERNAL_ENCRYPTION
+  value: {{ if .Values.enableInternalEncryption }}"true"{{else}}"false"{{end}}
 - name: DISPATCHER_RESULT_THREADS
   value: "{{ .Values.dispatcherResultThreads }}"
 - name: DISPATCHER_FINALIZE_THREADS
@@ -389,11 +391,11 @@ data:
 {{ end }}
 
 {{ if .Values.configuration.retrohunt.enabled }}
-  {{with merge (dict "host" "retrohunt") . }}
+  {{with merge (dict "host" "hauntedhouse") . }}
     {{template "assemblyline.GenCert" .}}
   {{end}}
 
-  {{with merge (dict "host" "retrohunt-worker") . }}
+  {{with merge (dict "host" "hauntedhouse-worker") . }}
     {{template "assemblyline.GenCert" .}}
   {{end}}
 {{ end }}

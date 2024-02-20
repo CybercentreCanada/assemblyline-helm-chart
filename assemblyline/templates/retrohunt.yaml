@@ -40,12 +40,12 @@ metadata:
   labels:
     app: assemblyline
     section: core
-    component: hauntedhouse-server
+    component: hauntedhouse-worker
 spec:
   selector:
     app: assemblyline
     section: core
-    component: hauntedhouse-server
+    component: hauntedhouse-worker
   clusterIP: None
   ports:
   - port: 4443
@@ -100,7 +100,7 @@ spec:
         fsGroup: 1000
       containers:
       - name: hauntedhouse-server
-        image: {{ .Values.retrohuntImage }}
+        image: {{ .Values.retrohuntImage }}:{{ .Values.retrohuntRelease }}
         imagePullPolicy: Always
         command: ['haunted-house']
         args: ['server', '--config', '/config/core.json']
@@ -129,12 +129,12 @@ spec:
           - name: TLS_KEY
             valueFrom:
               secretKeyRef:
-                name: retrohunt-cert
+                name: hauntedhouse-cert
                 key: tls.key
           - name: TLS_CERT
             valueFrom:
               secretKeyRef:
-                name: retrohunt-cert
+                name: hauntedhouse-cert
                 key: tls.crt
 {{- end }}
         resources:
@@ -199,7 +199,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: hauntedhouse-worker
-          image: {{ .Values.retrohuntImage }}
+          image: {{ .Values.retrohuntImage }}:{{ .Values.retrohuntRelease }}
           imagePullPolicy: Always
           command: ['haunted-house']
           args: ['worker', '--config', '/config/worker.json']
@@ -221,12 +221,12 @@ spec:
             - name: TLS_KEY
               valueFrom:
                 secretKeyRef:
-                  name: retrohunt-worker-cert
+                  name: hauntedhouse-worker-cert
                   key: tls.key
             - name: TLS_CERT
               valueFrom:
                 secretKeyRef:
-                  name: retrohunt-worker-cert
+                  name: hauntedhouse-worker-cert
                   key: tls.crt
 {{ end }}
           resources:
@@ -278,19 +278,20 @@ stringData:
       },
       "local_storage": "/data",
       "workers": {
-        {{- range $i, $e := until (int (sub $.Values.retrohuntScale 1)) }}
-        "{{$e}}": "hauntedhouse-worker-{{$e}}:4443",
+        {{- $retrohuntScale := $.Values.retrohuntScale }}
+        {{- range $i, $e := until (int $retrohuntScale) }}
+        "{{$e}}": "hauntedhouse-worker-{{$e}}.hauntedhouse-worker.{{ $.Release.Namespace }}.svc.cluster.local:4443"{{ if (ne (int $e) (int (sub $retrohuntScale 1))) }},{{ end }}
         {{- end }}        
-        "{{(sub .Values.retrohuntScale 1)}}": "hauntedhouse-worker-{{(sub .Values.retrohuntScale 1)}}:4443"
       },
       "datastore": {
         "url": {{ .Values.configuration.datastore.hosts | toJson }},
         "archive_access": ${ARCHIVE_ACTIVE:false}
         {{- if .Values.enableInternalEncryption }},
-        "ca_cert": "${CLUSTER_CA_CERT}",
-        {{ end }}
+        "ca_cert": "${CLUSTER_CA_CERT}"
+        {{- end }}
       },
       "classification_path": "/etc/assemblyline/classification.yml",
+      "require_classification": false,
       {{ if .Values.enableInternalEncryption -}}
       "worker_certificate": {"Certificate": "${CLUSTER_CA_CERT}"},
       {{ else -}}
@@ -299,12 +300,12 @@ stringData:
       "bind_address": "0.0.0.0:4443",
       {{ if .Values.enableInternalEncryption -}}
       "tls": {
-        "key_pem": "${TLS_KEY}"
+        "key_pem": "${TLS_KEY}", 
         "certificate_pem": "${TLS_CERT}"
       }
-      {{ else -}}
+      {{- else }}
       "tls": null
-      {{ end -}}
+      {{- end }}
     }
 
   worker.json: |
@@ -323,15 +324,16 @@ stringData:
         "data_path": "/data/"
       },
       "classification_path": "/etc/assemblyline/classification.yml",
+      "require_classification": false,
       "bind_address": "0.0.0.0:4443",
-      {{ if .Values.enableInternalEncryption -}}
+      {{- if .Values.enableInternalEncryption }}
       "tls": {
-        "key_pem": "${TLS_KEY}"
+        "key_pem": "${TLS_KEY}",
         "certificate_pem": "${TLS_CERT}"
       }
-      {{ else -}}
+      {{- else }}
       "tls": null
-      {{ end -}}
+      {{- end }}
     }
 
 {{ end }}
