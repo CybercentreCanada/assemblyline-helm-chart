@@ -8,7 +8,7 @@ assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
-assemblylineServiceVersion: "4.4.stable"
+assemblylineServiceVersion: "4.5.stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
@@ -142,6 +142,13 @@ ingressHost:
 # If a tls secret name is given here, that certificate will be used for https
 # If left null, a self signed cert will be generated.
 tlsSecretName:
+
+# HSTS management
+# see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# Set to true to enable HSTS
+enableHSTSHeader: false
+# Max Age value to send in HSTS header when enabled
+HSTSMaxAge: 31536000
 
 # Turn on the directory reader module
 enableVacuum: false
@@ -1138,17 +1145,10 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
-  persistence:
-    storageClass: default
-  priorityClassName: al-infra  
 
 uiPlugins:
   lookup:
     enabled: false
-    egress:
-    - ports:
-      - port: 80
-      - port: 443
     plugins:
       malwarebazaar:
         enabled: false

@@ -40,7 +40,7 @@ spec:
         app: assemblyline
         section: core
         component: ui
-        {{ include "assemblyline.coreLabels" . | indent 8 }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -64,6 +64,10 @@ spec:
                 secretKeyRef:
                   name: flask-secret
                   key: password
+          {{ if .Values.enableHSTSHeader }}
+            - name: AL_HSTS_MAX_AGE
+              value: "{{ .Values.HSTSMaxAge }}"
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
@@ -154,7 +158,7 @@ spec:
         app: assemblyline
         section: core
         component: socketio
-        {{ include "assemblyline.coreLabels" . | indent 8 }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -266,7 +270,7 @@ spec:
         app: assemblyline
         section: core
         component: frontend
-        {{ include "assemblyline.coreLabels" . | indent 8 }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -293,12 +297,23 @@ spec:
             - name: frontend-cert
               mountPath: '/etc/certs/'
           {{ end }}
+          {{ if .Values.enableHSTSHeader }}
+            - name: config-map
+              mountPath: '/usr/src/app/serve.json'
+              subPath: serve.json
+          {{ end }}
       volumes:
       {{ if .Values.enableInternalEncryption }}
         - name: frontend-cert
           secret:
             secretName: frontend-cert
       {{ end }}
+      {{ if .Values.enableHSTSHeader }}
+        - name: config-map
+          configMap:
+            name: frontend-config
+      {{ end }}
+ 
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1
@@ -343,7 +358,7 @@ spec:
         app: assemblyline
         section: core
         component: ui-ingest
-        {{ include "assemblyline.coreLabels" . | indent 8 }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}        
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
