@@ -143,6 +143,13 @@ ingressHost:
 # If left null, a self signed cert will be generated.
 tlsSecretName:
 
+# HSTS management
+# see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
+# Set to true to enable HSTS
+enableHSTSHeader: false
+# Max Age value to send in HSTS header when enabled
+HSTSMaxAge: 31536000
+
 # Turn on the directory reader module
 enableVacuum: false
 vacuumVolumes:
@@ -1138,17 +1145,10 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
-  persistence:
-    storageClass: default
-  priorityClassName: al-infra  
 
 uiPlugins:
   lookup:
     enabled: false
-    egress:
-    - ports:
-      - port: 80
-      - port: 443
     plugins:
       malwarebazaar:
         enabled: false
