@@ -143,6 +143,13 @@ ingressHost:
 # If left null, a self signed cert will be generated.
 tlsSecretName:
 
+# Session Cookie Samesite management
+# see https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+# Set to true to enable Session Cookie Samesite header
+enableSessionCookieSamesite: false
+# Set to either Strict or Lax
+sessionCookieSamesite: Strict
+
 # Turn on the directory reader module
 enableVacuum: false
 vacuumVolumes:
