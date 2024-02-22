@@ -116,135 +116,6 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: internal-ui
-  labels:
-    app: assemblyline
-    section: core
-    component: internal-ui
-spec:
-  clusterIP: None
-  selector:
-    app: assemblyline
-    section: core
-    component: internal-ui
-  ports:
-  - protocol: TCP
-    port: 5000
-    targetPort: 5000
-  sessionAffinity: ClientIP
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: internal-ui
-  labels:
-    app: assemblyline
-    section: core
-    component: internal-ui
-spec:
-  replicas: {{ .Values.internalAPIInstances }}
-  revisionHistoryLimit: {{ .Values.revisionCount }}
-  selector:
-    matchLabels:
-      app: assemblyline
-      section: core
-      component: internal-ui
-  template:
-    metadata:
-      labels:
-        app: assemblyline
-        section: core
-        component: internal-ui
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
-    spec:
-      priorityClassName: al-core-priority
-      serviceAccountName: {{ .Values.coreServiceAccountName }}
-      affinity:
-        nodeAffinity:
-          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
-      containers:
-        - name: internal-ui
-          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
-          {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
-          {{ end }}
-          env:
-          {{ include "assemblyline.coreEnv" . | indent 12 }}
-            - name: WORKERS
-              value: '2'
-            - name: AL_UNSECURED_UI
-              value: "true"
-            - name: FLASK_SECRET_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: flask-secret
-                  key: password
-          {{ if .Values.enableInternalEncryption }}
-            - name: CERTFILE
-              value: /etc/assemblyline/ssl/ui/tls.crt
-            - name: KEYFILE
-              value: /etc/assemblyline/ssl/ui/tls.key
-          {{ end}}
-          volumeMounts:
-          {{ include "assemblyline.coreMounts" . | indent 12 }}
-          {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
-            - name: ui-tls-cert
-              mountPath: '/mnt/assemblyline/'
-          {{ end }}
-          {{ if .Values.enableInternalEncryption }}
-            - name: ui-cert # Creates the secret from the secret provider
-              mountPath: '/etc/assemblyline/ssl/ui/'
-          {{ end }}
-          ports:
-            - containerPort: 5000
-          resources:
-            limits:
-              cpu: {{.Values.internalUILimCPU}}
-              memory: {{.Values.internalUILimRam}}
-            requests:
-              cpu: {{ .Values.internalUIReqCPU }}
-              memory: {{ .Values.internalUIReqRam }}
-          livenessProbe:
-            httpGet:
-              path: /healthz/live
-              port: 5000
-              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
-            timeoutSeconds: 5
-            periodSeconds: 60
-          startupProbe:
-            httpGet:
-              path: /healthz/ready
-              port: 5000
-              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
-            initialDelaySeconds: 10
-            timeoutSeconds: 5
-            periodSeconds: 60
-          readinessProbe:
-            httpGet:
-              path: /healthz/ready
-              port: 5000
-              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
-            timeoutSeconds: 5
-            periodSeconds: 60
-      volumes:
-      {{ include "assemblyline.coreVolumes" . | indent 8 }}
-      {{ if .Values.enableInternalEncryption }}
-        - name: ui-cert
-          secret:
-            secretName: internal-ui-cert
-      {{ end }}
-      {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
-        - name: ui-tls-cert
-          csi:
-            driver: secrets-store.csi.k8s.io
-            readOnly: true
-            volumeAttributes:
-              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
-      {{ end }}
----
-apiVersion: v1
-kind: Service
-metadata:
   name: socketio
   labels:
     app: assemblyline
@@ -313,6 +184,10 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
+            - name: ui-tls-cert
+              mountPath: '/mnt/assemblyline/'
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: socketio-cert
               mountPath: '/etc/assemblyline/ssl/sio/'
@@ -348,6 +223,14 @@ spec:
             periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
+        - name: ui-tls-cert
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
+      {{ end }}
       {{ if .Values.enableInternalEncryption }}
         - name: socketio-cert
           secret:

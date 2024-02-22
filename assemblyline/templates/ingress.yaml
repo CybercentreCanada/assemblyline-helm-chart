@@ -1,4 +1,3 @@
-# Generate self-signed certificate
 {{- if not .Values.tlsSecretName }}
 {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
 

@@ -323,7 +323,7 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ range $host := list "service-server" "internal-ui" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ range $host := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
 {{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ $host }}-cert" }}
 {{ if $server_sec }}
 apiVersion: v1
@@ -353,32 +353,4 @@ data:
 {{ end }}
 {{ end }}
 
-# Certificate for service updaters
-{{ $updates_sec := lookup "v1" "Secret" $.Release.Namespace "updates-cert"}}
-{{ if $updates_sec }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: updates-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ (get $updates_sec.data "tls.crt") }}
-  tls.key: {{ (get $updates_sec.data "tls.key") }}
----
-{{ else }}
-{{ $server := genSignedCert "updates" nil (list "*-updates") 365 $ca  }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: updates-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ (b64enc $server.Cert) }}
-  tls.key: {{ (b64enc $server.Key) }}
----
-{{ end }}
 {{ end }}

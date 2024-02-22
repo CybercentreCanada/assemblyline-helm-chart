@@ -135,13 +135,6 @@ spec:
           component: ui
     ports:
     - port: http
-  - from:
-    - podSelector:
-        matchLabels:
-          app: assemblyline
-          component: internal-ui
-    ports:
-    - port: http
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -155,29 +148,6 @@ spec:
     matchLabels:
       app: assemblyline
       component: ui
-  policyTypes:
-  - Egress
-  egress:
-  - to:
-    - podSelector:
-        matchLabels:
-          app: assemblyline
-          section: proxy
-    ports:
-    - port: http
----
-apiVersion: networking.k8s.io/v1
-kind: NetworkPolicy
-metadata:
-  name: allow-http-internalui-egress-proxy
-  labels:
-    app: assemblyline
-    section: proxy
-spec:
-  podSelector:
-    matchLabels:
-      app: assemblyline
-      component: internal-ui
   policyTypes:
   - Egress
   egress:
@@ -227,8 +197,10 @@ spec:
   policyTypes:
   - Egress
   egress:
-  - ports:
-    - port: 80
-    - port: 443
+  {{- if .Values.uiPlugins.lookup.egress }}
+    {{- .Values.uiPlugins.lookup.egress | toYaml | nindent 2 }}
+  {{- else -}}
+    {{- list | toYaml | indent 1 }}
+  {{- end }}
 ---
 {{- end }}

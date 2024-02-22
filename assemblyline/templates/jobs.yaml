@@ -87,7 +87,7 @@ spec:
         section: service
         component: alsvc_{{ . }}
     spec:
-      serviceAccountName: {{ $.Values.unprivilegedServiceAccountName }}
+      serviceAccountName: {{ $.Values.privilegedServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" $ | indent 10 }}
@@ -96,8 +96,8 @@ spec:
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}
         imagePullPolicy: Always
         env:
-          - name: SERVICE_API_HOST
-            value: http://service-server:5003
+          - name: PRIVILEGED
+            value: "true"
           - name: REGISTER_ONLY
             value: 'True'
         resources:
@@ -107,6 +107,10 @@ spec:
           limits:
             cpu: {{ $.Values.installJobLimCPU }}
             memory: {{ $.Values.installJobLimRam }}
+        volumeMounts:
+        {{ include "assemblyline.coreMounts" . | indent 10 }}
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300

@@ -38,6 +38,12 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{if .Values.enableInternalEncryption }}
+            - name: root-cert
+              mountPath: "/etc/assemblyline/ssl/al_root-ca.key"
+              subPath: tls.key
+              readOnly: true
+          {{ end }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
@@ -48,8 +54,6 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: UI_SERVER
-              value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://internal-ui:5000
             - name: SERVICE_API_HOST
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
             - name: CONFIGURATION_CONFIGMAP
