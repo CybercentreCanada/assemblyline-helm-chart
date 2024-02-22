@@ -165,7 +165,7 @@ datastore:
 filestore:
   persistence:
     size: 20Gi
-    StorageClass: microk8s-hostpath
+    storageClass: microk8s-hostpath
   resources:
     requests:
       memory: 512Mi
