@@ -8,7 +8,7 @@ assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
-assemblylineServiceVersion: "4.4.stable"
+assemblylineServiceVersion: "4.5.stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
