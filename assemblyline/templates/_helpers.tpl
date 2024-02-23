@@ -315,36 +315,6 @@ spec:
   targetCPUUtilizationPercentage: {{.targetUsage}}
 {{ end }}
 ---
-{{ define "assemblyline.GenCert" }}
-{{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ .host }}-cert" }}
-{{ if $server_sec }}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: {{ .host }}-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ get $server_sec.data "tls.crt" }}
-  tls.key: {{ get $server_sec.data "tls.key" }}
----
-{{ else }}
-{{ $server := genSignedCert .host nil (list .host) 36500 .ca}}
-apiVersion: v1
-kind: Secret
-type: kubernetes.io/tls
-metadata:
-  name: {{ .host }}-cert
-  labels:
-    app: assembyline
-data:
-  tls.crt: {{ (b64enc $server.Cert) }}
-  tls.key: {{ (b64enc $server.Key) }}
----
-{{ end }}
-{{ end }}
----
 {{ define "assemblyline.InternalCertificates" }}
 # Store CA
 {{ $ca := .ca }}
@@ -360,7 +330,12 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ range $host := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ $hosts := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ if .Values.configuration.retrohunt.enabled }}
+  {{ $hosts = append $hosts "hauntedhouse" }}
+  {{ $hosts = append $hosts "hauntedhouse-worker" }}
+{{ end }}
+{{ range $host := $hosts }}
 {{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ $host }}-cert" }}
 {{ if $server_sec }}
 apiVersion: v1
@@ -388,15 +363,5 @@ data:
   tls.key: {{ (b64enc $server.Key) }}
 ---
 {{ end }}
-{{ end }}
-
-{{ if .Values.configuration.retrohunt.enabled }}
-  {{with merge (dict "host" "hauntedhouse") . }}
-    {{template "assemblyline.GenCert" .}}
-  {{end}}
-
-  {{with merge (dict "host" "hauntedhouse-worker") . }}
-    {{template "assemblyline.GenCert" .}}
-  {{end}}
 {{ end }}
 {{ end }}
