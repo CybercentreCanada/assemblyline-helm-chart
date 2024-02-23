@@ -1,4 +1,5 @@
 {{ if .Values.configuration.retrohunt.enabled }}
+{{ $storageClass := .Values.retrohuntStorageClass | default .Values.persistantStorageClass }}
 # server service
 apiVersion: v1
 kind: Service
@@ -151,7 +152,7 @@ spec:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: {{ .Values.persistantStorageClass }}
+      storageClassName: {{ $storageClass }}
       resources:
         requests:
           storage: {{ .Values.retrohuntCacheSize }}
@@ -245,7 +246,7 @@ spec:
             volumeClaimTemplate:
               spec:
                 accessModes: [ "ReadWriteOnce" ]
-                storageClassName: {{ .Values.persistantStorageClass }}
+                storageClassName: {{ $storageClass }}
                 resources:
                   requests:
                     storage: {{ .Values.retrohuntCacheSize }}
@@ -254,7 +255,7 @@ spec:
       name: filter-data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: {{ .Values.persistantStorageClass }}
+      storageClassName: {{ $storageClass }}
       resources:
         requests:
           storage: {{ .Values.retrohuntLocalStorageSize }}
