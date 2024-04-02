@@ -19,7 +19,7 @@ redisImage: redis
 # Storage classes for persistent data.
 redisStorageClass:
 persistantStorageClass:
-# Retrohunt use persistantStorageClass if this is not set, only use this when you need them to be different
+# Retrohunt uses persistantStorageClass if this is not set, only use this when you need them to be different
 retrohuntStorageClass:
 
 # Overwrites storage size for redis persistent volume. (default: 20Gi)
