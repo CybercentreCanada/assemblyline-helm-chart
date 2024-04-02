@@ -79,14 +79,23 @@ separateIngestAPI: false
 # elasticsearch database.
 enableAPM: false
 
-# When true containers are launched to index the bodies of all analyzied 
-# files for yara signature based retrohunting
+# Storage allocated for caching disks for the retrohunt server
 retrohuntCacheSize: 100Gi
+
+# Index storage for retrohunt workers
 retrohuntLocalStorageSize: 1T
+
+# Number of retrohunt worker instances. The capacity for indexed files is this multiplied
+# by the retrohuntLocalStorageSize. Increasing this number is always safe, decreasing
+# it will cause data to be lost
 retrohuntScale: 3
+
+# Resource reservations and limits for the retrohunt broker node
 retrohuntRequestedCPU: 1
 retrohuntRequestedRam: 4Gi
 retrohuntWorkerLimRam: 4Gi
+
+# Resource reservations for the retrohunt workers
 retrohuntWorkerRequestedCPU: 1
 retrohuntWorkerRequestedRam: 4Gi
 
