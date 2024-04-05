@@ -58,7 +58,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: '4'
+              value: '6'
+            - name: WORKER_CONNECTIONS
+              value: '2048'
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -386,7 +388,9 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: '4'
+              value: '6'
+            - name: WORKER_CONNECTIONS
+              value: '2048'
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
