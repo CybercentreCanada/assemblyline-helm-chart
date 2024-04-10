@@ -320,6 +320,7 @@ stringData:
       "files": {
         "URL": {{ .Values.configuration.filestore.storage | toJson }}
       },
+      "data_limit": "{{ .Values.retrohuntLocalStorageSize }}",
       "settings": {
         "ingest_batch_size": 100,
         "data_path": "/data/"
