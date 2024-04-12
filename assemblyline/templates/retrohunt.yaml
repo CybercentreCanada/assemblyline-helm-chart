@@ -314,7 +314,7 @@ stringData:
       "file_cache": {
         "Directory": {
           "path": "/cache/files",
-          "size": "100Gi"
+          "size": "{{ .Values.retrohuntCacheSize }}"
         }
       },
       "files": {
