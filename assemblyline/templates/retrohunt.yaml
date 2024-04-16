@@ -115,8 +115,6 @@ spec:
           {{ include "assemblyline.coreMounts" . | indent 10 }}
         env:
           {{ include "assemblyline.coreEnv" . | indent 10 }}
-          - name: RUST_LOG
-            value: "haunted_house=info"
 {{- if .Values.configuration.datastore.archive.enabled }}
           - name: ARCHIVE_ACTIVE
             value: "true"
@@ -314,12 +312,13 @@ stringData:
       "file_cache": {
         "Directory": {
           "path": "/cache/files",
-          "size": "100Gi"
+          "size": "{{ .Values.retrohuntCacheSize }}"
         }
       },
       "files": {
         "URL": {{ .Values.configuration.filestore.storage | toJson }}
       },
+      "data_limit": "{{ .Values.retrohuntLocalStorageSize }}",
       "settings": {
         "ingest_batch_size": 100,
         "data_path": "/data/"
