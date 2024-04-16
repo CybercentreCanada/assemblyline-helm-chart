@@ -115,8 +115,6 @@ spec:
           {{ include "assemblyline.coreMounts" . | indent 10 }}
         env:
           {{ include "assemblyline.coreEnv" . | indent 10 }}
-          - name: RUST_LOG
-            value: "haunted_house=info"
 {{- if .Values.configuration.datastore.archive.enabled }}
           - name: ARCHIVE_ACTIVE
             value: "true"
