@@ -9,6 +9,8 @@ assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
 assemblylineServiceVersion: "4.5.stable"
+retrohuntImage: cccs/hauntedhouse
+retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
 elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
@@ -17,6 +19,8 @@ redisImage: redis
 # Storage classes for persistent data.
 redisStorageClass:
 persistantStorageClass:
+# Retrohunt uses persistantStorageClass if this is not set, only use this when you need them to be different
+retrohuntStorageClass:
 
 # Overwrites storage size for redis persistent volume. (default: 20Gi)
 redisStorageSize:
@@ -74,6 +78,26 @@ separateIngestAPI: false
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
 enableAPM: false
+
+# Storage allocated for caching disks for the retrohunt server
+retrohuntCacheSize: 100Gi
+
+# Index storage for retrohunt workers
+retrohuntLocalStorageSize: 1T
+
+# Number of retrohunt worker instances. The capacity for indexed files is this multiplied
+# by the retrohuntLocalStorageSize. Increasing this number is always safe, decreasing
+# it will cause data to be lost
+retrohuntScale: 3
+
+# Resource reservations and limits for the retrohunt broker node
+retrohuntRequestedCPU: 1
+retrohuntRequestedRam: 4Gi
+retrohuntWorkerLimRam: 4Gi
+
+# Resource reservations for the retrohunt workers
+retrohuntWorkerRequestedCPU: 1
+retrohuntWorkerRequestedRam: 4Gi
 
 # ILM policy for APM indices (default: Elastic-defined, rollover to warm after 30d)
 apmILM:
@@ -502,6 +526,11 @@ configuration:
     log_to_console: true
     log_to_file: false
     log_to_syslog: false
+  retrohunt:
+    enabled: false
+    url: https://hauntedhouse:4443
+    api_key: "${RETROHUNT_API_KEY}"
+    tls_verify: "${ENABLE_INTERNAL_ENCRYPTION}"
   services:
     cpu_reservation: 0.60
   ui:
