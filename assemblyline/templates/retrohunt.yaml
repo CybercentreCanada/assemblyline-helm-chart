@@ -166,6 +166,7 @@ spec:
       section: core
       component: hauntedhouse-worker
   serviceName: hauntedhouse-worker
+  podManagementPolicy: Parallel
   replicas: {{ .Values.retrohuntScale }}
   template:
     metadata:
