@@ -321,7 +321,7 @@ stringData:
       },
       "data_limit": "{{ .Values.retrohuntLocalStorageSize }}",
       "settings": {
-        "ingest_batch_size": 100,
+        "ingest_batch_size": 20,
         "data_path": "/data/"
       },
       "classification_path": "/etc/assemblyline/classification.yml",
