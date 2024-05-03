@@ -320,10 +320,8 @@ stringData:
         "URL": {{ .Values.configuration.filestore.storage | toJson }}
       },
       "data_limit": "{{ .Values.retrohuntLocalStorageSize }}",
-      "settings": {
-        "ingest_batch_size": 20,
-        "data_path": "/data/"
-      },
+      "ingest_batch_size": 20,
+      "data_path": "/data/",
       "classification_path": "/etc/assemblyline/classification.yml",
       "require_classification": false,
       "bind_address": "0.0.0.0:4443",
