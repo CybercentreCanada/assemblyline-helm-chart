@@ -12,7 +12,7 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 ---
-{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU "limitCPU" .Values.expiryLimCPU "limitRam" .Values.expiryLimRam) . }}
+{{with merge (dict "component" "expiry" "command" "assemblyline_core.expiry.run_expiry" "requestedCPU" .Values.expiryReqCPU "limitCPU" .Values.expiryLimCPU "requestedRam" .Values.expiryReqRam "limitRam" .Values.expiryLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{ if .Values.enableMetrics }}

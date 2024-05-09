@@ -64,6 +64,13 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: datastore-password
+- name: RETROHUNT_API_KEY
+  valueFrom:
+    secretKeyRef:
+      name: retrohunt-secret
+      key: password
+- name: ENABLE_INTERNAL_ENCRYPTION
+  value: {{ if .Values.enableInternalEncryption }}"true"{{else}}"false"{{end}}
 - name: DISPATCHER_RESULT_THREADS
   value: "{{ .Values.dispatcherResultThreads }}"
 - name: DISPATCHER_FINALIZE_THREADS
@@ -323,7 +330,12 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ range $host := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ $hosts := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ if .Values.configuration.retrohunt.enabled }}
+  {{ $hosts = append $hosts "hauntedhouse" }}
+  {{ $hosts = append $hosts "hauntedhouse-worker" }}
+{{ end }}
+{{ range $host := $hosts }}
 {{ $server_sec := lookup "v1" "Secret" $.Release.Namespace "{{ $host }}-cert" }}
 {{ if $server_sec }}
 apiVersion: v1
@@ -352,5 +364,4 @@ data:
 ---
 {{ end }}
 {{ end }}
-
 {{ end }}
