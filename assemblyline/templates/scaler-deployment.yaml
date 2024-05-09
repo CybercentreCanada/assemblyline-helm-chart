@@ -20,7 +20,7 @@ spec:
         app: assemblyline
         section: core
         component: scaler
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       priorityClassName: al-core-priority

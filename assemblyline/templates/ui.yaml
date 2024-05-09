@@ -64,6 +64,14 @@ spec:
                 secretKeyRef:
                   name: flask-secret
                   key: password
+          {{ if .Values.enableHSTSHeader }}
+            - name: AL_HSTS_MAX_AGE
+              value: "{{ .Values.HSTSMaxAge }}"
+          {{ end }}
+          {{ if .Values.enableSessionCookieSamesite }}
+            - name: AL_SESSION_COOKIE_SAMESITE
+              value: {{ .Values.sessionCookieSamesite }}
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: CERTFILE
               value: /etc/assemblyline/ssl/ui/tls.crt
@@ -305,12 +313,23 @@ spec:
             - name: frontend-cert
               mountPath: '/etc/certs/'
           {{ end }}
+          {{ if .Values.enableHSTSHeader }}
+            - name: config-map
+              mountPath: '/usr/src/app/serve.json'
+              subPath: serve.json
+          {{ end }}
       volumes:
       {{ if .Values.enableInternalEncryption }}
         - name: frontend-cert
           secret:
             secretName: frontend-cert
       {{ end }}
+      {{ if .Values.enableHSTSHeader }}
+        - name: config-map
+          configMap:
+            name: frontend-config
+      {{ end }}
+ 
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1

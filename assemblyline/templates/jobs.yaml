@@ -12,7 +12,7 @@ spec:
         app: assemblyline
         section: core
         component: bootstrap
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
@@ -108,9 +108,9 @@ spec:
             cpu: {{ $.Values.installJobLimCPU }}
             memory: {{ $.Values.installJobLimRam }}
         volumeMounts:
-        {{ include "assemblyline.coreMounts" . | indent 10 }}
+        {{ include "assemblyline.coreMounts" $ | indent 10 }}
       volumes:
-      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ include "assemblyline.coreVolumes" $ | indent 8 }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300
@@ -118,8 +118,8 @@ spec:
 {{- end }}
 {{ end }}
 {{ if .Values.internalELKStack }}
-{{ $kibana_token := (lookup "v1" "Secret" .Release.Namespace "kibana-service-token").data.token }}
-{{ if eq $kibana_token "" }}
+{{ $kibana_token_data := (lookup "v1" "Secret" .Release.Namespace "kibana-service-token").data }}
+{{ if and $kibana_token_data (eq $kibana_token_data.token "") }}
  # If we're deploying Kibana and the service account token hasn't been initialized, then start job
 apiVersion: batch/v1
 kind: Job
@@ -134,7 +134,7 @@ spec:
         app: assemblyline
         section: core
         component: kibana-bootstrap
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       serviceAccountName: {{ .Release.Name }}-scaling-manager
       affinity:
@@ -148,10 +148,10 @@ spec:
             - name: NAMESPACE
               value: {{ .Release.Namespace }}
             - name: LOGGING_BASEURL
-              value: {{ .Values.kibana.elasticsearchHosts }}          
+              value: {{ .Values.kibana.elasticsearchHosts }}
           {{ include "assemblyline.coreEnv" . | indent 12 }}
           volumeMounts:
-            - name: init-script  
+            - name: init-script
               mountPath: "/mount"
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           resources:
@@ -162,7 +162,7 @@ spec:
               cpu: {{ .Values.installJobLimCPU }}
               memory: {{ .Values.installJobLimRam }}
       volumes:
-        - name: init-script      
+        - name: init-script
           configMap:
             name: init-kibana-token
             items:

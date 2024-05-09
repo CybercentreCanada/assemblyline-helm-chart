@@ -1,5 +1,5 @@
 {{- if not .Values.tlsSecretName }}
-{{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
+  {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
 
 apiVersion: v1
 kind: Secret
