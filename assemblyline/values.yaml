@@ -168,20 +168,6 @@ ingressHost:
 tlsSecretName:
 useSharedTLSCert:
 
-# HSTS management
-# see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security
-# Set to true to enable HSTS
-enableHSTSHeader: false
-# Max Age value to send in HSTS header when enabled
-HSTSMaxAge: "31536000"
-
-# Session Cookie Samesite management
-# see https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
-# Set to true to enable Session Cookie Samesite header
-enableSessionCookieSamesite: false
-# Set to either Strict or Lax
-sessionCookieSamesite: Strict
-
 # SecretProvider definition that will be specifically for TLS
 # This requires installation of Secrets Store CSI Driver:
 # https://secrets-store-csi-driver.sigs.k8s.io/getting-started/installation
