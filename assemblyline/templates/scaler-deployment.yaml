@@ -27,6 +27,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: scaler
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

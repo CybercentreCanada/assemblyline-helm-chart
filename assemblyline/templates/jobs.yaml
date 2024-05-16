@@ -18,6 +18,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
       - name: pi
         image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
@@ -140,6 +142,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: pi
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

@@ -40,13 +40,15 @@ spec:
         app: assemblyline
         section: core
         component: ui
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
@@ -164,13 +166,15 @@ spec:
         app: assemblyline
         section: core
         component: socketio
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.release }}
@@ -276,13 +280,15 @@ spec:
         app: assemblyline
         section: core
         component: frontend
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: frontend
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
@@ -319,7 +325,7 @@ spec:
           configMap:
             name: frontend-config
       {{ end }}
- 
+
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1
@@ -364,13 +370,15 @@ spec:
         app: assemblyline
         section: core
         component: ui-ingest
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}

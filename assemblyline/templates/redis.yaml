@@ -21,13 +21,15 @@ spec:
         app: assemblyline
         section: core
         component: redis-volatile
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-infra
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: redis
           image: {{ .Values.redisImage }}
@@ -119,13 +121,15 @@ spec:
         app: assemblyline
         section: core
         component: redis-persistent
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       terminationGracePeriodSeconds: 10
       priorityClassName: al-infra
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
       - name: redis
         image: {{ .Values.redisImage }}
