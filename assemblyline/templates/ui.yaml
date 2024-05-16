@@ -58,9 +58,11 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: '6'
-            - name: WORKER_CONNECTIONS
-              value: '2048'
+              value: '2'
+            - name: GRACEFUL_TIMEOUT
+              value: '180'
+            - name: TIMEOUT
+              value: '180'
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -400,9 +402,7 @@ spec:
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: WORKERS
-              value: '6'
-            - name: WORKER_CONNECTIONS
-              value: '2048'
+              value: '2'
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:

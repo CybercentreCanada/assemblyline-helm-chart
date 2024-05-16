@@ -26,11 +26,12 @@ metadata:
     {{- end }}
     appgw.ingress.kubernetes.io/backend-hostname: "frontend"
 spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
-      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
   rules:
-    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn | quote }} {{end}}
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
       http:
         paths:
           - path: /
@@ -54,11 +55,12 @@ metadata:
     {{- end }}
     appgw.ingress.kubernetes.io/backend-hostname: "socketio"
 spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
-      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
   rules:
-    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn | quote }} {{end}}
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
       http:
         paths:
           - path: /socket.io/
@@ -82,11 +84,12 @@ metadata:
     {{- end }}
     appgw.ingress.kubernetes.io/backend-hostname: "ui"
 spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
-      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
   rules:
-    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn | quote }} {{end}}
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
       http:
         paths:
           - path: /api/
@@ -111,11 +114,12 @@ metadata:
     {{- end }}
     appgw.ingress.kubernetes.io/backend-hostname: "ui"
 spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
-      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
   rules:
-    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn | quote }} {{end}}
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
       http:
         paths:
           - path: /api/v4/ingest/
@@ -125,12 +129,12 @@ spec:
                 name: ui-ingest
                 port:
                   number: 5000
-{{end}}
+{{ end }}
 
 ---
 
 # KIBANA INGRESS (Internal)
-{{ if .Values.internalELKStack}}
+{{ if .Values.internalELKStack }}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -141,11 +145,12 @@ metadata:
     {{- end }}
     appgw.ingress.kubernetes.io/backend-hostname: "kibana"
 spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
   tls:
     - hosts: [{{ .Values.configuration.ui.fqdn }}]
-      secretName: {{ if .Values.tlsSecretName }} {{.Values.tlsSecretName }} {{else}} {{ .Release.Name }}-generated-cert {{end}}
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
   rules:
-    - host: {{ if .Values.ingressHost }} {{.Values.ingressHost }} {{else}} {{ .Values.configuration.ui.fqdn | quote }} {{end}}
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
       http:
         paths:
           - path: /kibana/
@@ -155,9 +160,10 @@ spec:
                 name: kibana
                 port:
                   number: 5601
-{{end}}
+{{ end }}
 
 ---
+
 {{ if .Values.ingressPaths }}
 {{ .Values.ingressPaths | toYaml | indent 10 }}
 {{ end }}
