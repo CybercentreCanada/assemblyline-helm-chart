@@ -165,6 +165,16 @@
 {{ end}}
 {{end}}
 ---
+# If the release version indicates an alias being used, then we'll always pull the latest tag
+# Otherwise, it's not necessary if it's a versioned tag of the image
+{{ define "assemblyline.coreImagePullPolicy" }}
+{{ if or (hasSuffix "latest" .Values.release) (hasSuffix "stable" .Values.release)}}
+"Always"
+{{ else }}
+"IfNotPresent"
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreService" }}
 apiVersion: apps/v1
 kind: Deployment
@@ -201,7 +211,7 @@ spec:
       containers:
         - name: {{ .component }}
           image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ include "assemblyline.coreImagePullPolicy" . | trim }}
           securityContext:
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
@@ -282,7 +292,7 @@ spec:
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ include "assemblyline.coreImagePullPolicy" . | trim }}
           securityContext:
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000

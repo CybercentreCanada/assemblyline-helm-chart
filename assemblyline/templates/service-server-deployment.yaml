@@ -32,7 +32,7 @@ spec:
       containers:
         - name: service-server
           image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ include "assemblyline.coreImagePullPolicy" . | trim }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_service_server.app"]
           {{ end }}

@@ -32,7 +32,7 @@ spec:
       containers:
         - name: scaler
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ include "assemblyline.coreImagePullPolicy" . | trim }}
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.scaler.run_scaler']
           {{ else }}
