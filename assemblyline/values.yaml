@@ -16,6 +16,9 @@ elasticLogstashImage: docker.elastic.co/logstash/logstash
 elasticLogstashTag: "8.10.2"
 redisImage: redis
 
+# Image Pull Policy, one of: "Always" or "IfNotPresent"
+imagePullPolicy: IfNotPresent
+
 # Storage classes for persistent data.
 redisStorageClass:
 persistantStorageClass:

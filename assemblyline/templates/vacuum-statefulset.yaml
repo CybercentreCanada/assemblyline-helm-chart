@@ -33,6 +33,7 @@ spec:
       containers:
         - name: vacuum
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ['python', '-m', 'assemblyline_core.vacuum.crawler']
           securityContext:
             runAsUser: {{ .Values.vacuumUser | default 1000}}

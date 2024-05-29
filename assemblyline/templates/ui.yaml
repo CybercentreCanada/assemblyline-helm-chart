@@ -52,6 +52,7 @@ spec:
       containers:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
@@ -178,6 +179,7 @@ spec:
       containers:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
@@ -292,6 +294,7 @@ spec:
       containers:
         - name: frontend
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableInternalEncryption }}
           command: ["serve", "-s",  "-l", "3000", '--ssl-key', '/etc/certs/tls.key', '--ssl-cert', '/etc/certs/tls.crt']
           {{ end }}
@@ -382,6 +385,7 @@ spec:
       containers:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
