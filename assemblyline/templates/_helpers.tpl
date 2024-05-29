@@ -106,6 +106,12 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.tolerations" }}
+{{ if .Values.tolerations }}
+{{- .Values.tolerations | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreLabels" }}
 {{ if .Values.coreLabels }}
 {{- .Values.coreLabels | toYaml -}}
@@ -178,6 +184,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -190,10 +198,12 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: {{ .component }}
           image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
@@ -257,6 +267,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -269,10 +281,12 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000

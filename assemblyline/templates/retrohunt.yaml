@@ -95,6 +95,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -102,7 +104,7 @@ spec:
       containers:
       - name: hauntedhouse-server
         image: {{ .Values.retrohuntImage }}:{{ .Values.retrohuntRelease }}
-        imagePullPolicy: Always
+        imagePullPolicy: {{ .Values.imagePullPolicy }}
         command: ['haunted-house']
         args: ['server', '--config', '/config/core.json']
         ports:
@@ -193,6 +195,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
@@ -200,7 +204,7 @@ spec:
       containers:
         - name: hauntedhouse-worker
           image: {{ .Values.retrohuntImage }}:{{ .Values.retrohuntRelease }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ['haunted-house']
           args: ['worker', '--config', '/config/worker.json']
           ports:
@@ -281,7 +285,7 @@ stringData:
         {{- $retrohuntScale := $.Values.retrohuntScale }}
         {{- range $i, $e := until (int $retrohuntScale) }}
         "{{$e}}": "hauntedhouse-worker-{{$e}}.hauntedhouse-worker.{{ $.Release.Namespace }}.svc.cluster.local:4443"{{ if (ne (int $e) (int (sub $retrohuntScale 1))) }},{{ end }}
-        {{- end }}        
+        {{- end }}
       },
       "datastore": {
         "url": {{ .Values.configuration.datastore.hosts | toJson }},
@@ -300,7 +304,7 @@ stringData:
       "bind_address": "0.0.0.0:4443",
       {{ if .Values.enableInternalEncryption -}}
       "tls": {
-        "key_pem": "${TLS_KEY}", 
+        "key_pem": "${TLS_KEY}",
         "certificate_pem": "${TLS_CERT}"
       }
       {{- else }}

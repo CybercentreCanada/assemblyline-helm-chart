@@ -21,13 +21,15 @@ spec:
         app: assemblyline-apm
         section: core
         component: apm
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: apm
           image: {{ .Values.elasticAPMImage }}:7.17.3
