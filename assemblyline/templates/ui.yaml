@@ -36,6 +36,8 @@ spec:
       component: ui
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -163,6 +165,8 @@ spec:
       component: socketio
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -369,6 +373,8 @@ spec:
       component: ui-ingest
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core

@@ -184,6 +184,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -265,6 +267,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core

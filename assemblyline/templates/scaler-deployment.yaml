@@ -16,6 +16,8 @@ spec:
       component: scaler
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
