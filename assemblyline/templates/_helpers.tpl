@@ -118,6 +118,12 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.coreSecurityContext" }}
+{{ if .Values.coreSecurityContext }}
+{{- .Values.coreSecurityContext | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreMounts" }}
 - name: al-config
   mountPath: /etc/assemblyline/config.yml
@@ -205,6 +211,7 @@ spec:
           image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
@@ -288,6 +295,7 @@ spec:
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
           command: ['python', '-m', '{{ .command }}']

@@ -110,6 +110,7 @@ spec:
 
 {{ if  .Values.logstashMounts  }}{{ .Values.logstashMounts | toYaml | indent 8 }}{{ end }}
       securityContext:
+        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
         fsGroup: 1000
         runAsUser: 1000
       terminationGracePeriodSeconds: 120

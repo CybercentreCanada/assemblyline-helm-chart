@@ -36,6 +36,7 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ['python', '-m', 'assemblyline_core.vacuum.crawler']
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
             runAsUser: {{ .Values.vacuumUser | default 1000}}
             runAsGroup: 1000
           resources:

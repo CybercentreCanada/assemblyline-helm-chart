@@ -23,6 +23,7 @@ spec:
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       priorityClassName: al-infra
       securityContext:
+        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000

@@ -98,6 +98,7 @@ spec:
       tolerations:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
+        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
@@ -198,6 +199,7 @@ spec:
       tolerations:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
+        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000
