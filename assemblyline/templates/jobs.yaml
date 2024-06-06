@@ -102,7 +102,7 @@ spec:
             value: "true"
           - name: REGISTER_ONLY
             value: 'True'
-        {{ include "assemblyline.coreEnv" . | indent 10 }}
+        {{ include "assemblyline.coreEnv" $ | indent 10 }}
         resources:
           requests:
             cpu: {{ $.Values.installJobReqCPU }}
