@@ -649,7 +649,7 @@ datastore:
             name: elastic-helper-secret
             key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
-      command: ['bash', '-c', 'cd /data/ && curl --retry 30 --retry-connrefused --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12 && curl --retry 30 --retry-connrefused --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12 && ls -la']
+      command: ['bash', '-c', 'cd /data/ && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12 && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12 && ls -la']
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
@@ -1173,7 +1173,7 @@ log-storage:
             name: elastic-helper-secret
             key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
-      command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -v -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
+      command: ['bash', '-c', 'cd /data/; curl --retry 30 --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12; curl --retry 30 --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12; ls -la']
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
