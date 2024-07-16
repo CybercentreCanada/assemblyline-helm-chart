@@ -7,7 +7,7 @@ type: kubernetes.io/tls
 metadata:
   name: {{ .Release.Name }}-generated-cert
   labels:
-    app: assembyline
+    app: assemblyline
 data:
   tls.crt: {{ b64enc $server.Cert }}
   tls.key: {{ b64enc $server.Key }}
