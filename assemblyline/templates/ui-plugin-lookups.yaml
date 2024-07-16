@@ -61,11 +61,11 @@ spec:
         component: ui-plugin-lookup-{{ $lookupName | lower }}
     spec:
       priorityClassName: al-infra
-      {{- if $.Values.nodeAffinity }}
       affinity:
         nodeAffinity:
-{{ $.Values.nodeAffinity | toYaml | indent 10 }}
-      {{- end }}
+          {{ $.Values.nodeAffinity | toYaml | indent 10 }}
+      tolerations:
+        {{ $.Values.tolerations | toYaml | indent 8 }}
       {{- if $lookupConfig.securityContext }}
       securityContext:
         runAsUser: {{ $lookupConfig.securityContext.user }}

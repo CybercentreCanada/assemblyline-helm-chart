@@ -36,20 +36,25 @@ spec:
       component: ui
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
         component: ui
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: ui
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}
@@ -164,20 +169,25 @@ spec:
       component: socketio
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
         component: socketio
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: socketio
           image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
           {{ end }}
@@ -292,16 +302,19 @@ spec:
         app: assemblyline
         section: core
         component: frontend
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: frontend
           image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableInternalEncryption }}
           command: ["serve", "-s",  "-l", "3000", '--ssl-key', '/etc/certs/tls.key', '--ssl-cert', '/etc/certs/tls.crt']
           {{ end }}
@@ -335,7 +348,7 @@ spec:
           configMap:
             name: frontend-config
       {{ end }}
- 
+
 {{ if .Values.separateIngestAPI }}
 ---
 apiVersion: v1
@@ -376,20 +389,25 @@ spec:
       component: ui-ingest
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
         component: ui-ingest
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: ui-ingest
           image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
           {{ end }}

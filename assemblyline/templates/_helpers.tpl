@@ -106,9 +106,21 @@
 {{ end }}
 {{ end }}
 ---
+{{ define "assemblyline.tolerations" }}
+{{ if .Values.tolerations }}
+{{- .Values.tolerations | toYaml -}}
+{{ end }}
+{{ end }}
+---
 {{ define "assemblyline.coreLabels" }}
 {{ if .Values.coreLabels }}
 {{- .Values.coreLabels | toYaml -}}
+{{ end }}
+{{ end }}
+---
+{{ define "assemblyline.coreSecurityContext" }}
+{{ if .Values.coreSecurityContext }}
+{{- .Values.coreSecurityContext | toYaml -}}
 {{ end }}
 {{ end }}
 ---
@@ -178,6 +190,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -190,11 +204,14 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: {{ .component }}
           image: {{ .image | default .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
@@ -257,6 +274,8 @@ spec:
       component: {{ .component }}
   template:
     metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
       labels:
         app: assemblyline
         section: core
@@ -269,11 +288,14 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: {{ .component }}
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
-          imagePullPolicy: Always
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
             runAsUser: {{ .runAsUser | default 1000}}
             runAsGroup: 1000
           command: ['python', '-m', '{{ .command }}']

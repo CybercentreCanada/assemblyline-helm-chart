@@ -18,7 +18,7 @@ spec:
       labels:
         component: logstash
         section: core
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
       name: logstash
     spec:
       serviceAccountName: {{ .Values.coreServiceAccountName }}
@@ -32,6 +32,8 @@ spec:
                 component: logstash
                 section: core
             topologyKey: kubernetes.io/hostname
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
       - image: {{ .Values.elasticLogstashImage }}:{{ .Values.elasticLogstashTag }}
         {{ if .Values.enableInternalEncryption }}
@@ -108,6 +110,7 @@ spec:
 
 {{ if  .Values.logstashMounts  }}{{ .Values.logstashMounts | toYaml | indent 8 }}{{ end }}
       securityContext:
+        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
         fsGroup: 1000
         runAsUser: 1000
       terminationGracePeriodSeconds: 120

@@ -18,6 +18,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
       - name: pi
         image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
@@ -91,6 +93,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" $ | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" $ | indent 8 }}
       containers:
       - name: install-alsvc-{{- . }}
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}
@@ -100,6 +104,7 @@ spec:
             value: "true"
           - name: REGISTER_ONLY
             value: 'True'
+        {{ include "assemblyline.coreEnv" $ | indent 10 }}
         resources:
           requests:
             cpu: {{ $.Values.installJobReqCPU }}
@@ -140,6 +145,8 @@ spec:
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: pi
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}

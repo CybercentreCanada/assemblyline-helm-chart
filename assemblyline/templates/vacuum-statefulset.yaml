@@ -21,18 +21,22 @@ spec:
         app: assemblyline
         section: core
         component: vacuum
-        {{ include "assemblyline.coreLabels" . | indent 8 }}        
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
       priorityClassName: al-infra
       serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: vacuum
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ['python', '-m', 'assemblyline_core.vacuum.crawler']
           securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
             runAsUser: {{ .Values.vacuumUser | default 1000}}
             runAsGroup: 1000
           resources:
