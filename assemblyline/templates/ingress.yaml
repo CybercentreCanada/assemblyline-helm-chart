@@ -1,3 +1,467 @@
+{{- if not .Values.useMultipleIngress - }}
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  labels:
+    app: assemblyline
+    section: core
+    component: ui
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: ui
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  sessionAffinity: ClientIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  labels:
+    app: assemblyline
+    section: core
+    component: ui
+spec:
+  replicas: {{ .Values.APIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: ui
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
+      labels:
+        app: assemblyline
+        section: core
+        component: ui
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: ui
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
+          {{ end }}
+          ports:
+            - containerPort: 5000
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: '6'
+            - name: WORKER_CONNECTIONS
+              value: '2048'
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
+          {{ if .Values.enableHSTSHeader }}
+            - name: AL_HSTS_MAX_AGE
+              value: "{{ .Values.HSTSMaxAge }}"
+          {{ end }}
+          {{ if .Values.enableSessionCookieSamesite }}
+            - name: AL_SESSION_COOKIE_SAMESITE
+              value: {{ .Values.sessionCookieSamesite }}
+          {{ end }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/ui/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/ui/tls.key
+          {{ end}}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: ui-cert
+              mountPath: '/etc/assemblyline/ssl/ui/'
+          {{ end }}
+          resources:
+            limits:
+              cpu: {{.Values.uiLimCPU}}
+              memory: {{.Values.uiLimRam}}
+            requests:
+              cpu: {{ .Values.uiReqCPU }}
+              memory: {{ .Values.uiReqRam }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: ui-cert
+          secret:
+            secretName: ui-cert
+      {{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: socketio
+  labels:
+    app: assemblyline
+    section: core
+    component: socketio
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: socketio
+  ports:
+  - protocol: TCP
+    port: 5002
+    targetPort: 5002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socketio
+  labels:
+    app: assemblyline
+    section: core
+    component: socketio
+spec:
+  replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: socketio
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
+      labels:
+        app: assemblyline
+        section: core
+        component: socketio
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: socketio
+          image: {{ .Values.assemblylineSocketIOImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.socketsrv"]
+          {{ end }}
+          ports:
+            - containerPort: 5002
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/sio/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/sio/tls.key
+          {{ end}}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: socketio-cert
+              mountPath: '/etc/assemblyline/ssl/sio/'
+          {{ end }}
+          resources:
+            limits:
+              cpu: {{.Values.socketIOLimCPU}}
+              memory: {{.Values.socketIOLimRam}}
+            requests:
+              cpu: {{ .Values.socketIOReqCPU }}
+              memory: {{ .Values.socketIOReqRam }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5002
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: socketio-cert
+          secret:
+            secretName: socketio-cert
+      {{ end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    app: assemblyline
+    section: core
+    component: frontend
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: frontend
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    app: assemblyline
+    section: core
+    component: frontend
+spec:
+  replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: frontend
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: frontend
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: frontend
+          image: {{ .Values.assemblylineFrontendImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          {{ if .Values.enableInternalEncryption }}
+          command: ["serve", "-s",  "-l", "3000", '--ssl-key', '/etc/certs/tls.key', '--ssl-cert', '/etc/certs/tls.crt']
+          {{ end }}
+          ports:
+            - containerPort: 3000
+          resources:
+            requests:
+              cpu: {{ .Values.frontendReqCPU }}
+              memory: {{ .Values.frontendReqRam }}
+            limits:
+              cpu: 1
+              memory:  {{ .Values.frontendLimRam}}
+          volumeMounts:
+          {{ if .Values.enableInternalEncryption }}
+            - name: frontend-cert
+              mountPath: '/etc/certs/'
+          {{ end }}
+          {{ if .Values.enableHSTSHeader }}
+            - name: config-map
+              mountPath: '/usr/src/app/serve.json'
+              subPath: serve.json
+          {{ end }}
+      volumes:
+      {{ if .Values.enableInternalEncryption }}
+        - name: frontend-cert
+          secret:
+            secretName: frontend-cert
+      {{ end }}
+      {{ if .Values.enableHSTSHeader }}
+        - name: config-map
+          configMap:
+            name: frontend-config
+      {{ end }}
+
+{{ if .Values.separateIngestAPI }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui-ingest
+  labels:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+  sessionAffinity: ClientIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui-ingest
+  labels:
+    app: assemblyline
+    section: core
+    component: ui-ingest
+spec:
+  replicas: {{ .Values.ingestAPIInstances }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: ui-ingest
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
+      labels:
+        app: assemblyline
+        section: core
+        component: ui-ingest
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: ui-ingest
+          image: {{ .Values.assemblylineUIImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          {{ if .Values.enableCoreDebugging}}
+          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_ui.app"]
+          {{ end }}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: ui-cert
+              mountPath: '/etc/assemblyline/ssl/ui/'
+          {{ end }}
+          ports:
+            - containerPort: 5000
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: WORKERS
+              value: '6'
+            - name: WORKER_CONNECTIONS
+              value: '2048'
+            - name: FLASK_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: flask-secret
+                  key: password
+          {{ if .Values.enableInternalEncryption }}
+            - name: CERTFILE
+              value: /etc/assemblyline/ssl/ui/tls.crt
+            - name: KEYFILE
+              value: /etc/assemblyline/ssl/ui/tls.key
+          {{ end}}
+          resources:
+            limits:
+              cpu: {{.Values.ingestUILimCPU}}
+              memory: {{.Values.ingestUILimRam}}
+            requests:
+              cpu: {{ .Values.ingestUIReqCPU }}
+              memory: {{ .Values.ingestUIReqRam }}
+          livenessProbe:
+            httpGet:
+              path: /healthz/live
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /healthz/ready
+              port: 5000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: ui-cert
+          secret:
+            secretName: ui-cert
+      {{ end }}
+{{end}}
+  
+{{- else -}}
+  
 {{- if not .Values.tlsSecretName }}
   {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
 
@@ -166,4 +630,6 @@ spec:
 
 {{ if .Values.ingressPaths }}
 {{ .Values.ingressPaths | toYaml | indent 10 }}
+{{ end }}
+
 {{ end }}
