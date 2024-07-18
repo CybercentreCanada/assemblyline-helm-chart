@@ -66,6 +66,10 @@ spec:
               value: '6'
             - name: WORKER_CONNECTIONS
               value: '2048'
+            - name: GRACEFUL_TIMEOUT
+              value: '180'
+            - name: TIMEOUT
+              value: '180'
             - name: FLASK_SECRET_KEY
               valueFrom:
                 secretKeyRef:
@@ -204,6 +208,10 @@ spec:
           {{ end}}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
+            - name: ui-tls-cert
+              mountPath: '/mnt/assemblyline/'
+          {{ end }}
           {{ if .Values.enableInternalEncryption }}
             - name: socketio-cert
               mountPath: '/etc/assemblyline/ssl/sio/'
@@ -239,6 +247,14 @@ spec:
             periodSeconds: 60
       volumes:
       {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
+        - name: ui-tls-cert
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: {{ .Values.tlsSecretProvider.className }}
+      {{ end }}
       {{ if .Values.enableInternalEncryption }}
         - name: socketio-cert
           secret:

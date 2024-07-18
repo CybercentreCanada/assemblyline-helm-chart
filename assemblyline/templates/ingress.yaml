@@ -1,6 +1,4 @@
 {{- if not .Values.tlsSecretName }}
-#  {{ $ca := genCA "svc-cat-ca" 3650 }}
-#  {{ $cn := .Values.domain }}
   {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
 
 apiVersion: v1
@@ -9,12 +7,13 @@ type: kubernetes.io/tls
 metadata:
   name: {{ .Release.Name }}-generated-cert
   labels:
-    app: assembyline
+    app: assemblyline
 data:
   tls.crt: {{ b64enc $server.Cert }}
   tls.key: {{ b64enc $server.Key }}
 {{ end }}
 ---
+{{- if not .Values.useMultipleIngress -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -76,3 +75,155 @@ spec:
 {{ if .Values.ingressPaths }}
 {{ .Values.ingressPaths | toYaml | indent 10 }}
 {{ end }}
+
+{{- else -}}
+
+# FRONTEND INGRESS (External)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-frontend-ingress
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "frontend"
+spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
+  rules:
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 3000
+
+---
+
+# SOCKETIO INGRESS (Internal)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-socketio-ingress
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "socketio"
+spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
+  rules:
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
+      http:
+        paths:
+          - path: /socket.io/
+            pathType: Prefix
+            backend:
+              service:
+                name: socketio
+                port:
+                  number: 5002
+
+---
+
+# UI INGRESS (Internal)
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ui-ingress
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "ui"
+spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
+  rules:
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
+      http:
+        paths:
+          - path: /api/
+            pathType: Prefix
+            backend:
+              service:
+                name: ui
+                port:
+                  number: 5000
+
+---
+
+# UI-INGEST INGRESS (Internal)
+{{ if .Values.separateIngestAPI }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-ui-ingest-ingress
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "ui"
+spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
+  rules:
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
+      http:
+        paths:
+          - path: /api/v4/ingest/
+            pathType: Prefix
+            backend:
+              service:
+                name: ui-ingest
+                port:
+                  number: 5000
+{{ end }}
+
+---
+
+# KIBANA INGRESS (Internal)
+{{ if .Values.internalELKStack }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Release.Name }}-kibana
+  annotations:
+    {{- range $key, $value := .Values.ingressAnnotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    appgw.ingress.kubernetes.io/backend-hostname: "kibana"
+spec:
+  ingressClassName: {{ .Values.ingressClassName | quote }}
+  tls:
+    - hosts: [{{ .Values.configuration.ui.fqdn }}]
+      secretName: {{ if .Values.tlsSecretName }} {{ .Values.tlsSecretName }} {{ else }} {{ .Release.Name }}-generated-cert {{ end }}
+  rules:
+    - host: {{ if .Values.ingressHost }} {{ .Values.ingressHost }} {{ else }} {{ .Values.configuration.ui.fqdn | quote }} {{ end }}
+      http:
+        paths:
+          - path: /kibana/
+            pathType: Prefix
+            backend:
+              service:
+                name: kibana
+                port:
+                  number: 5601
+{{ end }}
+---
+
+{{- end -}}
