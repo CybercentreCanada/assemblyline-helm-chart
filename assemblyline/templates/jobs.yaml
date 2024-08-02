@@ -87,6 +87,7 @@ spec:
       labels:
         app: assemblyline-{{ $.Release.Name }}
         section: service
+        privilege: core
         component: alsvc_{{ . }}
     spec:
       serviceAccountName: {{ $.Values.privilegedServiceAccountName }}
