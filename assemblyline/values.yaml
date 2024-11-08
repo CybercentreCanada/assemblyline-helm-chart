@@ -1228,6 +1228,7 @@ uiPlugins:
           API_URL: "https://mb-api.abuse.ch/api/v1"
           FRONTEND_URL: "https://bazaar.abuse.ch/browse.php"
           CLASSIFICATION: ""
+        serviceAccountName: default
         securityContext:
           user: 1000
           group: 1000
@@ -1258,6 +1259,7 @@ uiPlugins:
         #   secretName: ui-plugin-lookup-virustotal-apikey
         #   secretKey: API_KEY
         secretKeys: []
+        serviceAccountName: default
         securityContext:
           user: 1000
           group: 1000

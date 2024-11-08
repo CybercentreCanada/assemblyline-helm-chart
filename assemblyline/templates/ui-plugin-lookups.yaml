@@ -60,6 +60,7 @@ spec:
         section: proxy
         component: ui-plugin-lookup-{{ $lookupName | lower }}
     spec:
+      serviceAccountName: {{ $lookupConfig.serviceAccountName }}
       priorityClassName: al-infra
       affinity:
         nodeAffinity:
