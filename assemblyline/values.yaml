@@ -232,6 +232,7 @@ autoInstallServices:
   - apkaye
   - antivirus
   - batchdeobfuscator
+  - cape
   - characterize
   - configextractor
   - deobfuscripter
