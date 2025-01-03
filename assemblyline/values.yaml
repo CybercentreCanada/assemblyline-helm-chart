@@ -232,10 +232,9 @@ autoInstallServices:
   - apkaye
   - antivirus
   - batchdeobfuscator
-  - beaver
+  - cape
   - characterize
   - configextractor
-  - cuckoo
   - deobfuscripter
   - elf
   - elfparser
