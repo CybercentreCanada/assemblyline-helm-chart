@@ -94,6 +94,10 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: filestore-password
+- name: IP
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP
 {{ end }}
 {{ if .Values.coreEnv }}
 {{- .Values.coreEnv | toYaml -}}
@@ -352,7 +356,7 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ $hosts := list "service-server" "ui" "socketio" "frontend" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ $hosts := list "service-server" "ui" "socketio" "frontend" "dispatcher" "ingester" "plumber" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
 {{ if .Values.configuration.retrohunt.enabled }}
   {{ $hosts = append $hosts "hauntedhouse" }}
   {{ $hosts = append $hosts "hauntedhouse-worker" }}
@@ -386,4 +390,110 @@ data:
 ---
 {{ end }}
 {{ end }}
+{{ end }}
+---
+{{ define "assemblyline.rustService" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .component }}
+  labels:
+    app: assemblyline
+    section: core
+    component: {{ .component }}
+spec:
+  replicas: {{ .replicas | default 1 }}
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: {{ .component }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ .Values.configuration | toYaml | sha256sum }}
+      labels:
+        app: assemblyline
+        section: core
+        component: {{ .component }}
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      #setHostnameAsFQDN: true
+      #subdomain: {{ .component }}
+      terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: {{ .component }}
+          image: {{ .image | default .Values.assemblylineRustImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            runAsUser: {{ .runAsUser | default 1000}}
+            runAsGroup: 1000
+          {{ if .Values.enableCoreDebugging}}
+          command: ['{{ .command }}', {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} '{{ .component }}']
+          {{ else }}
+          command: ['{{ .command }}', {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} '{{ .component }}']
+          {{ end}}
+          volumeMounts:
+          {{ if and .replayContainer (eq .Values.replayMode "loader") }}
+            - name: replay-data
+              mountPath: {{ .Values.replay.loader.input_directory }}
+          {{ end}}
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .mounts }}
+          {{ .mounts | toYaml | nindent 12 }}
+          {{ end }}
+          {{if .Values.enableInternalEncryption }}
+            - name: server-cert
+              mountPath: /etc/assemblyline/ssl/server
+          {{ end }}
+          resources:
+            requests:
+              memory: {{ .requestedRam | default .Values.defaultReqRam }}
+              cpu: {{ .requestedCPU | default .Values.defaultReqCPU }}
+            limits:
+              memory: {{ .limitRam | default .Values.defaultLimRam }}
+              cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
+          env:
+            # Don't actually need the flask key for core containers, but since the variable is 
+            # used in the config file it needs to be initialized
+            - name: FLASK_SECRET_KEY
+              value: ""
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: AL_SHUTDOWN_GRACE
+              value: "{{ .terminationSeconds | default 60 }}"
+          {{ if .Values.enableInternalEncryption }}
+            - name: SERVER_CERT_PATH
+              value: /etc/assemblyline/ssl/server/tls.crt
+            - name: SERVER_KEY_PATH
+              value: /etc/assemblyline/ssl/server/tls.key
+            - name: SSL_CERT_FILE
+              value: /etc/assemblyline/ssl/al_root-ca.crt
+          {{ end}}
+          livenessProbe:
+            httpGet:
+              scheme: HTTPS
+              path: /alive
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 30
+      volumes:
+      {{ include "assemblyline.replayVolume" . | indent 8 }}
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .volumes }}
+      {{ .volumes | toYaml | nindent 8 }}
+      {{ end }}
+      {{if .Values.enableInternalEncryption }}
+        - name: server-cert
+          secret:
+            secretName: {{ .component }}-cert
+      {{ end }}
 {{ end }}

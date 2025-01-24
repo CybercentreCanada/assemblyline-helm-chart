@@ -3,6 +3,7 @@ release: "4.5.stable"
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
+assemblylineRustImage: cccs/assemblyline-rust
 assemblylineUIImage: cccs/assemblyline-ui
 assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio

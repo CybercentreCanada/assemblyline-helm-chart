@@ -35,18 +35,6 @@
 {{with merge (dict "component" "heartbeat" "command" "assemblyline_core.metrics.run_heartbeat_manager" "requestedCPU" .Values.heartbeatReqCPU "limitCPU" .Values.heartbeatLimCPU "limitRam" .Values.heartbeatLimRam) . }}
   {{template "assemblyline.coreService" .}}
 {{end}}
----
-{{with merge (dict "component" "plumber" "command" "assemblyline_core.plumber.run_plumber" "requestedCPU" .Values.plumberReqCPU "limitCPU" .Values.plumberLimCPU "limitRam" .Values.plumberLimRam) . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
-{{with merge (dict "component" "dispatcher" "command" "assemblyline_core.dispatching" "terminationSeconds" .Values.disptacherShutdownGrace "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU "limitCPU" .Values.dispatcherLimCPU "requestedRam" .Values.dispatcherReqRam "limitRam" .Values.dispatcherLimRam) . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
----
-{{with merge (dict "component" "ingester" "command" "assemblyline_core.ingester" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU "limitCPU" .Values.ingesterLimCPU "limitRam" .Values.ingesterLimRam) . }}
-  {{template "assemblyline.coreService" .}}
-{{end}}
 {{ if .Values.useReplay }}
 ---
 {{ if eq .Values.replayMode "creator" }}
@@ -85,3 +73,36 @@
   {{template "assemblyline.coreService" .}}
 {{end}}
 {{ end }}
+
+
+---
+{{with merge (dict "component" "plumber" "command" "assemblyline-server" "requestedCPU" .Values.plumberReqCPU "limitCPU" .Values.plumberLimCPU "limitRam" .Values.plumberLimRam) . }}
+  {{template "assemblyline.rustService" .}}
+{{end}}
+---
+{{with merge (dict "component" "dispatcher" "command" "assemblyline-server" "terminationSeconds" .Values.disptacherShutdownGrace "replicas" .Values.dispatcherInstances "requestedCPU" .Values.dispatcherReqCPU "limitCPU" .Values.dispatcherLimCPU "requestedRam" .Values.dispatcherReqRam "limitRam" .Values.dispatcherLimRam) . }}
+  {{template "assemblyline.rustService" .}}
+{{end}}
+---
+{{with merge (dict "component" "ingester" "command" "assemblyline-server" "replicas" .Values.ingesterInstances  "requestedCPU" .Values.ingesterReqCPU "limitCPU" .Values.ingesterLimCPU "limitRam" .Values.ingesterLimRam) . }}
+  {{template "assemblyline.rustService" .}}
+{{end}}
+---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   labels:
+#     app: assemblyline
+#   name: dispatcher
+# spec:
+#   type: ClusterIP
+#   clusterIP: None
+#   selector:
+#     component: dispatcher
+#   ports:
+#   - name: http
+#     port: 8080
+#     protocol: TCP
+#     targetPort: 8080
+
+# ---
