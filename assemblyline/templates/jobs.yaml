@@ -23,6 +23,8 @@ spec:
       containers:
       - name: pi
         image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+        securityContext:
+          {{ include "assemblyline.coreSecurityContext" . | indent 10 }}
         command: ["python",  "/mount/bootstrap.py"]
         env:
           - name: INITIAL_ADMIN_PASSWORD
@@ -99,6 +101,8 @@ spec:
       containers:
       - name: install-alsvc-{{- . }}
         image: {{ $.Values.assemblylineServiceImagePrefix }}{{ . }}:{{ $.Values.assemblylineServiceVersion }}
+        securityContext:
+          {{ include "assemblyline.coreSecurityContext" $ | indent 10 }}
         imagePullPolicy: Always
         env:
           - name: PRIVILEGED
@@ -151,6 +155,8 @@ spec:
       containers:
         - name: pi
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           command: ["python",  "/mount/create_serviceaccount_token.py"]
           env:
             - name: NAMESPACE
