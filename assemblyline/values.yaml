@@ -521,7 +521,7 @@ configuration:
         host: redis-persistent
         port: 6379
     scaler:
-      enable_pod_security: true
+      enable_pod_security: false
       cluster_pod_list: true
       service_defaults:
         backlog: 10
