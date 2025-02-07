@@ -25,8 +25,6 @@ spec:
     spec:
       priorityClassName: al-infra
       serviceAccountName: {{ .Values.coreServiceAccountName }}
-      securityContext:
-        fsGroup: 1000
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
@@ -129,8 +127,6 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       priorityClassName: al-infra
-      securityContext:
-        fsGroup: 1000
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
