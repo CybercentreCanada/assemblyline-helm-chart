@@ -38,6 +38,8 @@ spec:
           {{ if .Values.enableCoreDebugging}}
           command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_service_server.app"]
           {{ end }}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ if .Values.enableInternalEncryption }}
             - name: service-server-cert

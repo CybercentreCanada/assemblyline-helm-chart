@@ -40,6 +40,8 @@ spec:
           {{ else }}
           command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
           {{ end}}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}          
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{if .Values.enableInternalEncryption }}
