@@ -521,6 +521,7 @@ configuration:
         host: redis-persistent
         port: 6379
     scaler:
+      enable_pod_security: false
       cluster_pod_list: true
       service_defaults:
         backlog: 10
@@ -663,6 +664,13 @@ datastore:
             key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
       command: ['bash', '-c', 'cd /data/ && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12 && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12 && ls -la']
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+        seccompProfile:
+          type: RuntimeDefault
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
