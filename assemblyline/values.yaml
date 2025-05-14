@@ -266,6 +266,7 @@ autoInstallServices:
   - virustotal
   - xlmmacrodeobfuscator
   - yara
+  - zeek
 
 # Extra environment variables, mounts, and volumes shared by all core containers
 # Any environment variables set here can be used in the value strings of any
