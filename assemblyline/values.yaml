@@ -808,6 +808,9 @@ filebeat:
 metricbeatIndexPrefix: "metricbeat"
 
 metricbeat:
+  # Version of kube-state-metrics is not compatible with Assemblyline
+  kube_state_metrics:
+    enabled: false
   labels:
     section: core
     component: metricbeat
@@ -957,7 +960,9 @@ metricbeat:
             - volume
           period: 10s
           host: ${NODE_NAME}
-          hosts: ["localhost:10255"]
+          hosts: ["https://${NODE_NAME}:10250"]
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          ssl.verification_mode: "none"
 
       processors:
         - add_cloud_metadata: ~
