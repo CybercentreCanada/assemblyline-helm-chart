@@ -59,6 +59,11 @@ spec:
             - name: SSL_CERT_FILE
               value: /etc/assemblyline/ssl/al_root-ca.crt
           {{ end}}
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-secret
+                  key: password
             - name: BIND_ADDRESS
               value: 0.0.0.0:5003
             - name: FLASK_SECRET_KEY
@@ -84,14 +89,14 @@ spec:
               scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            periodSeconds: 60
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5003
               scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
-            periodSeconds: 60
+            periodSeconds: 10
       volumes:
         {{ if .Values.enableInternalEncryption }}
         - name: service-server-cert
