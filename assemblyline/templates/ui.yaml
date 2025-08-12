@@ -89,6 +89,8 @@ spec:
             - name: KEYFILE
               value: /etc/assemblyline/ssl/ui/tls.key
           {{ end}}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.enableInternalEncryption }}
@@ -206,6 +208,8 @@ spec:
             - name: KEYFILE
               value: /etc/assemblyline/ssl/sio/tls.key
           {{ end}}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
@@ -327,6 +331,8 @@ spec:
             limits:
               cpu: 1
               memory:  {{ .Values.frontendLimRam}}
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ if .Values.enableInternalEncryption }}
             - name: frontend-cert

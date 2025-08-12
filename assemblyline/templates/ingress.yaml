@@ -41,7 +41,7 @@ spec:
                 port:
                   number: 3000
           - path: /socket.io/
-            pathType: Prefix
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: socketio

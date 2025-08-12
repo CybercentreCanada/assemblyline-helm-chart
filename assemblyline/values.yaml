@@ -1,5 +1,5 @@
 # Tags for the containers used
-release: "4.5.stable"
+release: 4.6.0.stable10
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
@@ -9,7 +9,7 @@ assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
-assemblylineServiceVersion: "4.5.stable"
+assemblylineServiceVersion: "4.6.stable"
 retrohuntImage: cccs/hauntedhouse
 retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
@@ -267,6 +267,7 @@ autoInstallServices:
   - virustotal
   - xlmmacrodeobfuscator
   - yara
+  - zeek
 
 # Extra environment variables, mounts, and volumes shared by all core containers
 # Any environment variables set here can be used in the value strings of any
@@ -522,6 +523,7 @@ configuration:
         host: redis-persistent
         port: 6379
     scaler:
+      enable_pod_security: false
       cluster_pod_list: true
       service_defaults:
         backlog: 10
@@ -664,6 +666,13 @@ datastore:
             key: password
       image: docker.elastic.co/elasticsearch/elasticsearch:8.10.2
       command: ['bash', '-c', 'cd /data/ && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-stack-ca.p12 && curl --retry 30 --retry-connrefused --retry-delay 30 -k -H "Authorization: Bearer $SECRET_KEY" -O https://elastic-helper:8000/elastic-certificates.p12 && ls -la']
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsNonRoot: true
+        capabilities:
+          drop: ["ALL"]
+        seccompProfile:
+          type: RuntimeDefault
       volumeMounts:
         - name: elastic-certificates
           mountPath: /data/
@@ -800,6 +809,9 @@ filebeat:
 metricbeatIndexPrefix: "metricbeat"
 
 metricbeat:
+  # Version of kube-state-metrics is not compatible with Assemblyline
+  kube_state_metrics:
+    enabled: false
   labels:
     section: core
     component: metricbeat
@@ -949,7 +961,9 @@ metricbeat:
             - volume
           period: 10s
           host: ${NODE_NAME}
-          hosts: ["localhost:10255"]
+          hosts: ["https://${NODE_NAME}:10250"]
+          bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+          ssl.verification_mode: "none"
 
       processors:
         - add_cloud_metadata: ~

@@ -36,6 +36,8 @@ spec:
           image: {{ .Values.assemblylineRustImage }}:{{ .Values.release }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ["assemblyline-server", {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} "service-api"]
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ if .Values.enableInternalEncryption }}
             - name: service-server-cert
