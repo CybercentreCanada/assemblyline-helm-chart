@@ -431,7 +431,7 @@ spec:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: {{ .component }}
-          image: {{ .image | default .Values.assemblylineRustImage }}:{{ .Values.release }}
+          image: {{ .image | default .Values.assemblylineRustImage }}:{{if .Values.rustRelease }}{{ .Values.rustRelease }}{{else}}{{ .Values.release }}{{end}}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
