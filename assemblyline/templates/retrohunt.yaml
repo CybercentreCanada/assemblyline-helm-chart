@@ -291,7 +291,8 @@ stringData:
       },
       "datastore": {
         "url": {{ .Values.configuration.datastore.hosts | toJson }},
-        "archive_access": ${ARCHIVE_ACTIVE:false}
+        "archive_access": ${ARCHIVE_ACTIVE:false},
+        "batch_size": 10000
         {{- if .Values.enableInternalEncryption }},
         "ca_cert": "${CLUSTER_CA_CERT}"
         {{- end }}
