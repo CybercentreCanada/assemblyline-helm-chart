@@ -302,6 +302,9 @@ stringData:
       },
       "classification_path": "/etc/assemblyline/classification.yml",
       "require_classification": false,
+      {{- if .Values.retrohuntIngestCheckBatch }}
+      "ingest_check_batch_size": {{ .Values.retrohuntIngestCheckBatch }},
+      {{- end }}
       {{ if .Values.enableInternalEncryption -}}
       "worker_certificate": {"Certificate": "${CLUSTER_CA_CERT}"},
       {{ else -}}
