@@ -33,7 +33,7 @@ spec:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: service-server
-          image: {{ .Values.assemblylineRustImage }}:{{ .Values.release }}
+          image: {{ .Values.assemblylineRustImage }}:{{if .Values.rustRelease }}{{ .Values.rustRelease }}{{else}}{{ .Values.release }}{{end}}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           command: ["assemblyline-server", {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} "service-api"]
           securityContext:
