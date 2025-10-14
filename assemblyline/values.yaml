@@ -455,7 +455,7 @@ internalAPITargetUsage: 70
 ingestAPITargetUsage: 30
 ingesterTargetUsage: 50
 dispatcherTargetUsage: 70
-serviceServerTargetUsage: 50
+serviceServerTargetUsage: 80
 replayTargetUsage: 50
 vacuumTargetUsage: 150
 
