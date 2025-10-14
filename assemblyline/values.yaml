@@ -409,7 +409,7 @@ vacuumWorkerLimCPU: 1
 # Memory reservation
 apmReqRam: 512Mi
 defaultReqRam: 128Mi
-dispatcherReqRam: 256Mi
+dispatcherReqRam: 1Gi
 elasticHelperReqRam: 32Mi
 frontendReqRam: 128Mi
 ingestUIReqRam: 1Gi
@@ -431,7 +431,7 @@ vacuumWorkerReqRam: 1Gi
 # Memory Limits
 apmLimRam: 2Gi
 defaultLimRam: 1Gi
-dispatcherLimRam: 1Gi
+dispatcherLimRam: 2Gi
 elasticHelperLimRam: 256Mi
 frontendLimRam: 1Gi
 ingestUILimRam: 2Gi
