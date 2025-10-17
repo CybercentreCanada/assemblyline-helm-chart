@@ -291,13 +291,20 @@ stringData:
       },
       "datastore": {
         "url": {{ .Values.configuration.datastore.hosts | toJson }},
-        "archive_access": ${ARCHIVE_ACTIVE:false}
+        "archive_access": ${ARCHIVE_ACTIVE:false},
+        "batch_size": 10000
         {{- if .Values.enableInternalEncryption }},
         "ca_cert": "${CLUSTER_CA_CERT}"
+        {{- end }}
+        {{- if .Values.retrohuntConcurrentTasks }},
+        "concurrent_tasks": {{ .Values.retrohuntConcurrentTasks }}
         {{- end }}
       },
       "classification_path": "/etc/assemblyline/classification.yml",
       "require_classification": false,
+      {{- if .Values.retrohuntIngestCheckBatch }}
+      "ingest_check_batch_size": {{ .Values.retrohuntIngestCheckBatch }},
+      {{- end }}
       {{ if .Values.enableInternalEncryption -}}
       "worker_certificate": {"Certificate": "${CLUSTER_CA_CERT}"},
       {{ else -}}
