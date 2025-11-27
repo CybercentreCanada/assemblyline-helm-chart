@@ -161,6 +161,8 @@ loggingUsername: "elastic"
 loggingTLSVerify: "full"
 
 # Values used to configure the ingress
+# Set to false to disable ingress
+enableIngress: true
 ingressAnnotations: {}
 # This field is not required and will be set automatically if the field
 # configuration.ui.fqdn is defined. Only set this field directly when you need
