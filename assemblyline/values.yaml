@@ -1,5 +1,5 @@
 # Tags for the containers used
-release: 4.6.0.stable22
+release: 4.6.0.stable23
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
