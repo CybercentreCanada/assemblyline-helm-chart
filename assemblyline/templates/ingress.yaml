@@ -1,3 +1,4 @@
+{{ if .Values.enableIngress }}
 {{- if not .Values.tlsSecretName }}
   {{ $server := genSelfSignedCert .Values.configuration.ui.fqdn nil (list .Values.configuration.ui.fqdn) 365 }}
 
@@ -227,3 +228,4 @@ spec:
 ---
 
 {{- end -}}
+{{ end }}
