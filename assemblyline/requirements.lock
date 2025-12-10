@@ -15,7 +15,7 @@ dependencies:
   repository: https://helm.elastic.co/
   version: 7.17.3
 - name: minio
-  repository: https://helm.min.io/
-  version: 5.0.32
-digest: sha256:1c8032e6bbe695e84b5c92c0c6c8a13c96517edee35a967f3d560551d4360ad1
-generated: "2023-10-06T18:25:11.347382418Z"
+  repository: https://charts.min.io/
+  version: 5.4.0
+digest: sha256:797497ba971e3a980ace9b27fd34d08e1b9d3f8b72383648849aa13acc496ade
+generated: "2025-12-10T13:08:18.809087Z"
