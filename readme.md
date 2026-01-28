@@ -1,8 +1,7 @@
 Assemblyline Helm
 =================
 
-Please find the AssemblyLine4 helm chart at the link below
+Helm chart for the Assemblyline malware analysis platform.
 
-[Main chart](./assemblyline)
+See the [Project Documentation](https://cybercentrecanada.github.io/assemblyline4_docs/) for more information.
 
-[Appliance chart](./appliance)
