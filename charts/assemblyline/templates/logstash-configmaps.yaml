@@ -8,6 +8,7 @@ data:
     monitoring.enabled: false
     http.host: 0.0.0.0
     pipeline.ecs_compatibility: "disabled"
+    xpack.geoip.downloader.enabled: false
 ---
 apiVersion: v1
 kind: ConfigMap
