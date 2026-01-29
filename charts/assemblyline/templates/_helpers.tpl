@@ -421,8 +421,6 @@ spec:
     spec:
       priorityClassName: al-core-priority
       serviceAccountName: {{ .Values.coreServiceAccountName }}
-      #setHostnameAsFQDN: true
-      #subdomain: {{ .component }}
       terminationGracePeriodSeconds: {{ .terminationSeconds | default 60 }}
       affinity:
         nodeAffinity:
@@ -463,7 +461,7 @@ spec:
               memory: {{ .limitRam | default .Values.defaultLimRam }}
               cpu: {{ .limitCPU | default .Values.defaultLimCPU  }}
           env:
-            # Don't actually need the flask key for core containers, but since the variable is 
+            # Don't actually need the flask key for core containers, but since the variable is
             # used in the config file it needs to be initialized
             - name: FLASK_SECRET_KEY
               value: ""
