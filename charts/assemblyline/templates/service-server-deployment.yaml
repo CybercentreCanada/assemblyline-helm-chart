@@ -33,11 +33,9 @@ spec:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: service-server
-          image: {{ .Values.assemblylineServiceAPIImage }}:{{ .Values.release }}
+          image: {{ .Values.assemblylineRustImage }}:{{if .Values.rustRelease }}{{ .Values.rustRelease }}{{else}}{{ .Values.release }}{{end}}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
-          {{ if .Values.enableCoreDebugging}}
-          command: ["python", "-m", "debugpy", "--listen", "localhost:5678", "-m", "assemblyline_service_server.app"]
-          {{ end }}
+          command: ["assemblyline-server", {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} "service-api"]
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
@@ -56,11 +54,22 @@ spec:
             - name: WORKER_CONNECTIONS
               value: '2048'
           {{ if .Values.enableInternalEncryption }}
-            - name: CERTFILE
+            - name: SERVER_CERT_PATH
               value: /etc/assemblyline/ssl/service-server/tls.crt
-            - name: KEYFILE
+            - name: SERVER_KEY_PATH
               value: /etc/assemblyline/ssl/service-server/tls.key
+            - name: SSL_CERT_FILE
+              value: /etc/assemblyline/ssl/al_root-ca.crt
           {{ end}}
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-secret
+                  key: password
+            - name: BIND_ADDRESS
+              value: 0.0.0.0:5003
+            - name: FLASK_SECRET_KEY
+              value: ""
           resources:
             limits:
               cpu: {{.Values.serviceServerLimCPU}}
@@ -82,14 +91,14 @@ spec:
               scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             initialDelaySeconds: 10
             timeoutSeconds: 5
-            periodSeconds: 60
+            periodSeconds: 10
           readinessProbe:
             httpGet:
               path: /healthz/ready
               port: 5003
               scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
             timeoutSeconds: 5
-            periodSeconds: 60
+            periodSeconds: 10
       volumes:
         {{ if .Values.enableInternalEncryption }}
         - name: service-server-cert

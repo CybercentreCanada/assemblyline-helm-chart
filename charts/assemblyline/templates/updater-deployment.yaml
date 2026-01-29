@@ -56,6 +56,11 @@ spec:
                   fieldPath: metadata.namespace
             - name: SERVICE_API_HOST
               value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-secret
+                  key: password
             - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
               value: {{ .Values.privilegedServiceAccountName }}
           livenessProbe:
