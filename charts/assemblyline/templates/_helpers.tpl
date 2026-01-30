@@ -82,12 +82,12 @@
   valueFrom:
     secretKeyRef:
       name: internal-filestore-keys
-      key: accesskey
+      key: rootUser
 - name: INTERNAL_FILESTORE_KEY
   valueFrom:
     secretKeyRef:
       name: internal-filestore-keys
-      key: secretkey
+      key: rootPassword
 {{ else }}
 - name: FILESTORE_PASSWORD
   valueFrom:
