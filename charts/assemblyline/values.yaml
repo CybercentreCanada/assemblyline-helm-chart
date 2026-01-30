@@ -282,6 +282,11 @@ coreMounts: []
 coreVolumes: []
 coreSecurityContext: {}
 
+# Overriding the default classification configuration (default: classification is disabled)
+classification:
+  configMap:
+  key:
+
 # An affinity to be applied to all core (non-service) pods not provided by imported charts.
 # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
 nodeAffinity:
