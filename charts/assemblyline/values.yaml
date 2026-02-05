@@ -1,5 +1,5 @@
 # Tags for the containers used
-release: 4.6.2.stable1
+release: 4.7.0.stable1
 
 # Images for containers used
 assemblylineCoreImage: cccs/assemblyline-core
@@ -281,6 +281,11 @@ coreLabels: {}
 coreMounts: []
 coreVolumes: []
 coreSecurityContext: {}
+
+# Overriding the default classification configuration (default: classification is disabled)
+classification:
+  configMap:
+  key:
 
 # An affinity to be applied to all core (non-service) pods not provided by imported charts.
 # https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#NodeAffinity
@@ -1220,6 +1225,8 @@ filestore:
     section: core
     component: filestore
   existingSecret: internal-filestore-keys
+  mode: standalone
+  replicas: 1
 
 uiPlugins:
   lookup:

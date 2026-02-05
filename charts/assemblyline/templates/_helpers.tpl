@@ -82,12 +82,12 @@
   valueFrom:
     secretKeyRef:
       name: internal-filestore-keys
-      key: accesskey
+      key: rootUser
 - name: INTERNAL_FILESTORE_KEY
   valueFrom:
     secretKeyRef:
       name: internal-filestore-keys
-      key: secretkey
+      key: rootPassword
 {{ else }}
 - name: FILESTORE_PASSWORD
   valueFrom:
@@ -133,6 +133,10 @@
   mountPath: /etc/assemblyline/config.yml
   subPath: config
   readOnly: true
+- name: {{ if .Values.classification.configMap }}"al-classification"{{ else }}"al-config"{{ end }}
+  mountPath: /etc/assemblyline/classification.yml
+  subPath: {{ .Values.classification.key | default "classification" }}
+  readOnly: true
 {{ if .Values.useReplay }}
 - name: replay-config
   mountPath: /etc/assemblyline/replay.yml
@@ -154,6 +158,11 @@
 - name: al-config
   configMap:
     name: {{ .Release.Name }}-global-config
+{{ if .Values.classification.configMap }}
+- name: al-classification
+  configMap:
+    name: {{ .Values.classification.configMap }}
+{{ end }}
 {{ if .Values.useReplay }}
 - name: replay-config
   configMap:
