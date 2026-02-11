@@ -9,7 +9,7 @@ assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineServiceImagePrefix: cccs/assemblyline-service-
-assemblylineServiceVersion: "4.6.stable"
+assemblylineServiceVersion: "4.7.stable"
 retrohuntImage: cccs/hauntedhouse
 retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
@@ -248,7 +248,6 @@ autoInstallServices:
   - frankenstrings
   - iparse
   - jsjaws
-  - metadefender
   - metapeek
   - oletools
   - overpower

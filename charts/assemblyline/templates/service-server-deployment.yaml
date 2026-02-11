@@ -35,7 +35,7 @@ spec:
         - name: service-server
           image: {{ .Values.assemblylineRustImage }}:{{if .Values.rustRelease }}{{ .Values.rustRelease }}{{else}}{{ .Values.release }}{{end}}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
-          command: ["assemblyline-server", {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} "service-api"]
+          command: ["assemblyline-server", {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} "service-api" {{if not .Values.enableInternalEncryption }}, '--allow-http-mode'{{end}}]
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:

@@ -105,11 +105,15 @@ spec:
           {{ include "assemblyline.coreSecurityContext" $ | indent 10 }}
         imagePullPolicy: Always
         env:
-          - name: PRIVILEGED
-            value: "true"
           - name: REGISTER_ONLY
             value: 'True'
-        {{ include "assemblyline.coreEnv" $ | indent 10 }}
+          - name: SERVICE_API_HOST
+            value: "http{{ if $.Values.enableInternalEncryption }}s{{ end }}://service-server:5003"
+          - name: SERVICE_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: service-secret
+                key: password
         resources:
           requests:
             cpu: {{ $.Values.installJobReqCPU }}
@@ -118,9 +122,25 @@ spec:
             cpu: {{ $.Values.installJobLimCPU }}
             memory: {{ $.Values.installJobLimRam }}
         volumeMounts:
-        {{ include "assemblyline.coreMounts" $ | indent 10 }}
+        - name: "al-classification"
+          mountPath: /etc/assemblyline/classification.yml
+          subPath: {{ $.Values.classification.key | default "classification" }}
+          readOnly: true
+        {{ if $.Values.enableInternalEncryption }}
+        - name: root-cert
+          mountPath: "/etc/assemblyline/ssl/al_root-ca.crt"
+          subPath: tls.crt
+          readOnly: true
+        {{ end }}
       volumes:
-      {{ include "assemblyline.coreVolumes" $ | indent 8 }}
+      - name: al-classification
+        configMap:
+          name: {{ $.Values.classification.configMap | default (printf "%s-global-config" $.Release.Name) }}
+      {{ if $.Values.enableInternalEncryption }}
+      - name: root-cert
+        secret:
+          secretName: {{ $.Release.Name }}.internal-generated-ca
+      {{ end }}
       restartPolicy: Never
   backoffLimit: 500
   ttlSecondsAfterFinished: 300
