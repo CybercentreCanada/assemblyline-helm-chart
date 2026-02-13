@@ -1,7 +1,7 @@
 apiVersion: v1
 name: assemblyline
-version: 4.3.0
-appVersion: 4.3.0
+version: 7.1.22-dev
+appVersion: "4.7.1.dev22"
 description: Assemblyline is a malware detection and analysis tool developed by the Cyber Centre and released to the cyber security community.
 keywords: [assemblyline, malware, gc, canada, cse-cst, cse, cst, cyber, cccs]
 home: https://cyber.gc.ca/en/assemblyline
