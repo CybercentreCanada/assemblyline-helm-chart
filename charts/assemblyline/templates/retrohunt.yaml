@@ -330,7 +330,7 @@ stringData:
         }
       },
       "files": {
-        "URL": {{ .Values.configuration.filestore.storage | toJson }}
+        "URL": {{ (concat .Values.configuration.filestore.storage .Values.configuration.filestore.archive) | toJson }}
       },
       "data_limit": "{{ .Values.retrohuntLocalStorageSize }}",
       "ingest_batch_size": 1000,
