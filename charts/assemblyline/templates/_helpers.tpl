@@ -77,6 +77,10 @@
   value: "{{ .Values.dispatcherFinalizeThreads }}"
 - name: DEV_MODE
   value: "{{ .Values.enableCoreDebugging | default false | toString }}"
+- name: IP
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP
 {{ if .Values.internalFilestore }}
 - name: INTERNAL_FILESTORE_ACCESS
   valueFrom:
@@ -94,10 +98,6 @@
     secretKeyRef:
       name: assemblyline-system-passwords
       key: filestore-password
-- name: IP
-  valueFrom:
-    fieldRef:
-      fieldPath: status.podIP
 {{ end }}
 {{ if .Values.coreEnv }}
 {{- .Values.coreEnv | toYaml -}}
