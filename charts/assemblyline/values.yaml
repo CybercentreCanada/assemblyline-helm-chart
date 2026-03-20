@@ -727,10 +727,6 @@ filebeat:
         configMapKeyRef:
           name: system-settings
           key: logging-tls-verify
-    - name: NODE_NAME
-      valueFrom:
-        fieldRef:
-          fieldPath: spec.nodeName
   filebeatConfig:
     filebeat.yml: |-
       logging:
@@ -906,10 +902,6 @@ metricbeat:
           configMapKeyRef:
             name: system-settings
             key: metricbeat-index-prefix
-      - name: NODE_NAME
-        valueFrom:
-          fieldRef:
-            fieldPath: spec.nodeName
   metricbeatConfig:
     # Configuration on the daemonset
     metricbeat.yml: |
