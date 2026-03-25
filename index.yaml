@@ -2,6 +2,61 @@ apiVersion: v1
 entries:
   assemblyline:
   - apiVersion: v1
+    appVersion: 4.7.2.dev47
+    created: "2026-03-25T20:33:59.929199621Z"
+    dependencies:
+    - alias: datastore
+      condition: internalDatastore
+      name: elasticsearch
+      repository: https://helm.elastic.co/
+      version: 8.5.1
+    - alias: filebeat
+      condition: enableLogging
+      name: filebeat
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: metricbeat
+      condition: enableMetricbeat
+      name: metricbeat
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: log-storage
+      condition: seperateInternalELKStack
+      name: elasticsearch
+      repository: https://helm.elastic.co/
+      version: 8.5.1
+    - alias: kibana
+      condition: internalELKStack
+      name: kibana
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: filestore
+      condition: internalFilestore
+      name: minio
+      repository: https://charts.min.io/
+      version: "5.0"
+    description: Assemblyline is a malware detection and analysis tool developed by
+      the Cyber Centre and released to the cyber security community.
+    digest: c047f573196892e2d05e234067ad327aecdf6b849614b7f8f98e275204a4454f
+    home: https://cyber.gc.ca/en/assemblyline
+    icon: https://bitbucket-assetroot.s3.amazonaws.com/c/photos/2018/Nov/06/2199173190-1-alv4-logo_avatar.png
+    keywords:
+    - assemblyline
+    - malware
+    - gc
+    - canada
+    - cse-cst
+    - cse
+    - cst
+    - cyber
+    - cccs
+    name: assemblyline
+    sources:
+    - https://github.com/CybercentreCanada/
+    urls:
+    - https://github.com/CybercentreCanada/assemblyline-helm-chart/releases/download/assemblyline-7.2.47-dev/assemblyline-7.2.47-dev.tgz
+    version: 7.2.47-dev
+  - apiVersion: v1
     appVersion: 4.7.2.dev46
     created: "2026-03-25T16:49:39.014406342Z"
     dependencies:
@@ -4676,4 +4731,4 @@ entries:
     urls:
     - https://github.com/CybercentreCanada/assemblyline-helm-chart/releases/download/assemblyline-7.0.0/assemblyline-7.0.0.tgz
     version: 7.0.0
-generated: "2026-03-25T16:49:39.014725898Z"
+generated: "2026-03-25T20:33:59.929510043Z"
