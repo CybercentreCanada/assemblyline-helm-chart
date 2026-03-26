@@ -21,6 +21,7 @@ redisImage: redis
 imagePullPolicy: IfNotPresent
 
 # Storage classes for persistent data.
+useInternalRedis: true
 redisStorageClass:
 persistantStorageClass:
 # Retrohunt uses persistantStorageClass if this is not set, only use this when you need them to be different
