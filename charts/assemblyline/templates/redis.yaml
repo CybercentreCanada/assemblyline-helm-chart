@@ -1,5 +1,5 @@
 # Create a POD/Service for non-persisted redis
-{{ if .Values.useInteralRedis }}
+{{ if .Values.useInternalRedis }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
