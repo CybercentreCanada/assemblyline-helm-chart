@@ -130,6 +130,7 @@ spec:
     spec:
       terminationGracePeriodSeconds: 10
       priorityClassName: al-infra
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
       affinity:
         nodeAffinity:
           {{ include "assemblyline.nodeAffinity" . | indent 10 }}
