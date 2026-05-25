@@ -5,16 +5,15 @@
 
 name: trivy
 
-# on:
-#   push:
-#     branches: [ "main", "master" ]
-#   pull_request:
-#     # The branches below must be a subset of the branches above
-#     branches: [ "main" ]
-#   schedule:
-#     - cron: '38 2 * * 1'
-
-on: workflow_dispatch
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ "main", "master" ]
+  schedule:
+    - cron: '38 2 * * 1'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -34,7 +33,7 @@ jobs:
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
         with:
-          scan-type: 'fs'
+          scan-type: 'config'
           scan-ref: './charts/assemblyline'
           format: 'template'
           template: '@/contrib/sarif.tpl'
