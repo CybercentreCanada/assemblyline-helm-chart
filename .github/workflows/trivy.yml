@@ -34,8 +34,7 @@ jobs:
         with:
           scan-type: 'config'
           scan-ref: './charts/assemblyline'
-          format: 'template'
-          template: '@/contrib/sarif.tpl'
+          format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
 
