@@ -71,8 +71,6 @@ spec:
   ttlSecondsAfterFinished: 300
 {{ end }}
 ---
-{{- end }}
-{{ end }}
 {{ if .Values.internalELKStack }}
 {{ $kibana_token_data := (lookup "v1" "Secret" .Release.Namespace "kibana-service-token").data }}
 {{ if and $kibana_token_data (eq $kibana_token_data.token "") }}
