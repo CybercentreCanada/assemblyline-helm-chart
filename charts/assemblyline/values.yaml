@@ -8,8 +8,6 @@ assemblylineUIImage: cccs/assemblyline-ui
 assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
-assemblylineServiceImagePrefix: cccs/assemblyline-service-
-assemblylineServiceVersion: "4.7.stable"
 retrohuntImage: cccs/hauntedhouse
 retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
@@ -229,47 +227,6 @@ serviceAccountAnnotations: {}
 
 # Internal communications are encrypted for hosts part of this chart
 enableInternalEncryption: false
-
-# A list of services to be installed, only run during a helm install.
-autoInstallServices:
-  - apivector
-  - apkaye
-  - antivirus
-  - batchdeobfuscator
-  - cape
-  - characterize
-  - configextractor
-  - deobfuscripter
-  - elf
-  - elfparser
-  - emlparser
-  - espresso
-  - extract
-  - floss
-  - frankenstrings
-  - iparse
-  - jsjaws
-  - metapeek
-  - oletools
-  - overpower
-  - pdfid
-  - peepdf
-  - pe
-  - pixaxe
-  - safelist
-  - sigma
-  - suricata
-  - swiffer
-  - tagcheck
-  - torrentslicer
-  - unpacme
-  - unpacker
-  - urldownloader
-  - vipermonkey
-  - virustotal
-  - xlmmacrodeobfuscator
-  - yara
-  - zeek
 
 # Extra environment variables, mounts, and volumes shared by all core containers
 # Any environment variables set here can be used in the value strings of any
@@ -540,6 +497,9 @@ configuration:
         environment:
           - name: "SERVICE_API_HOST"
             value: "http://service-server:5003"
+    # updater:
+    #   # By default this is populated with a list of services to install automatically, set to empty to disable this behaviour
+    #   auto_install: []
   datastore:
     archive:
       enabled: False
@@ -731,7 +691,7 @@ filebeat:
     - name: NODE_NAME
       valueFrom:
         fieldRef:
-          fieldPath: spec.nodeName          
+          fieldPath: spec.nodeName
   filebeatConfig:
     filebeat.yml: |-
       logging:
