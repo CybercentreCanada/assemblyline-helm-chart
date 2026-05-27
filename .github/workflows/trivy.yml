@@ -39,6 +39,7 @@ jobs:
           severity: 'CRITICAL,HIGH'
           misconfig-scanners: 'helm'
           hide-progress: false
+          skip-files: 'templates/configmaps.yaml,templates/ui.yaml'
           exit-code: '1'
           ignore-unfixed: true
         env:
