@@ -40,8 +40,6 @@ jobs:
           hide-progress: false
           skip-files: 'templates/configmaps.yaml,templates/ui.yaml'
           ignore-unfixed: true
-        env:
-          TRIVY_DEBUG: true
           
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v3
