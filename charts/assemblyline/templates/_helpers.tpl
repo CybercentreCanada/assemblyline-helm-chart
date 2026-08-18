@@ -365,7 +365,7 @@ data:
   tls.key: {{ b64enc $ca.Key }}
 ---
 # Create signed certificates for hosts specified in values.yaml
-{{ $hosts := list "service-server" "ui" "socketio" "frontend" "dispatcher" "ingester" "plumber" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
+{{ $hosts := list "service-server" "ui" "socketio" "frontend" "dispatcher" "ingester" "plumber" "redis-persistent" "redis-volatile" "logstash" "filestore" "kibana" "apm" "mcp" (print .Values.datastore.clusterName "-master") (print (get (get .Values "log-storage") "clusterName") "-master") }}
 {{ if .Values.configuration.retrohunt.enabled }}
   {{ $hosts = append $hosts "hauntedhouse" }}
   {{ $hosts = append $hosts "hauntedhouse-worker" }}

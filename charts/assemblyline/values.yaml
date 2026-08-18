@@ -8,6 +8,7 @@ assemblylineUIImage: cccs/assemblyline-ui
 assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
+assemblylineMCPImage: cccs/assemblyline-mcp
 retrohuntImage: cccs/hauntedhouse
 retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
@@ -77,6 +78,9 @@ internalFilestore: true
 # making it hard for users to use the UI. Turning on this flag creates separate
 # containers for the ingest API which make the other APIs more responsive.
 separateIngestAPI: false
+
+# Enable the MCP server for Assemblyline
+enableMCP: false
 
 # Launch an elastic APM server to collect profiling data and report it to the logging
 # elasticsearch database.
