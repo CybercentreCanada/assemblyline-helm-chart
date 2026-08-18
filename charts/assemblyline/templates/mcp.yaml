@@ -52,7 +52,7 @@ spec:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       containers:
         - name: mcp
-          image: {{ .Values.assemblylineMCPImage }}:{{ .Values.release }}
+          image: {{ .Values.assemblylineMCPImage }}:latest
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
