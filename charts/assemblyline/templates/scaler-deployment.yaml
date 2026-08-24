@@ -1,3 +1,124 @@
+
+{{ $scaleCommand := "assemblyline_core.scaler.run_scaler" }}
+{{ if .Values.enableNativeScaling }}
+{{ $scaleCommand = "assemblyline_core.scaler_hpa.run_scaler" }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: assemblyline-metrics-apiserver
+  labels:
+    app: assemblyline
+    section: core
+    component: assemblyline-metrics-apiserver
+spec:
+  replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: assemblyline-metrics-apiserver
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: assemblyline-metrics-apiserver
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      # serviceAccountName: {{ .Release.Name }}-scaling-manager
+      priorityClassName: al-core-priority
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: apiserver
+          image: {{ .Values.assemblylineMetricsAdapterImage }}:{{ .Values.assemblylineMetricsAdapterRelease }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          args:
+          - --secure-port=6443
+          - --v=10
+          {{if .Values.enableInternalEncryption }}
+          - --ca-cert=/etc/assemblyline/ssl/al_root-ca.crt
+          {{ end }}
+          - --volatile={{ if .Values.enableInternalEncryption }}rediss{{ else }}redis{{ end }}://{{ .Values.configuration.core.redis.nonpersistent.host }}:{{ .Values.configuration.core.redis.nonpersistent.port }}
+          - --persistent={{ if .Values.enableInternalEncryption }}rediss{{ else }}redis{{ end }}://{{ .Values.configuration.core.redis.persistent.host }}:{{ .Values.configuration.core.redis.persistent.port }}
+          ports:
+          - containerPort: 6443
+            name: https
+          securityContext:
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+            - name: KUBERNETES_AL_CONFIG
+              value: {{ .Release.Name }}-global-config
+            - name: RELEASE_NAME
+              value: {{ .Release.Name }}
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SERVICE_API_HOST
+              value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: service-secret
+                  key: password
+            - name: CONFIGURATION_CONFIGMAP
+              value: {{ .Release.Name }}-global-config
+            - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
+              value: {{ .Values.privilegedServiceAccountName }}
+            - name: UNPRIVILEGED_SERVICE_ACCOUNT_NAME
+              value: {{ .Values.unprivilegedServiceAccountName }}
+          resources:
+            limits:
+              cpu: {{ .Values.adaptorLimCPU }}
+              memory: {{ .Values.adaptorLimRam }}
+            requests:
+              cpu: {{ .Values.adaptorReqCPU }}
+              memory: {{ .Values.adaptorReqRam }}
+#          livenessProbe:
+#            exec:
+#              command: [ "bash", "-c", "if [[ ! `find /tmp/heartbeat -newermt '-30 seconds'` ]]; then false; fi" ]
+#            initialDelaySeconds: 30
+#            periodSeconds: 30
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: assemblyline-metrics-apiserver
+spec:
+  ports:
+  - name: https
+    port: 443
+    targetPort: 6443
+  selector:
+    app: assemblyline
+    section: core
+    component: assemblyline-metrics-apiserver
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1beta1.external.metrics.k8s.io
+spec:
+  service:
+    name: assemblyline-metrics-apiserver
+    namespace: {{ $.Release.Namespace }}
+  group: external.metrics.k8s.io
+  version: v1beta1
+  insecureSkipTLSVerify: true
+  groupPriorityMinimum: 100
+  versionPriority: 100
+---
+{{ end }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -36,20 +157,14 @@ spec:
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{ if .Values.enableCoreDebugging}}
-          command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', 'assemblyline_core.scaler.run_scaler']
+          command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', {{ $scaleCommand }}]
           {{ else }}
-          command: ['python', '-m', 'assemblyline_core.scaler.run_scaler']
+          command: ['python', '-m', {{ $scaleCommand }}]
           {{ end}}
           securityContext:
-            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}          
+            {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
-          {{if .Values.enableInternalEncryption }}
-            - name: root-cert
-              mountPath: "/etc/assemblyline/ssl/al_root-ca.key"
-              subPath: tls.key
-              readOnly: true
-          {{ end }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
