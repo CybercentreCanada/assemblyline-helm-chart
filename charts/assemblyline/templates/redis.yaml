@@ -4,6 +4,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-volatile
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: core
@@ -112,6 +116,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: redis-persistent
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:

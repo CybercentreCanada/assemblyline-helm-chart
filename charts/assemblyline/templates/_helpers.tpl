@@ -189,6 +189,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .component }}
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: core
@@ -273,6 +277,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .component }}
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: core
@@ -406,6 +414,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .component }}
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: core

@@ -6,6 +6,10 @@ metadata:
     section: core
     component: logstash
   name: logstash
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   replicas: 1
   revisionHistoryLimit: {{ .Values.revisionCount }}

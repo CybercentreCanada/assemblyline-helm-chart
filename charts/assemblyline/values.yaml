@@ -241,6 +241,14 @@ enableInternalEncryption: false
 # services.
 coreEnv: []
 coreLabels: {}
+# Annotations added to the workload metadata (Deployment/StatefulSet) of core
+# components. Unlike coreLabels (which annotates the pod template), these land on
+# the workload object itself. This is key for tooling that keys off workload-level
+# annotations — for example, controllers that restart a workload when a referenced
+# Secret/ConfigMap changes (such as Stakater Reloader):
+#   coreAnnotations:
+#     <annotation-key>: <value>
+coreAnnotations: {}
 coreMounts: []
 coreVolumes: []
 coreSecurityContext: {}
