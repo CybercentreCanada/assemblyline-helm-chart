@@ -41,6 +41,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ui-plugin-lookup-{{ $lookupName | lower }}
+  {{- with $.Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: proxy
