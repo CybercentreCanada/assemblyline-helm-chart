@@ -30,7 +30,7 @@ spec:
         component: assemblyline-metrics-apiserver
         {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
-      # serviceAccountName: {{ .Release.Name }}-scaling-manager
+      serviceAccountName: {{ .Release.Name }}-metric-adaptor
       priorityClassName: al-core-priority
       affinity:
         nodeAffinity:
@@ -66,19 +66,8 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
-            - name: SERVICE_API_HOST
-              value: {{ if .Values.enableInternalEncryption }}https{{ else }}http{{ end }}://service-server:5003
-            - name: SERVICE_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: service-secret
-                  key: password
             - name: CONFIGURATION_CONFIGMAP
               value: {{ .Release.Name }}-global-config
-            - name: PRIVILEGED_SERVICE_ACCOUNT_NAME
-              value: {{ .Values.privilegedServiceAccountName }}
-            - name: UNPRIVILEGED_SERVICE_ACCOUNT_NAME
-              value: {{ .Values.unprivilegedServiceAccountName }}
           resources:
             limits:
               cpu: {{ .Values.adaptorLimCPU }}
