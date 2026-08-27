@@ -36,7 +36,7 @@ spec:
     {{- range $.Values.privilegedSafelistedCIDRs }}
     - ipBlock:
         cidr: {{ . }}
-    {{- end }} 
+    {{- end }}
 {{end}}
 ---
 # Allow privileged services to reach core components
@@ -112,7 +112,17 @@ spec:
     matchExpressions:
     - key: component
       operator: In
-      values: {{ if .Values.separateIngestAPI }} [frontend, ui, ui-ingest, socketio, service-server] {{else}} [frontend, ui, socketio, service-server] {{end}}
+      values:
+       - frontend
+       - ui
+       - socketio
+       - service-server
+       {{- if .Values.separateIngestAPI }}
+       - ui-ingest
+       {{- end }}
+       {{- if .Values.enableMCP }}
+       - mcp
+       {{- end }}
   # Allow ingress from all sources, regardless of origin
   ingress:
   - from: []

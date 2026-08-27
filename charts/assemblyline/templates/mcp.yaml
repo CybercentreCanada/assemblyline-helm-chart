@@ -1,0 +1,114 @@
+{{ if .Values.enableMCP }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mcp
+  labels:
+    app: assemblyline
+    section: core
+    component: mcp
+spec:
+  clusterIP: None
+  selector:
+    app: assemblyline
+    section: core
+    component: mcp
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000
+  sessionAffinity: ClientIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mcp
+  labels:
+    app: assemblyline
+    section: core
+    component: mcp
+spec:
+  replicas: 1
+  revisionHistoryLimit: {{ .Values.revisionCount }}
+  selector:
+    matchLabels:
+      app: assemblyline
+      section: core
+      component: mcp
+  template:
+    metadata:
+      labels:
+        app: assemblyline
+        section: core
+        component: mcp
+        {{ include "assemblyline.coreLabels" . | indent 8 }}
+    spec:
+      priorityClassName: al-core-priority
+      serviceAccountName: {{ .Values.coreServiceAccountName }}
+      affinity:
+        nodeAffinity:
+          {{ include "assemblyline.nodeAffinity" . | indent 10 }}
+      tolerations:
+        {{ include "assemblyline.tolerations" . | indent 8 }}
+      containers:
+        - name: mcp
+          image: {{ .Values.assemblylineMCPImage }}:{{ .Values.release }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          volumeMounts:
+          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: mcp-cert
+              mountPath: '/etc/assemblyline/ssl/mcp/'
+          {{ end }}
+          ports:
+            - containerPort: 8000
+          env:
+          {{ include "assemblyline.coreEnv" . | indent 12 }}
+          {{ if .Values.enableInternalEncryption }}
+            - name: MCP_CLIENT_CERT_PATH
+              value: /etc/assemblyline/ssl/mcp/tls.crt
+            - name: MCP_CLIENT_KEY_PATH
+              value: /etc/assemblyline/ssl/mcp/tls.key
+            - name: AL_UI
+              value: https://ui:5000
+          {{ else }}
+            - name: AL_UI
+              value: http://ui:5000
+          {{ end }}
+          resources:
+            limits:
+              cpu: 1
+              memory: 2Gi
+            requests:
+              cpu: 0.25
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            initialDelaySeconds: 10
+            timeoutSeconds: 5
+            periodSeconds: 60
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+              scheme: {{ ternary "HTTPS" "HTTP" .Values.enableInternalEncryption }}
+            timeoutSeconds: 5
+            periodSeconds: 60
+      volumes:
+      {{ include "assemblyline.coreVolumes" . | indent 8 }}
+      {{ if .Values.enableInternalEncryption }}
+        - name: mcp-cert
+          secret:
+            secretName: mcp-cert
+      {{ end }}
+{{end}}
