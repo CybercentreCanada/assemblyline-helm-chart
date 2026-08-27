@@ -30,7 +30,7 @@ spec:
         component: assemblyline-metrics-apiserver
         {{ include "assemblyline.coreLabels" . | indent 8 }}
     spec:
-      serviceAccountName: {{ .Release.Name }}-metric-manager
+      serviceAccountName: {{ .Release.Name }}-metric-adaptor
       priorityClassName: al-core-priority
       affinity:
         nodeAffinity:
