@@ -9,6 +9,8 @@ assemblylineFrontendImage: cccs/assemblyline-ui-frontend
 assemblylineSocketIOImage: cccs/assemblyline-socketio
 assemblylineServiceAPIImage: cccs/assemblyline-service-server
 assemblylineMCPImage: cccs/assemblyline-mcp
+assemblylineMetricsAdapterImage: cccs/assemblyline-metrics-adaptor
+assemblylineMetricsAdapterRelease: stable
 retrohuntImage: cccs/hauntedhouse
 retrohuntRelease: "stable"
 elasticAPMImage: docker.elastic.co/apm/apm-server
@@ -50,6 +52,10 @@ enableMetrics: true
 # When true, new pods are launch to gather hosts, containers, pods metrics into a
 # central ELK stack
 enableMetricbeat: true
+
+# When true, scaling is done via native kubernetes HPAs, requires the
+# assemblylineMetricsAdapterImage to be avaialble
+enableNativeScaling: false
 
 # When true an elk stack is launched inside assemblyline to collect logs and metrics
 internalELKStack: true
@@ -239,6 +245,14 @@ enableInternalEncryption: false
 # services.
 coreEnv: []
 coreLabels: {}
+# Annotations added to the workload metadata (Deployment/StatefulSet) of core
+# components. Unlike coreLabels (which annotates the pod template), these land on
+# the workload object itself. This is key for tooling that keys off workload-level
+# annotations — for example, controllers that restart a workload when a referenced
+# Secret/ConfigMap changes (such as Stakater Reloader):
+#   coreAnnotations:
+#     <annotation-key>: <value>
+coreAnnotations: {}
 coreMounts: []
 coreVolumes: []
 coreSecurityContext: {}
@@ -334,6 +348,7 @@ redisPersistentReqCPU: "500m"
 replayReqCPU: "250m"
 replayWorkerReqCPU: 1
 scalerReqCPU: "500m"
+adaptorReqCPU: "100m"
 serviceServerReqCPU: "500m"
 socketIOReqCPU: "100m"
 statisticsReqCPU: "50m"
@@ -366,6 +381,7 @@ redisPersistentLimCPU: 1
 replayLimCPU: 1
 replayWorkerLimCPU: 1
 scalerLimCPU: 1
+adaptorLimCPU: 1
 serviceServerLimCPU: 1
 socketIOLimCPU: 1
 statisticsLimCPU: 1
@@ -389,6 +405,7 @@ redisVolatileReqRam: 1Gi
 replayReqRam: 256Mi
 replayWorkerReqRam: 1Gi
 scalerReqRam: 512Mi
+adaptorReqRam: 128Mi
 serviceServerReqRam: 1Gi
 socketIOReqRam: 256Mi
 uiReqRam: 1Gi
@@ -411,6 +428,7 @@ redisVolatileLimRam: 8Gi
 replayLimRam: 512Mi
 replayWorkerLimRam: 2Gi
 scalerLimRam: 4Gi
+adaptorLimRam: 4Gi
 serviceServerLimRam: 1Gi
 socketIOLimRam: 2Gi
 uiLimRam: 2Gi

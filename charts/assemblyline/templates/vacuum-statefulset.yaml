@@ -3,6 +3,10 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: vacuum
+  {{- with .Values.coreAnnotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   labels:
     app: assemblyline
     section: core
