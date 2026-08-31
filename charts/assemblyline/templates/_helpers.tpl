@@ -344,7 +344,7 @@ spec:
 {{ end }}
 ---
 {{ define "assemblyline.HPA" }}
-apiVersion: autoscaling/v1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{.name}}-hpa
@@ -355,7 +355,13 @@ spec:
     apiVersion: apps/v1
     kind: Deployment
     name: {{.name}}
-  targetCPUUtilizationPercentage: {{.targetUsage}}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{int .targetUsage}}
 {{ end }}
 ---
 {{ define "assemblyline.InternalCertificates" }}
