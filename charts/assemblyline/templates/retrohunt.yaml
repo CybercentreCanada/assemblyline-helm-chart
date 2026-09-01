@@ -98,8 +98,10 @@ spec:
       tolerations:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
-        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
+        {{ include "assemblyline.corePodSecurityContext" . | indent 8 }}
+        {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
         runAsUser: 1000
+        {{- end }}
         runAsGroup: 1000
         fsGroup: 1000
       containers:
@@ -199,8 +201,10 @@ spec:
       tolerations:
         {{ include "assemblyline.tolerations" . | indent 8 }}
       securityContext:
-        {{ include "assemblyline.coreSecurityContext" . | indent 8 }}
+        {{ include "assemblyline.corePodSecurityContext" . | indent 8 }}
+        {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
         runAsUser: 1000
+        {{- end }}
         runAsGroup: 1000
         fsGroup: 1000
       containers:

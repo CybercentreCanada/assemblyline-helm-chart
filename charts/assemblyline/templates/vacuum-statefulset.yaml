@@ -41,7 +41,9 @@ spec:
           command: ['python', '-m', 'assemblyline_core.vacuum.crawler']
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
             runAsUser: {{ .Values.vacuumUser | default 1000}}
+            {{- end }}
             runAsGroup: 1000
           resources:
             requests:

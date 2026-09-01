@@ -95,6 +95,9 @@ spec:
           {{ end}}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+            runAsUser: {{ .runAsUser | default 1000 }}
+            {{- end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.enableInternalEncryption }}
@@ -218,6 +221,9 @@ spec:
           {{ end}}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+            runAsUser: {{ .runAsUser | default 1000 }}
+            {{- end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           {{ if .Values.tlsSecretProvider.enabled }} # Loads TLS certs from a secret provider
@@ -345,6 +351,9 @@ spec:
               memory:  {{ .Values.frontendLimRam}}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+            runAsUser: {{ .runAsUser | default 1000 }}
+            {{- end }}
           volumeMounts:
           {{ if .Values.enableInternalEncryption }}
             - name: frontend-cert

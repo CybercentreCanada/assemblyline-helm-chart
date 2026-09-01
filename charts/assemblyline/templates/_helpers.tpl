@@ -127,6 +127,15 @@
 {{- .Values.coreSecurityContext | toYaml -}}
 {{ end }}
 {{ end }}
+
+{{/* Pod-level variant: PodSecurityContext does not support container-only fields
+   (capabilities, allowPrivilegeEscalation), so strip them when applying coreSecurityContext
+   at the pod level. Container-level sites still use assemblyline.coreSecurityContext. */}}
+{{ define "assemblyline.corePodSecurityContext" }}
+{{ if .Values.coreSecurityContext }}
+{{- omit .Values.coreSecurityContext "capabilities" "allowPrivilegeEscalation" "readOnlyRootFilesystem" "privileged" "procMount" | toYaml -}}
+{{ end }}
+{{ end }}
 ---
 {{ define "assemblyline.coreMounts" }}
 - name: al-config
@@ -229,7 +238,9 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
             runAsUser: {{ .runAsUser | default 1000}}
+            {{- end }}
             runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
           command: ['python', '-m', 'debugpy', '--listen', 'localhost:5678', '-m', '{{ .command }}']
@@ -317,7 +328,9 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
             runAsUser: {{ .runAsUser | default 1000}}
+            {{- end }}
             runAsGroup: 1000
           command: ['python', '-m', '{{ .command }}']
           volumeMounts:
@@ -460,7 +473,9 @@ spec:
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if not (hasKey (.Values.coreSecurityContext | default dict) "runAsUser") }}
             runAsUser: {{ .runAsUser | default 1000}}
+            {{- end }}
             runAsGroup: 1000
           {{ if .Values.enableCoreDebugging}}
           command: ['{{ .command }}', {{if .Values.enableInternalEncryption }}'--secure-connections',{{end}} '{{ .component }}']
