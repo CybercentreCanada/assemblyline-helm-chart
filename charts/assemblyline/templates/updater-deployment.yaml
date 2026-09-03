@@ -46,6 +46,9 @@ spec:
           {{ end}}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}          
+            {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+            runAsUser: {{ .runAsUser | default 1000 }}
+            {{- end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
           env:

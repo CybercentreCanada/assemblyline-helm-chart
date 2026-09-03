@@ -255,6 +255,33 @@ coreLabels: {}
 coreAnnotations: {}
 coreMounts: []
 coreVolumes: []
+# Hardening securityContext for the core Assemblyline components (ui, scaler, updater,
+# service-server, redis, logstash, vacuum, retrohunt, elastic-helper, jobs and the core-*
+# deployments). Empty by default (unchanged from upstream). Applied at the container level via
+# the "assemblyline.coreSecurityContext" helper; the few pod-level sites (elastic-helper,
+# logstash, retrohunt) use "assemblyline.corePodSecurityContext" instead, which strips the
+# container-only fields a PodSecurityContext rejects (capabilities, allowPrivilegeEscalation,
+# readOnlyRootFilesystem, privileged, procMount) - so it is safe to include those here.
+#
+# runAsUser is optional here. Set it to run the core components under a specific uid: the chart
+# emits its own runAsUser line ONLY when you don't set one here, so your value takes precedence
+# with no duplicate key. It defaults to 1000, the uid the stock images are built for (USER
+# assemblyline / USER node, with /app owned by 1000) - running the STOCK images as any other uid
+# breaks file access, so only override this when you supply custom-built images. An explicit
+# runAsUser here also wins over the per-component knobs (vacuumUser, replayLoaderUser), which
+# otherwise default to 1000. Only affects the core chart components; the bundled subcharts
+# (elasticsearch, minio, kibana, metricbeat) carry their own securityContext.
+#
+# Example - Pod Security Standards "restricted"-compliant hardening:
+# coreSecurityContext:
+#   runAsNonRoot: true
+#   runAsGroup: 1000
+#   # runAsUser: 1000    # optional; omit to use the default (1000). Set only for custom images.
+#   allowPrivilegeEscalation: false
+#   capabilities:
+#     drop: [ALL]
+#   seccompProfile:
+#     type: RuntimeDefault
 coreSecurityContext: {}
 
 # Overriding the default classification configuration (default: classification is disabled)

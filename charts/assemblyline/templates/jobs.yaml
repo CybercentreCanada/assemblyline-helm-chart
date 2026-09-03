@@ -25,6 +25,9 @@ spec:
         image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
         securityContext:
           {{ include "assemblyline.coreSecurityContext" . | indent 10 }}
+          {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+          runAsUser: {{ .runAsUser | default 1000 }}
+          {{- end }}
         command: ["python",  "/mount/bootstrap.py"]
         env:
           - name: INITIAL_ADMIN_PASSWORD
@@ -101,6 +104,9 @@ spec:
           image: {{ .Values.assemblylineCoreImage }}:{{ .Values.release }}
           securityContext:
             {{ include "assemblyline.coreSecurityContext" . | indent 12 }}
+            {{- if and .Values.coreSecurityContext (not (hasKey .Values.coreSecurityContext "runAsUser")) }}
+            runAsUser: {{ .runAsUser | default 1000 }}
+            {{- end }}
           command: ["python",  "/mount/create_serviceaccount_token.py"]
           env:
             - name: NAMESPACE
