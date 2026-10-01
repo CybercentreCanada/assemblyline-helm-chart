@@ -515,8 +515,6 @@ spec:
               value: /etc/assemblyline/ssl/server/tls.crt
             - name: SERVER_KEY_PATH
               value: /etc/assemblyline/ssl/server/tls.key
-            - name: CLUSTER_CA_CERT_PATH
-              value: /etc/assemblyline/ssl/al_root-ca.crt
           {{ end}}
           livenessProbe:
             httpGet:
