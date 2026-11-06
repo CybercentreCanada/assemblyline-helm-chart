@@ -58,7 +58,7 @@ spec:
             runAsUser: {{ .runAsUser | default 1000 }}
             {{- end }}
           volumeMounts:
-          {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{ include "assemblyline.coreMounts" . | indent 12 }}          
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
@@ -168,6 +168,12 @@ spec:
             {{- end }}
           volumeMounts:
           {{ include "assemblyline.coreMounts" . | indent 12 }}
+          {{if .Values.enableInternalEncryption }}
+            - name: root-cert
+              mountPath: "/etc/assemblyline/ssl/al_root-ca.key"
+              subPath: tls.key
+              readOnly: true
+          {{ end }}
           env:
           {{ include "assemblyline.coreEnv" . | indent 12 }}
             - name: KUBERNETES_AL_CONFIG
