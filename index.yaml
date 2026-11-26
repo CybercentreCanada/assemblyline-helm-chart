@@ -662,6 +662,61 @@ entries:
     - https://github.com/CybercentreCanada/assemblyline-helm-chart/releases/download/assemblyline-8.1.0-dev/assemblyline-8.1.0-dev.tgz
     version: 8.1.0-dev
   - apiVersion: v1
+    appVersion: 4.8.0.stable4
+    created: "2026-11-26T16:16:56.241071003Z"
+    dependencies:
+    - alias: datastore
+      condition: internalDatastore
+      name: elasticsearch
+      repository: https://helm.elastic.co/
+      version: 8.5.1
+    - alias: filebeat
+      condition: enableLogging
+      name: filebeat
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: metricbeat
+      condition: enableMetricbeat
+      name: metricbeat
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: log-storage
+      condition: seperateInternalELKStack
+      name: elasticsearch
+      repository: https://helm.elastic.co/
+      version: 8.5.1
+    - alias: kibana
+      condition: internalELKStack
+      name: kibana
+      repository: https://helm.elastic.co/
+      version: 7.17.3
+    - alias: filestore
+      condition: internalFilestore
+      name: minio
+      repository: https://charts.min.io/
+      version: "5.0"
+    description: Assemblyline is a malware detection and analysis tool developed by
+      the Cyber Centre and released to the cyber security community.
+    digest: 46376800cf54d72818733c6ed01c90c3826c28449fb72622bb9e8073bc17c970
+    home: https://cyber.gc.ca/en/assemblyline
+    icon: https://bitbucket-assetroot.s3.amazonaws.com/c/photos/2018/Nov/06/2199173190-1-alv4-logo_avatar.png
+    keywords:
+    - assemblyline
+    - malware
+    - gc
+    - canada
+    - cse-cst
+    - cse
+    - cst
+    - cyber
+    - cccs
+    name: assemblyline
+    sources:
+    - https://github.com/CybercentreCanada/
+    urls:
+    - https://github.com/CybercentreCanada/assemblyline-helm-chart/releases/download/assemblyline-8.0.4/assemblyline-8.0.4.tgz
+    version: 8.0.4
+  - apiVersion: v1
     appVersion: 4.8.0.stable3
     created: "2026-11-23T17:41:08.679433311Z"
     dependencies:
@@ -14631,4 +14686,4 @@ entries:
     urls:
     - https://github.com/CybercentreCanada/assemblyline-helm-chart/releases/download/assemblyline-7.0.0/assemblyline-7.0.0.tgz
     version: 7.0.0
-generated: "2026-11-25T21:39:55.835864928Z"
+generated: "2026-11-26T16:16:56.241592787Z"
